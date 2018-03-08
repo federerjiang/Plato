@@ -1,0 +1,1 @@
+This folder contains our proposed lstm based viewport predictor, and the comparison schemes: average, linear regression.
