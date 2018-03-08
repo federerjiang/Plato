@@ -1,0 +1,1 @@
+This folder contains the implementations of the comparison schemes.
