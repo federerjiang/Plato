@@ -16,7 +16,8 @@ S_LEN = 8  # take how many frames in the past
 A_DIM = 6
 TRAIN_SEQ_LEN = 100  # take as a train batch
 MODEL_SAVE_INTERVAL = 100
-VIDEO_BIT_RATE = [300, 750, 1200, 1850, 2850, 4300]  # Kbps
+# VIDEO_BIT_RATE = [300, 750, 1200, 1850, 2850, 4300]  # Kbps
+VIDEO_BIT_RATE = [10, 15, 20, 25, 30]  # QP according to kvazaar
 BUFFER_NORM_FACTOR = 10.0  # used for reward function
 SEG_TILL_VIDEO_END_CAP = 48.0
 M_IN_K = 1000.0
@@ -71,11 +72,12 @@ def train(args):
             action = prob.multinomia().data
             log_prob = log_prob.gather(1, Variable(action))
 
-            bit_rate = get_bit_rate(prob)
+            # bit_rate = get_bit_rate(prob)
+            vp_quality, ad_quality, out_quality = get_bit_rate(prob)
 
             delay, sleep_time, buffer_size, rebuf, \
             video_seg_size, next_video_seg_sizes, \
-            end_of_video, video_seg_remain = net_env.get_video_seg(bit_rate)
+            end_of_video, video_seg_remain = net_env.get_video_seg(vp_quality, ad_quality, out_quality)
 
             time_stamp += delay  # in ms
             time_stamp += sleep_time  # in ms
