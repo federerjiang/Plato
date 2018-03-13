@@ -1,0 +1,8 @@
+#questionId;answer(s) -> 0 = uid; 1 = gender; 2 = age; 3 = impairment; 4 = nbHour of HMD usage; 5 = apps used; 6 = devices used
+0;9e26d280-7581-420e-bfc3-15bc087e6b82
+1;man
+2;26
+3;hypermetropia&astigmatic
+4;1
+5;Game,YouTube360,Facebook,Static Panorama
+6;HMD,Desktop Player,Smartphone

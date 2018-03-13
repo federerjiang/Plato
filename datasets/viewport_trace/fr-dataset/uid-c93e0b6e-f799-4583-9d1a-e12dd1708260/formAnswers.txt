@@ -1,0 +1,8 @@
+#questionId;answer(s) -> 0 = uid; 1 = gender; 2 = age; 3 = impairment; 4 = nbHour of HMD usage; 5 = apps used; 6 = devices used
+0;c93e0b6e-f799-4583-9d1a-e12dd1708260
+1;man
+2;41
+3;myopia&presbiopia
+4;0
+5;
+6;
