@@ -78,6 +78,7 @@ def train(args):
             delay, sleep_time, buffer_size, rebuf, \
             video_seg_size, next_video_seg_sizes, \
             end_of_video, video_seg_remain = net_env.get_video_seg(vp_quality, ad_quality, out_quality)
+            tile_map = net_env.get_viewport()
 
             time_stamp += delay  # in ms
             time_stamp += sleep_time  # in ms

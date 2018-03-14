@@ -1,16 +1,25 @@
 import numpy as np
+import statsmodels.api as sm
 
 
-def linear_regression(orientations):
+def wl_regression(orientations):
     x = np.arange(len(orientations))
     y = np.array(orientations)
-    A = np.vstack([x, np.ones(len(x))]).T
-    m, c = np.linalg.lstsq(A, y)[0]
+    x = sm.add_constant(x)
+    weights = np.arange(0, 1, 0.0333)[1:]
+    # weights = [x * 0.0333 for x in range(1, 31)]
+    # for i in range(len(weights)):
+    #     weights[i] = weights[i] * weights[i]
+    wls_model = sm.WLS(y, x, weights)
+    results = wls_model.fit()
+    m, c = results.params
+    # print(m, c)
     return m, c
 
 # x = np.array([0, 1, 2, 3])
 # y = np.array([-1, 0.2, 0.9, 2.1])
-# print(linear_regression(y))
+# print(wl_regression(y))
+# print(np.arange(0, 1, 0.033)[1:])
 
 
 def data_loader(filename):
@@ -38,14 +47,14 @@ if __name__ == "__main__":
             z.append(train_data[i+j][2])
             w.append(train_data[i+j][3])
         label = train_data[i+30]
-        m,c = linear_regression(x)
+        m,c = wl_regression(x)
         output = []
         output.append(m*30 + c)
-        m,c = linear_regression(y)
+        m,c = wl_regression(y)
         output.append(m*30 + c)
-        m,c = linear_regression(z)
+        m,c = wl_regression(z)
         output.append(m*30 + c)
-        m,c = linear_regression(w)
+        m,c = wl_regression(w)
         output.append(m*30 + c)
         loss = 0.0
         for k in range(4):
