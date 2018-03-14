@@ -1,4 +1,6 @@
 import numpy as np
+import viewport.predictor.lstm as lstm
+import abr.viewport_to_tile as vp_convert
 
 S_INFO = 6  # bit_rate, buffer_size, next_seg_size, bandwidth_measurement(throughput and time), seg_til_video_end
 S_LEN = 8  # take how many frames in the past
@@ -19,13 +21,17 @@ LINK_RTT = 80  # milliseconds
 NOISE_LOW = 0.9  #
 NOISE_HIGH = 1.1  #
 VIDEO_SIZE_FILE = '../datasets/video/video_size_'
+VP_HISTORY_LENGTH = 30  # last 30 frame's viewport points
 
 
 class Environment:
-    def __init__(self, all_cooked_time, all_cooked_bw, random_seed=RANDOM_SEED):
+    def __init__(self, all_cooked_time, all_cooked_bw, all_vp_time, all_vp_unit, random_seed=RANDOM_SEED):
         assert len(all_cooked_time) == len(all_cooked_bw)
 
         np.random.seed(random_seed)
+
+        self.all_vp_time = all_vp_time
+        self.all_vp_unit = all_vp_unit
 
         self.all_cooked_time = all_cooked_time
         self.all_cooked_bw = all_cooked_bw
@@ -33,6 +39,15 @@ class Environment:
         self.video_seg_counter = 0
         self.buffer_size = 0
         self.tile_count = 0  # the number of tiles in a downloaded segment
+
+        # pick a random viewport trace file
+        self.vp_idx = np.random.randint(len(self.all_vp_time))
+        self.vp_time = self.all_cooked_time[self.vp_idx]
+        self.vp_unit = self.all_cooked_bw[self.vp_idx]
+        # self.vp_sim_ptr = np.random.randint(35, len(self.vp_time))
+        self.vp_sim_ptr = 40
+        self.last_vp_time = self.vp_time[self.vp_sim_ptr]
+        self.vp_history = self.__init_vp_history()
 
         # pick a random bandwidth trace file
         self.trace_idx = np.random.randint(len(self.all_cooked_time))
@@ -45,6 +60,18 @@ class Environment:
         self.last_mahimahi_time = self.cooked_time[self.mahimahi_ptr - 1]
 
         self.video_size = self.__get_video_size()  # in bytes
+
+    def __init_vp_history(self):
+        # vp_history = [x[:] for x in [[0.0] * 4] * VP_HISTORY_LENGTH]
+        # pick a random viewport trace file
+        self.vp_idx = np.random.randint(len(self.all_vp_time))
+        self.vp_time = self.all_cooked_time[self.vp_idx]
+        self.vp_unit = self.all_cooked_bw[self.vp_idx]
+        # self.vp_sim_ptr = np.random.randint(35, len(self.vp_time))
+        self.vp_sim_ptr = 40
+        self.last_vp_time = self.vp_time[self.vp_sim_ptr]
+        vp_history = self.vp_unit[self.vp_sim_ptr - VP_HISTORY_LENGTH: self.vp_sim_ptr]
+        return vp_history
 
     @staticmethod
     def __get_video_size():
@@ -60,9 +87,6 @@ class Environment:
 
         return video_size
 
-    def __get_viewport_tile(self):
-        pass
-
     def __get_download_seg_size(self, vp_quality, ad_quality, out_quality):
 
         assert vp_quality >= 0
@@ -72,11 +96,26 @@ class Environment:
         assert ad_quality < BITRATE_LEVELS
         assert out_quality < BITRATE_LEVELS
 
-        vp_tiles, ad_tiles, out_tiles = self.__get_viewport_tile()
+        vp_tiles, ad_tiles, out_tiles = self.get_viewport()
         vp_tiles_size = self.video_size[vp_quality][self.video_seg_counter][vp_tiles]
         ad_tiles_size = self.video_size[ad_quality][self.video_seg_counter][ad_tiles]
         out_tiles_size = self.video_size[out_quality][self.video_seg_counter][out_tiles]
         return vp_tiles_size + ad_tiles_size + out_tiles_size
+
+    def get_viewport(self):
+        self.vp_sim_ptr = self.last_vp_time / 0.02  # each frame is about 0.02s
+        if self.last_vp_time > self.vp_time[-1] or self.vp_sim_ptr >= len(self.vp_time):
+            #  select a new viewport trace file
+            self.vp_history = self.__init_vp_history()
+        else:
+            self.vp_history = self.vp_unit[self.vp_sim_ptr - VP_HISTORY_LENGTH: self.vp_sim_ptr]
+
+        predicted_unit = lstm.predictor(self.vp_history)
+        rotation = vp_convert.unit_to_rotation(predicted_unit)
+        yaw = rotation[1]
+        pitch = rotation[2]
+        tile_map = vp_convert.rotation_to_tile(yaw, pitch, 12, 6, 110, 90, 120, 100)
+        return tile_map
 
     def get_video_seg(self, vp_quality, ad_quality, out_quality):
         video_seg_size = self.__get_download_seg_size(vp_quality, ad_quality, out_quality)
@@ -122,7 +161,7 @@ class Environment:
         self.buffer_size = np.maximum(self.buffer_size - delay, 0.0)
 
         # add in the new tiles in a seg
-        self.buffer_size += VIDEO_SEG_LEN * self.tile_count
+        self.buffer_size += VIDEO_SEG_LEN
 
         # sleep if the buffer gets too large
         sleep_time = 0
@@ -170,6 +209,8 @@ class Environment:
             # note: trace file starts with time 0
             self.mahimahi_ptr = np.random.randint(1, len(self.cooked_bw))
             self.last_mahimahi_time = self.cooked_time[self.mahimahi_ptr - 1]
+
+        self.last_vp_time += (delay + sleep_time) / MILLISECONDS_IN_SECOND  # vp time in seconds
 
         next_video_seg_sizes = []
         for i in range(BITRATE_LEVELS):
