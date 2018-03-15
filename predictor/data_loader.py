@@ -24,10 +24,9 @@ class TrainDataLoader:
 
         self.trace_folder = trace_folder
         self.all_vp_unit, _ = self._load_viewport_unit()
-        print(len(self.all_vp_unit))
         # pick a random viewport trace file
-        # self.vp_idx = np.random.randint(low=0, high=len(self.all_vp_unit))
-        self.vp_idx = np.random.randint(low=0, high=45)
+        self.vp_idx = np.random.randint(low=0, high=len(self.all_vp_unit))
+        # self.vp_idx = np.random.randint(low=0, high=45)
         self.vp_unit = self.all_vp_unit[self.vp_idx]
         self.unit_start_max = len(self.vp_unit) - LABEL_SAMPLE_LENGTH - 2
         self.unit_idx = 0
@@ -50,7 +49,6 @@ class TrainDataLoader:
                             vp_unit.append(self._str_to_float(parse[2:6]))
                 all_vp_time.append(vp_time)
                 all_vp_unit.append(vp_unit)
-                print(len(all_vp_unit))
 
         return all_vp_unit, all_vp_time
 
