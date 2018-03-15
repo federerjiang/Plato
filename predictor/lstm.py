@@ -48,18 +48,6 @@ class LSTMPredict(nn.Module):
         return tag_scores
 
 
-def data_loader(filename):
-    train_data = []
-    with open(filename) as f:
-        for line in f:
-            cordinates = line.split(",")
-            if len(cordinates) == 4:
-                for i in range(4):
-                    cordinates[i] = float(cordinates[i])
-            train_data.append(cordinates)
-    return train_data
-
-
 def train_model(model, learning_rate, train_data, epoch):
     loss_function = nn.MSELoss()
     # optimizer = optim.SGD(model.parameters(), lr=learning_rate)

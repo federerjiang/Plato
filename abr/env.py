@@ -43,8 +43,8 @@ class Environment:
 
         # pick a random viewport trace file
         self.vp_idx = np.random.randint(len(self.all_vp_time))
-        self.vp_time = self.all_cooked_time[self.vp_idx]
-        self.vp_unit = self.all_cooked_bw[self.vp_idx]
+        self.vp_time = self.all_vp_time[self.vp_idx]
+        self.vp_unit = self.all_vp_unit[self.vp_idx]
         # self.vp_sim_ptr = np.random.randint(35, len(self.vp_time))
         self.vp_sim_ptr = 40
         self.last_vp_time = self.vp_time[self.vp_sim_ptr]
