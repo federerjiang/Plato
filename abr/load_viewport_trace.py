@@ -2,10 +2,10 @@ import os
 import fnmatch
 
 VIEWPORT_TRACE = '../datasets/viewport_trace/'
-FR_DATASET = VIEWPORT_TRACE + 'fr-dataset/'
+TRAIN_DATASET = VIEWPORT_TRACE + 'train-dataset/'
 
 
-def load_viewport_unit(trace_folder=FR_DATASET):
+def load_viewport_unit(trace_folder=TRAIN_DATASET):
     all_vp_time = []
     all_vp_unit = []
     for root, dirnames, filenames in os.walk(trace_folder):
@@ -19,13 +19,19 @@ def load_viewport_unit(trace_folder=FR_DATASET):
                 for line in f:
                     if len(line) > 10:
                         parse = line.split()
-                        vp_time.append(parse[0])
-                        vp_unit.append(parse[2:6])
+                        vp_time.append(float(parse[0]))
+                        vp_unit.append(str_to_float(parse[2:6]))
             all_vp_time.append(vp_time)
             all_vp_unit.append(vp_unit)
 
     return all_vp_time, all_vp_unit
 
+
+def str_to_float(str_list):
+    float_list = []
+    for string in str_list:
+        float_list.append(float(string))
+    return float_list
 
 if __name__ == '__main__':
     all_vp_time, all_vp_unit = load_viewport_unit()

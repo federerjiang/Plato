@@ -3,6 +3,8 @@ import torch.autograd as autograd
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
+from predictor.data_loader import TrainDataLoader
+
 # import matplotlib.pyplot as plt
 # import numpy as np
 
@@ -48,23 +50,27 @@ class LSTMPredict(nn.Module):
         return tag_scores
 
 
-def train_model(model, learning_rate, train_data, epoch):
+def train_model(model, learning_rate, data_loader, epoch=10, count_max=10000):
     loss_function = nn.MSELoss()
     # optimizer = optim.SGD(model.parameters(), lr=learning_rate)
     train_losses = []
     validate_losses = []
     batch_loss = 0.0
     for poch in range(epoch):
-        if poch < 2:
+        count = 0
+        if poch < 4:
             optimizer = optim.SGD(model.parameters(), lr=0.001)
         else:
-            optimizer = optim.SGD(model.parameters(), lr=0.0001)
-        for i in range(1, 10001):
-            inputs = train_data[i: i+30]
+            optimizer = optim.SGD(model.parameters(), lr=0.0003)
+        for inputs, label in data_loader:
+            # inputs = train_data[i: i+30]
+            if count == count_max:
+                break
             inputs = torch.FloatTensor(inputs).view(30, 1, -1)
             inputs = autograd.Variable(inputs)
             # print(inputs)
-            label = torch.FloatTensor(train_data[i+1: i+31])
+            # label = torch.FloatTensor(train_data[i+1: i+31])
+            label = torch.FloatTensor(label)
             label = autograd.Variable(label)
             # print(inputs.size(), label.size())
             model.zero_grad()
@@ -77,13 +83,15 @@ def train_model(model, learning_rate, train_data, epoch):
             loss.backward()
             optimizer.step()
             # print(inputs)
-            if i % 100 == 0:
-                batch_loss = batch_loss / 100
+            if count % 1000 == 0:
+                batch_loss = batch_loss / 1000
                 train_losses.append(batch_loss)
-                print(poch, i, batch_loss)
+                print(poch, count, batch_loss)
                 batch_loss = 0.0
             else:
                 batch_loss += loss
+
+            count += 1
             # print(len(output))
                 # accuracy = validate(model, train_data)
                 # validate_losses.append(accuracy)
@@ -91,14 +99,14 @@ def train_model(model, learning_rate, train_data, epoch):
     return train_losses
 
 
-def validate(model, dataset):
+def validate(model, data_loader):
     loss_function = nn.MSELoss()
     loss_sum = 0.0
-    for i in range(11000, 14000):
-        inputs = train_data[i: i+30]
+    for inputs, label in data_loader:
+        # inputs = train_data[i: i+30]
         inputs = torch.FloatTensor(inputs).view(30, 1, -1)
         inputs = autograd.Variable(inputs)
-        label = torch.FloatTensor(train_data[i+30])
+        # label = torch.FloatTensor(train_data[i+30])
         label = autograd.Variable(label)
         output = model(inputs)
         loss = loss_function(output[-1], label)
@@ -119,17 +127,25 @@ def save_loss(losses, path):
 #     plt.show()
 
 
+def try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoc, count_max):
+    for hidden_size in hidden_size_list:
+        for num_layers in num_layer_list:
+            model = LSTMPredict(input_size=4, hidden_size=hidden_size, num_layers=num_layers, tag_size=4)
+            losses = train_model(model, learning_rate=0.0001, data_loader=data_loader, epoch=epoc, count_max=count_max)
+            print("finished training")
+            model_name = 'lstm-' + str(hidden_size) + '-' + str(num_layers) + '.model'
+            loss_name = 'loss-' + str(hidden_size) + '-' + str(num_layers) + '.dat'
+            torch.save(model, model_name)
+            print('saved model: ' + model_name)
+            save_loss(losses, loss_name)
+            print('saved loss data: ' + loss_name)
+
 if __name__ == "__main__":
-    train_data = data_loader("../datasets/pre_train.csv")
-    # model = LSTMPredict(input_size=4, hidden_size=128, num_layers=2, tag_size=4)
-    # # losses = train_model(model, learning_rate=0.0001, train_data=train_data, epoch=4)
-    # train_model(model, learning_rate=0.001, train_data=train_data, epoch=3)
-    # print("finished training")
-    # torch.save(model, "lstm-128-2.model")
-    # print("the second train is finished")
-    # draw_loss(losses, accuracy)
-    # save_loss(losses, "loss-256-1.dat")
-    # save_loss(accuracy, "accuracy.dat")
+    data_loader = TrainDataLoader()
+    hidden_size_list = [128, 256]
+    num_layer_list = [1, 2]
+    try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoc=1, count_max=1000)
+
 
     # model = torch.load("lstm-512-1.model")
     # print(validate(model, train_data))
