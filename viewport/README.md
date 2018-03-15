@@ -1,1 +1,0 @@
-This folder contains the viewport dataset process file, and predictor folder.

@@ -1,6 +1,7 @@
 import numpy as np
-import viewport.predictor.lstm as lstm
+
 import abr.viewport_to_tile as vp_convert
+import predictor.lstm as lstm
 
 S_INFO = 6  # bit_rate, buffer_size, next_seg_size, bandwidth_measurement(throughput and time), seg_til_video_end
 S_LEN = 8  # take how many frames in the past
