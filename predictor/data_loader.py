@@ -26,7 +26,8 @@ class TrainDataLoader:
         self.all_vp_unit, _ = self._load_viewport_unit()
         # pick a random viewport trace file
         # self.vp_idx = np.random.randint(0, len(self.all_vp_unit))
-        self.vp_idx = random.randint(0, len(self.all_vp_unit)-1)
+        # self.vp_idx = random.randint(0, len(self.all_vp_unit)-1)
+        self.vp_idx = random.randrange(len(self.all_vp_unit))
         self.vp_unit = self.all_vp_unit[self.vp_idx]
         self.unit_start_max = len(self.vp_unit) - LABEL_SAMPLE_LENGTH - 2
         self.unit_idx = 0
