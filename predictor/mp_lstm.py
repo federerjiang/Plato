@@ -127,8 +127,8 @@ def try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoch, count_m
             loss_name = 'loss-' + str(hidden_size) + '-' + str(num_layers) + '.dat'
             torch.save(model, model_name)
             print('saved model: ' + model_name)
-            save_loss(losses, loss_name)
-            print('saved loss data: ' + loss_name)
+            # save_loss(losses, loss_name)
+            # print('saved loss data: ' + loss_name)
 
 if __name__ == "__main__":
     data_loader = TrainDataLoader()
