@@ -4,8 +4,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 # from predictor import data_loader
-from predictor.data_loader import TrainDataLoader
-
+# from predictor.data_loader import TrainDataLoader
+from data_loader import TrainDataLoader
 # import matplotlib.pyplot as plt
 # import numpy as np
 
