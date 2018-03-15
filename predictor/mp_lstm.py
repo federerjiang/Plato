@@ -124,7 +124,7 @@ def try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoch, count_m
             main_train(data_loader, hidden_size=128, num_layers=1, num_processes=15, epoch=epoch, count_max=count_max)
             print("finished training")
             model_name = 'lstm-' + str(hidden_size) + '-' + str(num_layers) + '.model'
-            loss_name = 'loss-' + str(hidden_size) + '-' + str(num_layers) + '.dat'
+            # loss_name = 'loss-' + str(hidden_size) + '-' + str(num_layers) + '.dat'
             torch.save(model, model_name)
             print('saved model: ' + model_name)
             # save_loss(losses, loss_name)
