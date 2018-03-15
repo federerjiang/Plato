@@ -144,7 +144,7 @@ if __name__ == "__main__":
     data_loader = TrainDataLoader()
     hidden_size_list = [128, 256]
     num_layer_list = [1, 2]
-    try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoc=1, count_max=1000)
+    try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoc=30, count_max=500000)
 
 
     # model = torch.load("lstm-512-1.model")
