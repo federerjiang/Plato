@@ -3,6 +3,7 @@ import torch.autograd as autograd
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
+import torch.multiprocessing as mp
 # from predictor.data_loader import TrainDataLoader  # in mac
 from data_loader import TrainDataLoader  # in ubuntu
 
@@ -48,18 +49,17 @@ class LSTMPredict(nn.Module):
         return tag_scores
 
 
-def train_model(model, learning_rate, data_loader, epoch=10, count_max=10000):
+def train_model(rank, model, data_loader, epoch=10, count_max=10000):
     loss_function = nn.MSELoss()
-    # optimizer = optim.SGD(model.parameters(), lr=learning_rate)
-    train_losses = []
-    validate_losses = []
     batch_loss = 0.0
     for poch in range(epoch):
         count = 0
-        if poch < 4:
+        if poch == 0:
             optimizer = optim.SGD(model.parameters(), lr=0.001)
-        else:
+        elif poch == 1:
             optimizer = optim.SGD(model.parameters(), lr=0.0003)
+        else:
+            optimizer = optim.SGD(model.parameters(), lr=0.00001)
         for inputs, label in data_loader:
             # inputs = train_data[i: i+30]
             if count == count_max:
@@ -83,33 +83,12 @@ def train_model(model, learning_rate, data_loader, epoch=10, count_max=10000):
             # print(inputs)
             if count % 1000 == 0:
                 batch_loss = batch_loss / 1000
-                train_losses.append(batch_loss)
-                print(poch, count, batch_loss)
+                print(rank, poch, count, batch_loss)
                 batch_loss = 0.0
             else:
                 batch_loss += loss
 
             count += 1
-            # print(len(output))
-                # accuracy = validate(model, train_data)
-                # validate_losses.append(accuracy)
-                # print(loss, accuracy)
-    return train_losses
-
-
-def validate(model, data_loader):
-    loss_function = nn.MSELoss()
-    loss_sum = 0.0
-    for inputs, label in data_loader:
-        # inputs = train_data[i: i+30]
-        inputs = torch.FloatTensor(inputs).view(30, 1, -1)
-        inputs = autograd.Variable(inputs)
-        # label = torch.FloatTensor(train_data[i+30])
-        label = autograd.Variable(label)
-        output = model(inputs)
-        loss = loss_function(output[-1], label)
-        loss_sum += loss
-    return loss_sum / 3000
 
 
 def save_loss(losses, path):
@@ -118,11 +97,17 @@ def save_loss(losses, path):
             f.write(str(loss) + "\n")
 
 
-# def draw_loss(losses, accuracy):
-#     x = np.arange(len(accuracy))
-#     plt.plot(x, losses, 'bo')
-#     plt.plot(x, accuracy, 'r--')
-#     plt.show()
+def main_train(data_loader, hidden_size, num_layers, num_processes, epoch=1, count_max=100000):
+    model = LSTMPredict(input_size=4, hidden_size=hidden_size, num_layers=num_layers, tag_size=4)
+    model.share_memory()
+
+    processes = []
+    for rank in range(num_processes):
+        p = mp.Process(target=train_model, args=(rank, model, data_loader, epoch, count_max))
+        p.start()
+        processes.append(p)
+    for p in processes:
+        p.join()
 
 
 def try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoc, count_max):
@@ -142,8 +127,8 @@ if __name__ == "__main__":
     data_loader = TrainDataLoader()
     hidden_size_list = [128, 256]
     num_layer_list = [1, 2]
-    try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoc=30, count_max=500000)
-
+    # try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoc=30, count_max=500000)
+    main_train(data_loader, hidden_size=128, num_layers=1, num_processes=40, epoch=4, count_max=300000)
 
     # model = torch.load("lstm-512-1.model")
     # print(validate(model, train_data))
