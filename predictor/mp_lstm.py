@@ -49,7 +49,7 @@ class LSTMPredict(nn.Module):
         return tag_scores
 
 
-def train_model(rank, model, data_loader, epoch=10, count_max=10000):
+def train_model(rank, lock, counter, model, data_loader, epoch=10, count_max=10000):
     loss_function = nn.MSELoss()
     batch_loss = 0.0
     for poch in range(epoch):
@@ -78,6 +78,10 @@ def train_model(rank, model, data_loader, epoch=10, count_max=10000):
             for index in range(len(output)):
                 sum_loss += loss_function(output[index], label[index])
             loss = sum_loss / len(output)
+
+            with lock:
+                counter.value += 1
+
             loss.backward()
             optimizer.step()
             # print(inputs)
@@ -101,9 +105,12 @@ def main_train(data_loader, hidden_size, num_layers, num_processes, epoch=1, cou
     model = LSTMPredict(input_size=4, hidden_size=hidden_size, num_layers=num_layers, tag_size=4)
     model.share_memory()
 
+    counter = mp.Value('i', 0)
+    lock = mp.Lock()
+
     processes = []
     for rank in range(num_processes):
-        p = mp.Process(target=train_model, args=(rank, model, data_loader, epoch, count_max))
+        p = mp.Process(target=train_model, args=(rank, lock, counter, model, data_loader, epoch, count_max))
         p.start()
         processes.append(p)
     for p in processes:
