@@ -49,9 +49,10 @@ class LSTMPredict(nn.Module):
         return tag_scores
 
 
-def train_model(rank, lock, counter, model, data_loader, epoch=10, count_max=10000):
+def train_model(rank, lock, counter, model, data_loader, epoch=10, count_max=10000, hidden_size=128, num_layers=1):
     loss_function = nn.MSELoss()
     batch_loss = 0.0
+    train_losses = []
     for poch in range(epoch):
         count = 0
         if poch == 0:
@@ -87,12 +88,17 @@ def train_model(rank, lock, counter, model, data_loader, epoch=10, count_max=100
             # print(inputs)
             if count % 1000 == 0:
                 batch_loss = batch_loss / 1000
+                train_losses.append(batch_loss)
                 print(rank, poch, count, batch_loss)
                 batch_loss = 0.0
             else:
                 batch_loss += loss
 
             count += 1
+
+    loss_name = 'loss-' + str(hidden_size) + '-' + str(num_layers) + '-' + str(rank) + '.dat'
+    save_loss(train_losses, loss_name)
+    print('saved loss data: ' + loss_name)
 
 
 def save_loss(losses, path):
@@ -110,7 +116,8 @@ def main_train(data_loader, hidden_size, num_layers, num_processes, epoch=1, cou
 
     processes = []
     for rank in range(num_processes):
-        p = mp.Process(target=train_model, args=(rank, lock, counter, model, data_loader, epoch, count_max))
+        p = mp.Process(target=train_model, args=(rank, lock, counter, model, data_loader, epoch, count_max,
+                                                 hidden_size, num_layers))
         p.start()
         processes.append(p)
     for p in processes:
@@ -121,7 +128,7 @@ def try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoch, count_m
     for hidden_size in hidden_size_list:
         for num_layers in num_layer_list:
             model = LSTMPredict(input_size=4, hidden_size=hidden_size, num_layers=num_layers, tag_size=4)
-            main_train(data_loader, hidden_size=128, num_layers=1, num_processes=15, epoch=epoch, count_max=count_max)
+            main_train(data_loader, hidden_size=128, num_layers=1, num_processes=4, epoch=epoch, count_max=count_max)
             print("finished training")
             model_name = 'lstm-' + str(hidden_size) + '-' + str(num_layers) + '.model'
             # loss_name = 'loss-' + str(hidden_size) + '-' + str(num_layers) + '.dat'
@@ -134,7 +141,7 @@ if __name__ == "__main__":
     data_loader = TrainDataLoader()
     hidden_size_list = [128, 256]
     num_layer_list = [1, 2]
-    try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoch=4, count_max=300000)
+    try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoch=1, count_max=2000)
     # main_train(data_loader, hidden_size=128, num_layers=1, num_processes=15, epoch=4, count_max=300000)
 
     # model = torch.load("lstm-512-1.model")
