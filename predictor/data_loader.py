@@ -8,6 +8,7 @@ TRAIN_DATASET = VIEWPORT_TRACE + 'train-dataset/'
 TEST_DATASET = VIEWPORT_TRACE + 'test-dataset/'
 TRAIN_SAMPLE_LENGTH = 30
 LABEL_SAMPLE_LENGTH = 30
+TEST_LABEL_LENGTH = 30
 
 
 class TrainDataLoader:
@@ -90,7 +91,7 @@ class TestDataLoader:
         # pick a random viewport trace file
         self.vp_idx = np.random.randint(len(self.all_vp_unit))
         self.vp_unit = self.all_vp_unit[self.vp_idx]
-        self.unit_start_max = len(self.vp_unit) - LABEL_SAMPLE_LENGTH - TRAIN_SAMPLE_LENGTH - 1
+        self.unit_start_max = len(self.vp_unit) - TEST_LABEL_LENGTH - TRAIN_SAMPLE_LENGTH - 1
         self.unit_idx = 0
 
     def _load_viewport_unit(self):
@@ -128,11 +129,11 @@ class TestDataLoader:
         if self.unit_idx > self.unit_start_max:
             self.vp_idx = np.random.randint(len(self.all_vp_unit))
             self.vp_unit = self.all_vp_unit[self.vp_idx]
-            self.unit_start_max = len(self.vp_unit) - LABEL_SAMPLE_LENGTH - TRAIN_SAMPLE_LENGTH - 1
+            self.unit_start_max = len(self.vp_unit) - TEST_LABEL_LENGTH - TRAIN_SAMPLE_LENGTH - 1
             self.unit_idx = 0
         train_sample = self.vp_unit[self.unit_idx: self.unit_idx + TRAIN_SAMPLE_LENGTH]
         label_sample = self.vp_unit[self.unit_idx + TRAIN_SAMPLE_LENGTH: self.unit_idx +
-                                    TRAIN_SAMPLE_LENGTH + LABEL_SAMPLE_LENGTH]
+                                    TRAIN_SAMPLE_LENGTH + TEST_LABEL_LENGTH]
         return train_sample, label_sample
 
 

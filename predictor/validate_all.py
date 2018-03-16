@@ -1,11 +1,19 @@
 import torch
-from predictor.data_loader import LABEL_SAMPLE_LENGTH  # in mac
+from predictor.data_loader import TEST_LABEL_LENGTH  # in mac
+from predictor.data_loader import TestDataLoader
 
 LSTM_MODEL_PATH = 'lstm-128-1.model'
 
 
-def lstm_predict(test_data_loader):
-    pass
+def lstm_predict(test_sample):
+    model = torch.load(LSTM_MODEL_PATH)
+    outputs = []
+    for _ in range(TEST_LABEL_LENGTH):
+        output = model(test_sample)
+        outputs.append(output)
+        test_sample
+
+
 
 def validate(model, data_loader):
     loss_function = nn.MSELoss()
@@ -20,3 +28,7 @@ def validate(model, data_loader):
         loss = loss_function(output[-1], label)
         loss_sum += loss
     return loss_sum / 3000
+
+
+if __name__ == '__main__':
+    test_data_loader = TestDataLoader()
