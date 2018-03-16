@@ -141,6 +141,7 @@ def try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoch, count_m
             # save_loss(losses, loss_name)
             # print('saved loss data: ' + loss_name)
 
+
 if __name__ == "__main__":
     # parser = argparse.ArgumentParser(description='lstm predictor running on Liunx')
     # parser.add_argument('--num-process', type=int, default=4,
