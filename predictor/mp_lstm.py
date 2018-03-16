@@ -158,7 +158,7 @@ if __name__ == "__main__":
 
     data_loader = TrainDataLoader()
     hidden_size_list = [128, 256]
-    num_layer_list = [2]
+    num_layer_list = [1]
     try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoch=4, count_max=200000)
     # main_train(data_loader, hidden_size=128, num_layers=1, num_processes=15, epoch=4, count_max=300000)
 
