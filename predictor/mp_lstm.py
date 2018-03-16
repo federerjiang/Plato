@@ -131,7 +131,7 @@ def try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoch, count_m
     for hidden_size in hidden_size_list:
         for num_layers in num_layer_list:
             model = LSTMPredict(input_size=4, hidden_size=hidden_size, num_layers=num_layers, tag_size=4)
-            main_train(data_loader, hidden_size=hidden_size, num_layers=num_layers, num_processes=3, epoch=epoch,
+            main_train(data_loader, hidden_size=hidden_size, num_layers=num_layers, num_processes=16, epoch=epoch,
                        count_max=count_max)
             print("finished training")
             model_name = 'lstm-' + str(hidden_size) + '-' + str(num_layers) + '.model'
@@ -159,7 +159,7 @@ if __name__ == "__main__":
     data_loader = TrainDataLoader()
     hidden_size_list = [128, 256]
     num_layer_list = [2]
-    try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoch=3, count_max=100000)
+    try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoch=4, count_max=300000)
     # main_train(data_loader, hidden_size=128, num_layers=1, num_processes=15, epoch=4, count_max=300000)
 
     # model = torch.load("lstm-512-1.model")
