@@ -52,7 +52,7 @@ class LSTMPredict(nn.Module):
 def train_model(rank, lock, counter, model, data_loader, epoch=10, count_max=10000, hidden_size=128, num_layers=1):
     loss_function = nn.MSELoss()
     batch_loss = 0.0
-    train_losses = []
+    # train_losses = []
     for poch in range(epoch):
         count = 0
         if poch == 0:
@@ -88,7 +88,7 @@ def train_model(rank, lock, counter, model, data_loader, epoch=10, count_max=100
             # print(inputs)
             if count % 1000 == 0:
                 batch_loss = batch_loss / 1000
-                train_losses.append(batch_loss)
+                # train_losses.append(batch_loss)
                 print(rank, poch, count, batch_loss)
                 batch_loss = 0.0
             else:
@@ -96,9 +96,9 @@ def train_model(rank, lock, counter, model, data_loader, epoch=10, count_max=100
 
             count += 1
 
-    loss_name = 'loss-' + str(hidden_size) + '-' + str(num_layers) + '-' + str(rank) + '.dat'
-    save_loss(train_losses, loss_name)
-    print('saved loss data: ' + loss_name)
+    # loss_name = 'loss-' + str(hidden_size) + '-' + str(num_layers) + '-' + str(rank) + '.dat'
+    # save_loss(train_losses, loss_name)
+    # print('saved loss data: ' + loss_name)
 
 
 def save_loss(losses, path):
@@ -128,7 +128,7 @@ def try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoch, count_m
     for hidden_size in hidden_size_list:
         for num_layers in num_layer_list:
             model = LSTMPredict(input_size=4, hidden_size=hidden_size, num_layers=num_layers, tag_size=4)
-            main_train(data_loader, hidden_size=hidden_size, num_layers=num_layers, num_processes=10, epoch=epoch,
+            main_train(data_loader, hidden_size=hidden_size, num_layers=num_layers, num_processes=4, epoch=epoch,
                        count_max=count_max)
             print("finished training")
             model_name = 'lstm-' + str(hidden_size) + '-' + str(num_layers) + '.model'
@@ -142,7 +142,7 @@ if __name__ == "__main__":
     data_loader = TrainDataLoader()
     hidden_size_list = [128, 256]
     num_layer_list = [1]
-    try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoch=4, count_max=300000)
+    try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoch=2, count_max=200000)
     # main_train(data_loader, hidden_size=128, num_layers=1, num_processes=15, epoch=4, count_max=300000)
 
     # model = torch.load("lstm-512-1.model")
