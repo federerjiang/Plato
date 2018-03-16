@@ -128,7 +128,7 @@ def try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoch, count_m
     for hidden_size in hidden_size_list:
         for num_layers in num_layer_list:
             model = LSTMPredict(input_size=4, hidden_size=hidden_size, num_layers=num_layers, tag_size=4)
-            main_train(data_loader, hidden_size=hidden_size, num_layers=num_layers, num_processes=14, epoch=epoch,
+            main_train(data_loader, hidden_size=hidden_size, num_layers=num_layers, num_processes=20, epoch=epoch,
                        count_max=count_max)
             print("finished training")
             model_name = 'lstm-' + str(hidden_size) + '-' + str(num_layers) + '.model'
