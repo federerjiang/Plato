@@ -4,6 +4,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 import torch.multiprocessing as mp
+
+import argparse
+
 # from predictor.data_loader import TrainDataLoader  # in mac
 from data_loader import TrainDataLoader  # in ubuntu
 
@@ -128,7 +131,7 @@ def try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoch, count_m
     for hidden_size in hidden_size_list:
         for num_layers in num_layer_list:
             model = LSTMPredict(input_size=4, hidden_size=hidden_size, num_layers=num_layers, tag_size=4)
-            main_train(data_loader, hidden_size=hidden_size, num_layers=num_layers, num_processes=15, epoch=epoch,
+            main_train(data_loader, hidden_size=hidden_size, num_layers=num_layers, num_processes=6, epoch=epoch,
                        count_max=count_max)
             print("finished training")
             model_name = 'lstm-' + str(hidden_size) + '-' + str(num_layers) + '.model'
@@ -139,6 +142,19 @@ def try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoch, count_m
             # print('saved loss data: ' + loss_name)
 
 if __name__ == "__main__":
+    # parser = argparse.ArgumentParser(description='lstm predictor running on Liunx')
+    # parser.add_argument('--num-process', type=int, default=4,
+    #                     help='how many training processes to use (default 4)')
+    # parser.add_argument('--count_max', type=int, default=100000,
+    #                     help='how many samples in one epoch (default 100000)')
+    # parser.add_argument('--epoch', type=int, default=3,
+    #                     help='how many epochs in each training processes (default 3)')
+    #
+    # args = parser.parse_args()
+    # num_processes = args.num_process
+    # count_max = args.count_max
+    # epoch = args.epoc
+
     data_loader = TrainDataLoader()
     hidden_size_list = [128, 256]
     num_layer_list = [1]
