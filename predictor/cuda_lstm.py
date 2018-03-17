@@ -7,7 +7,7 @@ import torch.optim as optim
 from data_loader import TrainDataLoader  # in ubuntu
 from data_loader import CudaTrainLoader  # in ubuntu
 
-BATCH_SIZE = 32
+BATCH_SIZE = 16
 SEQ_LEN = 30
 TAG_SIZE = 4
 CUDA = True
@@ -127,6 +127,8 @@ def try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoc, count_ma
 if __name__ == "__main__":
     data_loader = TrainDataLoader()
     cuda_data_loader = CudaTrainLoader(data_loader)
-    hidden_size_list = [128, 256, 512]
+    # hidden_size_list = [128, 256, 512]
+    # num_layer_list = [1, 2]
+    hidden_size_list = [512]
     num_layer_list = [1, 2]
     try_hyper_para(hidden_size_list, num_layer_list, cuda_data_loader, epoc=5, count_max=50000)
