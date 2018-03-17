@@ -79,6 +79,7 @@ def train_model(model, learning_rate, data_loader, epoch=10, count_max=10000):
             label = torch.FloatTensor(label)
             if use_cuda:
                 inputs, label = inputs.cuda(), label.cuda()
+                print('change inputs, label to cuda type')
 
             inputs = autograd.Variable(inputs)
             label = autograd.Variable(label).view(-1, 4)
