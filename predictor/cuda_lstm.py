@@ -38,8 +38,8 @@ class LSTMPredict(nn.Module):
                 nn.init.normal(weights)
 
     def init_hidden(self):
-        hx = torch.nn.init.xavier_normal(autograd.Variable(torch.randn(self.num_layers, BATCH_SIZE, self.hidden_size)))
-        cx = torch.nn.init.xavier_normal(autograd.Variable(torch.randn(self.num_layers, BATCH_SIZE, self.hidden_size)))
+        hx = torch.nn.init.xavier_normal(torch.FloatTensor(torch.randn(self.num_layers, BATCH_SIZE, self.hidden_size)))
+        cx = torch.nn.init.xavier_normal(torch.FloatTensor(torch.randn(self.num_layers, BATCH_SIZE, self.hidden_size)))
         hidden = (hx, cx)
         return hidden
 
