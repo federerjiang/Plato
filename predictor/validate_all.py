@@ -68,11 +68,14 @@ def init_hidden(num_layers, hidden_size):
 
 def get_lstm_loss(model_path, num_layers, hidden_size, test_data_loader):
     batch_model = torch.load(model_path)
+    # model.load_state_dict(own_state)
     # batch_model = torch.load(model_path, map_location='cpu')
     batch_model.hidden = init_hidden(num_layers, hidden_size)
     batch_model.lstm.flatten_parameters()
+    model = LSTMPredict(input_size=4, hidden_size=hidden_size, num_layers=num_layers, tag_size=4)
+    model.load_state_dict(batch_model.state_dict())
     # batch_model.lstm2tag.flatten_parameters()
-    loss = validate_lstm(batch_model, test_data_loader)
+    loss = validate_lstm(model, test_data_loader)
     print(model_path)
     print(loss)
 
