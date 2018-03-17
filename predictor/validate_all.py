@@ -28,7 +28,7 @@ def validate_lstm(model, test_data_loader):
     for inputs, label in test_data_loader:
         # inputs = train_data[i: i+30]
         inputs = torch.FloatTensor(inputs).view(1, 30, -1).cuda()
-        inputs = autograd.Variable(inputs, volatile=True)
+        inputs = autograd.Variable(inputs)
         # label = torch.FloatTensor(train_data[i+30])
         label = autograd.Variable(torch.FloatTensor(label[0]).cuda())
         output = model(inputs)
@@ -66,7 +66,7 @@ def init_hidden(num_layers, hidden_size):
         return hidden
 
 
-def get_lstm_loss(model_path, num_layers, hidden_size):
+def get_lstm_loss(model_path, num_layers, hidden_size, test_data_loader):
     batch_model = torch.load(model_path)
     # batch_model = torch.load(model_path, map_location='cpu')
     batch_model.hidden = init_hidden(num_layers, hidden_size)
@@ -76,18 +76,33 @@ def get_lstm_loss(model_path, num_layers, hidden_size):
 
 
 if __name__ == '__main__':
-    test_data_loader = TrainDataLoader()
-    loss = validate_others(average, test_data_loader)
-    print('average: ')
-    print(loss)
-    loss = validate_others(lr, test_data_loader)
-    print('linear regression ')
-    print(loss)
+    test_data_loader = TestDataLoader()
+    # batch_model = torch.load('lstm-128-1.model', map_location='cpu')
+    # batch_model.hidden = init_hidden(1, 128)
+    # batch_model.lstm.flatten_parameters()
+    # loss = validate_lstm(batch_model, test_data_loader)
+    # print(batch_model.state_dict())
+    # own_state = batch_model.state_dict()
+    # print(len(own_state))
+    # for i in own_state:
+    #     print(i)
+    # model = LSTMPredict(input_size=4, hidden_size=128, num_layers=1, tag_size=4)
+    # model.load_state_dict(own_state)
+    # loss = validate_lstm(batch_model, test_data_loader)
+
+
+
+    # loss = validate_others(average, test_data_loader)
+    # print('average: ')
+    # print(loss)
+    # loss = validate_others(lr, test_data_loader)
+    # print('linear regression ')
+    # print(loss)
     get_lstm_loss('lstm-128-1.model', 1, 128)
-    get_lstm_loss('adam-lstm-128-1.model', 1, 128)
-    get_lstm_loss('lstm-128-2.model', 2, 128)
-    get_lstm_loss('adam-lstm-128-2.model', 2, 128)
-    get_lstm_loss('lstm-256-1.model', 1, 256)
-    get_lstm_loss('adam-lstm-256-1.model', 1, 256)
-    get_lstm_loss('lstm-512-1.model', 1, 512)
+    # get_lstm_loss('adam-lstm-128-1.model', 1, 128)
+    # get_lstm_loss('lstm-128-2.model', 2, 128)
+    # get_lstm_loss('adam-lstm-128-2.model', 2, 128)
+    # get_lstm_loss('lstm-256-1.model', 1, 256)
+    # get_lstm_loss('adam-lstm-256-1.model', 1, 256)
+    # get_lstm_loss('lstm-512-1.model', 1, 512)
 
