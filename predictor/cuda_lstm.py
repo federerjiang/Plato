@@ -74,6 +74,7 @@ def train_model(model, learning_rate, data_loader, epoch=10, count_max=10000):
         else:
             optimizer = optim.SGD(model.parameters(), lr=0.0003)
 
+        loss_avg = 0.0
         for inputs, label in data_loader:
             # inputs = train_data[i: i+30]
             if count == count_max:
@@ -95,9 +96,11 @@ def train_model(model, learning_rate, data_loader, epoch=10, count_max=10000):
             loss.backward()
             optimizer.step()
 
-            print(poch, count, loss)
-
+            loss_avg += loss
             count += 1
+            if count % 1000 == 0:
+                print(poch, count, loss_avg / 1000)
+        # print(poch, loss_avg / count_max)
     return train_losses
 
 
@@ -123,6 +126,6 @@ def try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoc, count_ma
 if __name__ == "__main__":
     data_loader = TrainDataLoader()
     cuda_data_loader = CudaTrainLoader(data_loader)
-    hidden_size_list = [128, 256]
-    num_layer_list = [1]
-    try_hyper_para(hidden_size_list, num_layer_list, cuda_data_loader, epoc=1, count_max=10000)
+    hidden_size_list = [128, 256, 512]
+    num_layer_list = [1, 2]
+    try_hyper_para(hidden_size_list, num_layer_list, cuda_data_loader, epoc=30, count_max=200000)
