@@ -1,12 +1,12 @@
 import torch
 import torch.nn as nn
 import torch.autograd as autograd
-from predictor.data_loader import TEST_LABEL_LENGTH  # in mac
-from predictor.data_loader import TestDataLoader
-from predictor.data_loader import TrainDataLoader
-from predictor.average import average
-from predictor.lr import lr
-from predictor.lstm import LSTMPredict
+from data_loader import TEST_LABEL_LENGTH  # in mac
+from data_loader import TestDataLoader
+from data_loader import TrainDataLoader
+from average import average
+from lr import lr
+from lstm import LSTMPredict
 
 
 LSTM_MODEL_PATH = 'lstm-256-1.model'
