@@ -43,7 +43,7 @@ class LSTMPredict(nn.Module):
         cx = torch.nn.init.xavier_normal(torch.randn(self.num_layers, BATCH_SIZE, self.hidden_size))
         if self.use_cuda:
             hx, cx = hx.cuda(), cx.cuda()
-        hidden = (autograd.Variable(hx), autograd.Variable(cx))
+        hidden = (autograd.Variable(hx), autograd.Variable(cx))  # convert to Variable as late as possible
         return hidden
 
     def forward(self, orientations):
