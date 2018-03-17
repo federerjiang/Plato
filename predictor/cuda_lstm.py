@@ -39,8 +39,10 @@ class LSTMPredict(nn.Module):
                 nn.init.normal(weights)
 
     def init_hidden(self):
-        hx = torch.nn.init.xavier_normal(autograd.Variable(torch.randn(self.num_layers, BATCH_SIZE, self.hidden_size)))
-        cx = torch.nn.init.xavier_normal(autograd.Variable(torch.randn(self.num_layers, BATCH_SIZE, self.hidden_size)))
+        hx = torch.nn.init.xavier_normal(autograd.Variable(torch.randn(self.num_layers, BATCH_SIZE, self.hidden_size),
+                                                           volatile=True))
+        cx = torch.nn.init.xavier_normal(autograd.Variable(torch.randn(self.num_layers, BATCH_SIZE, self.hidden_size),
+                                                           volatile=True))
         if self.use_cuda:
             hx, cx = hx.cuda(), cx.cuda()
         hidden = (hx, cx)
@@ -85,8 +87,8 @@ def train_model(model, learning_rate, data_loader, epoch=10, count_max=10000):
                 inputs, label = inputs.cuda(), label.cuda()
                 # print('change inputs, label to cuda type')
 
-            inputs = autograd.Variable(inputs)
-            label = autograd.Variable(label).view(-1, 4)
+            inputs = autograd.Variable(inputs, volatile=True)
+            label = autograd.Variable(label, volatile=True).view(-1, 4)
 
             model.zero_grad()
             model.hidden = model.init_hidden()
