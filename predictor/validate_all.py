@@ -54,7 +54,7 @@ def validate_others(model, test_data_loader):
         if count == 100000:
             # print(loss_sum / count)
             break
-        print(loss)
+        # print(loss)
 
     return loss_sum / count
 
