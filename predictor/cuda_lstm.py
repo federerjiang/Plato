@@ -73,7 +73,7 @@ def train_model(model, learning_rate, data_loader, epoch=10, count_max=10000):
 
         # optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=0.9, nesterov=True)
         optimizer = optim.Adam(model.parameters(), lr=learning_rate)
-        learning_rate *= 0.3
+        learning_rate *= 0.2
         for inputs, label in data_loader:
             # inputs = train_data[i: i+30]
             if count == count_max:
