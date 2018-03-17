@@ -58,7 +58,7 @@ def train_model(model, learning_rate, data_loader, epoch=10, count_max=10000):
     use_cuda = torch.cuda.is_available()
     print('cuda: ' + str(use_cuda))
     if use_cuda:
-        model.cuda()
+        model = model.cuda()
 
     loss_function = nn.MSELoss()
     # optimizer = optim.SGD(model.parameters(), lr=learning_rate)
@@ -79,7 +79,7 @@ def train_model(model, learning_rate, data_loader, epoch=10, count_max=10000):
             label = torch.FloatTensor(label)
             if use_cuda:
                 inputs, label = inputs.cuda(), label.cuda()
-                print('change inputs, label to cuda type')
+                # print('change inputs, label to cuda type')
 
             inputs = autograd.Variable(inputs)
             label = autograd.Variable(label).view(-1, 4)
