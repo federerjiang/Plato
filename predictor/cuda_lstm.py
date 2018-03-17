@@ -127,4 +127,4 @@ if __name__ == "__main__":
     cuda_data_loader = CudaTrainLoader(data_loader)
     hidden_size_list = [128, 256, 512]
     num_layer_list = [1, 2]
-    try_hyper_para(hidden_size_list, num_layer_list, cuda_data_loader, epoc=5, count_max=100000)
+    try_hyper_para(hidden_size_list, num_layer_list, cuda_data_loader, epoc=5, count_max=200000)
