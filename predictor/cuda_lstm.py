@@ -10,16 +10,17 @@ from data_loader import CudaTrainLoader  # in ubuntu
 BATCH_SIZE = 32
 SEQ_LEN = 30
 TAG_SIZE = 4
-
+CUDA = True
 
 class LSTMPredict(nn.Module):
 
-    def __init__(self, input_size, hidden_size, num_layers, tag_size=TAG_SIZE):
+    def __init__(self, input_size, hidden_size, num_layers, tag_size=TAG_SIZE, use_cuda=CUDA):
         super(LSTMPredict, self).__init__()
         self.input_size = input_size
         self.hidden_size = hidden_size
         self.num_layers = num_layers
         self.tag_size = tag_size
+        self.use_cuda = use_cuda
 
         # self.in2lstm = nn.Linear(tag_size, input_size)
         self.lstm = nn.LSTM(self.input_size, self.hidden_size, self.num_layers, batch_first=True)
@@ -40,6 +41,8 @@ class LSTMPredict(nn.Module):
     def init_hidden(self):
         hx = torch.nn.init.xavier_normal(autograd.Variable(torch.randn(self.num_layers, BATCH_SIZE, self.hidden_size)))
         cx = torch.nn.init.xavier_normal(autograd.Variable(torch.randn(self.num_layers, BATCH_SIZE, self.hidden_size)))
+        if self.use_cuda:
+            hx, cx = hx.cuda(), cx.cuda()
         hidden = (hx, cx)
         return hidden
 
