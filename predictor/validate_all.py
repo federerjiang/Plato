@@ -27,10 +27,10 @@ def validate_lstm(model, test_data_loader):
     count = 0
     for inputs, label in test_data_loader:
         # inputs = train_data[i: i+30]
-        inputs = torch.FloatTensor(inputs).view(1, 30, -1)
-        inputs = autograd.Variable(inputs).cuda()
+        inputs = torch.FloatTensor(inputs).view(1, 30, -1).cuda()
+        inputs = autograd.Variable(inputs)
         # label = torch.FloatTensor(train_data[i+30])
-        label = autograd.Variable(torch.FloatTensor(label[0])).cuda()
+        label = autograd.Variable(torch.FloatTensor(label[0]).cuda())
         output = model(inputs)
         loss = loss_function(output[-1], label)
         loss_sum += loss
@@ -60,8 +60,8 @@ def validate_others(model, test_data_loader):
 
 
 def init_hidden(num_layers, hidden_size):
-        hx = torch.nn.init.xavier_normal(torch.randn(num_layers, 1, hidden_size))
-        cx = torch.nn.init.xavier_normal(torch.randn(num_layers, 1, hidden_size))
+        hx = torch.nn.init.xavier_normal(torch.randn(num_layers, 1, hidden_size)).cuda()
+        cx = torch.nn.init.xavier_normal(torch.randn(num_layers, 1, hidden_size)).cuda()
         hidden = (autograd.Variable(hx), autograd.Variable(cx))  # convert to Variable as late as possible
         return hidden
 
