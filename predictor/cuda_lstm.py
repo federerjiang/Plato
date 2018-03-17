@@ -68,7 +68,8 @@ def train_model(model, learning_rate, data_loader, epoch=10, count_max=10000):
 
     loss_function = nn.MSELoss()
     # optimizer = optim.Adam(model.parameters(), lr=learning_rate)
-    optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=0.9, nesterov=True)
+    # optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=0.9, nesterov=True)
+    optimizer = optim.SGD(model.parameters(), lr=learning_rate)
     for poch in range(epoch):
         count = 0
         loss_avg = 0.0
