@@ -100,7 +100,7 @@ if __name__ == '__main__':
     # loss = validate_others(lr, test_data_loader)
     # print('linear regression ')
     # print(loss)
-    get_lstm_loss('lstm-128-1.model', 1, 128)
+    get_lstm_loss('lstm-128-1.model', 1, 128, test_data_loader)
     # get_lstm_loss('adam-lstm-128-1.model', 1, 128)
     # get_lstm_loss('lstm-128-2.model', 2, 128)
     # get_lstm_loss('adam-lstm-128-2.model', 2, 128)
