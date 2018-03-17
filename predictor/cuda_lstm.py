@@ -39,11 +39,11 @@ class LSTMPredict(nn.Module):
                 nn.init.normal(weights)
 
     def init_hidden(self):
-        hx = torch.nn.init.xavier_normal(autograd.Variable(torch.randn(self.num_layers, BATCH_SIZE, self.hidden_size)))
-        cx = torch.nn.init.xavier_normal(autograd.Variable(torch.randn(self.num_layers, BATCH_SIZE, self.hidden_size)))
+        hx = torch.nn.init.xavier_normal(torch.randn(self.num_layers, BATCH_SIZE, self.hidden_size))
+        cx = torch.nn.init.xavier_normal(torch.randn(self.num_layers, BATCH_SIZE, self.hidden_size))
         if self.use_cuda:
             hx, cx = hx.cuda(), cx.cuda()
-        hidden = (hx, cx)
+        hidden = (autograd.Variable(hx), autograd.Variable(cx))
         return hidden
 
     def forward(self, orientations):
@@ -67,8 +67,6 @@ def train_model(model, learning_rate, data_loader, epoch=10, count_max=10000):
 
     loss_function = nn.MSELoss()
     # optimizer = optim.SGD(model.parameters(), lr=learning_rate)
-    train_losses = []
-    batch_loss = 0.0
     for poch in range(epoch):
         count = 0
         if poch < 4:
@@ -102,8 +100,8 @@ def train_model(model, learning_rate, data_loader, epoch=10, count_max=10000):
             count += 1
             if count % 1000 == 0:
                 print(poch, count, loss_avg / 1000)
+                loss_avg = 0.0
         # print(poch, loss_avg / count_max)
-    return train_losses
 
 
 def save_loss(losses, path):
