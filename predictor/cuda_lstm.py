@@ -62,6 +62,8 @@ class LSTMPredict(nn.Module):
 def train_model(model, learning_rate, data_loader, epoch=10, count_max=10000):
     use_cuda = torch.cuda.is_available()
     print('cuda: ' + str(use_cuda))
+
+    model.train()  # for cuda speed up
     if use_cuda:
         model = model.cuda()
 
