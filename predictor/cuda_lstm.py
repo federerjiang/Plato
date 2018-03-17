@@ -7,7 +7,7 @@ import torch.optim as optim
 from data_loader import TrainDataLoader  # in ubuntu
 from data_loader import CudaTrainLoader  # in ubuntu
 
-BATCH_SIZE = 16
+BATCH_SIZE = 32
 SEQ_LEN = 30
 TAG_SIZE = 4
 CUDA = True
