@@ -113,7 +113,7 @@ def try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoc, count_ma
     for hidden_size in hidden_size_list:
         for num_layers in num_layer_list:
             model = LSTMPredict(input_size=4, hidden_size=hidden_size, num_layers=num_layers, tag_size=4)
-            train_model(model, learning_rate=0.0001, data_loader=data_loader, epoch=epoc, count_max=count_max)
+            train_model(model, learning_rate=0.00001, data_loader=data_loader, epoch=epoc, count_max=count_max)
             print("finished training")
             model_name = 'lstm-' + str(hidden_size) + '-' + str(num_layers) + '.model'
             # loss_name = 'loss-' + str(hidden_size) + '-' + str(num_layers) + '.dat'
