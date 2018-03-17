@@ -71,7 +71,7 @@ def get_lstm_loss(model_path, num_layers, hidden_size, test_data_loader):
     # batch_model = torch.load(model_path, map_location='cpu')
     batch_model.hidden = init_hidden(num_layers, hidden_size)
     batch_model.lstm.flatten_parameters()
-    batch_model.lstm2tag.flatten_parameters()
+    # batch_model.lstm2tag.flatten_parameters()
     loss = validate_lstm(batch_model, test_data_loader)
     print(model_path)
     print(loss)
