@@ -16,7 +16,7 @@ class LSTMPredict(nn.Module):
         self.num_layers = num_layers
 
         # self.in2lstm = nn.Linear(tag_size, input_size)
-        self.lstm = nn.LSTM(input_size, hidden_size, num_layers)
+        self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
         self.init_lstm()
 
         self.lstm2tag = nn.Linear(hidden_size, tag_size)
@@ -64,7 +64,7 @@ def train_model(model, learning_rate, data_loader, epoch=10, count_max=10000):
             # inputs = train_data[i: i+30]
             if count == count_max:
                 break
-            inputs = torch.FloatTensor(inputs).view(30, 1, -1)
+            inputs = torch.FloatTensor(inputs).view(1, 30, -1)
             inputs = autograd.Variable(inputs)
             # print(inputs)
             # label = torch.FloatTensor(train_data[i+1: i+31])
@@ -103,7 +103,7 @@ def validate(model, data_loader):
     loss_sum = 0.0
     for inputs, label in data_loader:
         # inputs = train_data[i: i+30]
-        inputs = torch.FloatTensor(inputs).view(30, 1, -1)
+        inputs = torch.FloatTensor(inputs).view(1, 30, -1)
         inputs = autograd.Variable(inputs)
         # label = torch.FloatTensor(train_data[i+30])
         label = autograd.Variable(label)
