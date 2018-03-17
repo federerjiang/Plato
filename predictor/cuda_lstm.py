@@ -67,12 +67,12 @@ def train_model(model, learning_rate, data_loader, epoch=10, count_max=10000):
         model = model.cuda()
 
     loss_function = nn.MSELoss()
-    optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+    # optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+    optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=0.9, nesterov=True)
     for poch in range(epoch):
         count = 0
         loss_avg = 0.0
 
-        # optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=0.9, nesterov=True)
         # learning_rate *= 0.2
         for inputs, label in data_loader:
             # inputs = train_data[i: i+30]
