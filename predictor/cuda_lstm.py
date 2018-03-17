@@ -12,6 +12,7 @@ SEQ_LEN = 30
 TAG_SIZE = 4
 CUDA = True
 
+
 class LSTMPredict(nn.Module):
 
     def __init__(self, input_size, hidden_size, num_layers, tag_size=TAG_SIZE, use_cuda=CUDA):
@@ -66,15 +67,13 @@ def train_model(model, learning_rate, data_loader, epoch=10, count_max=10000):
         model = model.cuda()
 
     loss_function = nn.MSELoss()
-    # optimizer = optim.SGD(model.parameters(), lr=learning_rate)
     for poch in range(epoch):
         count = 0
-        if poch < 4:
-            optimizer = optim.SGD(model.parameters(), lr=0.001)
-        else:
-            optimizer = optim.SGD(model.parameters(), lr=0.0003)
-
         loss_avg = 0.0
+
+        # optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=0.9, nesterov=True)
+        optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+        learning_rate *= 0.3
         for inputs, label in data_loader:
             # inputs = train_data[i: i+30]
             if count == count_max:
@@ -114,7 +113,7 @@ def try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoc, count_ma
     for hidden_size in hidden_size_list:
         for num_layers in num_layer_list:
             model = LSTMPredict(input_size=4, hidden_size=hidden_size, num_layers=num_layers, tag_size=4)
-            train_model(model, learning_rate=0.0001, data_loader=data_loader, epoch=epoc, count_max=count_max)
+            train_model(model, learning_rate=0.001, data_loader=data_loader, epoch=epoc, count_max=count_max)
             print("finished training")
             model_name = 'lstm-' + str(hidden_size) + '-' + str(num_layers) + '.model'
             # loss_name = 'loss-' + str(hidden_size) + '-' + str(num_layers) + '.dat'
@@ -128,4 +127,4 @@ if __name__ == "__main__":
     cuda_data_loader = CudaTrainLoader(data_loader)
     hidden_size_list = [128, 256, 512]
     num_layer_list = [1, 2]
-    try_hyper_para(hidden_size_list, num_layer_list, cuda_data_loader, epoc=30, count_max=200000)
+    try_hyper_para(hidden_size_list, num_layer_list, cuda_data_loader, epoc=5, count_max=100000)
