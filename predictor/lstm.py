@@ -74,10 +74,11 @@ def train_model(model, learning_rate, data_loader, epoch=10, count_max=10000):
             model.zero_grad()
             model.hidden = model.init_hidden()
             output = model(inputs)
-            sum_loss = 0.0
-            for index in range(len(output)):
-                sum_loss += loss_function(output[index], label[index])
-            loss = sum_loss / len(output)
+            # sum_loss = 0.0
+            # for index in range(len(output)):
+            #     sum_loss += loss_function(output[index], label[index])
+            # loss = sum_loss / len(output)
+            loss = loss_function(output, label)
             loss.backward()
             optimizer.step()
             # print(inputs)
@@ -118,13 +119,6 @@ def save_loss(losses, path):
             f.write(str(loss) + "\n")
 
 
-# def draw_loss(losses, accuracy):
-#     x = np.arange(len(accuracy))
-#     plt.plot(x, losses, 'bo')
-#     plt.plot(x, accuracy, 'r--')
-#     plt.show()
-
-
 def try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoc, count_max):
     for hidden_size in hidden_size_list:
         for num_layers in num_layer_list:
@@ -135,14 +129,14 @@ def try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoc, count_ma
             loss_name = 'loss-' + str(hidden_size) + '-' + str(num_layers) + '.dat'
             torch.save(model, model_name)
             print('saved model: ' + model_name)
-            save_loss(losses, loss_name)
-            print('saved loss data: ' + loss_name)
+            # save_loss(losses, loss_name)
+            # print('saved loss data: ' + loss_name)
 
 if __name__ == "__main__":
     data_loader = TrainDataLoader()
     hidden_size_list = [128, 256]
     num_layer_list = [1]
-    try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoc=30, count_max=500000)
+    try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoc=1, count_max=10000)
 
 
     # model = torch.load("lstm-512-1.model")

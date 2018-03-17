@@ -78,10 +78,11 @@ def train_model(rank, lock, counter, model, data_loader, epoch=10, count_max=100
             model.zero_grad()
             model.hidden = model.init_hidden()
             output = model(inputs)
-            sum_loss = 0.0
-            for index in range(len(output)):
-                sum_loss += loss_function(output[index], label[index])
-            loss = sum_loss / len(output)
+            # sum_loss = 0.0
+            # for index in range(len(output)):
+            #     sum_loss += loss_function(output[index], label[index])
+            # loss = sum_loss / len(output)
+            loss = loss_function(output, label)
 
             with lock:
                 counter.value += 1
@@ -159,7 +160,7 @@ if __name__ == "__main__":
     data_loader = TrainDataLoader()
     hidden_size_list = [128, 256]
     num_layer_list = [1]
-    try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoch=4, count_max=200000)
+    try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoch=3, count_max=50000)
     # main_train(data_loader, hidden_size=128, num_layers=1, num_processes=15, epoch=4, count_max=300000)
 
     # model = torch.load("lstm-512-1.model")

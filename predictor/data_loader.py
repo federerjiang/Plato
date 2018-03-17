@@ -2,6 +2,8 @@ import os
 import fnmatch
 import numpy as np
 import random
+import torch
+
 
 VIEWPORT_TRACE = '../datasets/viewport_trace/'
 TRAIN_DATASET = VIEWPORT_TRACE + 'train-dataset/'
@@ -9,6 +11,7 @@ TEST_DATASET = VIEWPORT_TRACE + 'test-dataset/'
 TRAIN_SAMPLE_LENGTH = 30
 LABEL_SAMPLE_LENGTH = 30
 TEST_LABEL_LENGTH = 30
+BATCH_SIZE = 32
 
 
 class TrainDataLoader:
@@ -64,7 +67,8 @@ class TrainDataLoader:
         return self
 
     def __next__(self):
-        if self.unit_idx > self.unit_start_max:
+        self.unit_idx += 1
+        if self.unit_idx >= self.unit_start_max:
             self.vp_idx = np.random.randint(len(self.all_vp_unit))
             self.vp_unit = self.all_vp_unit[self.vp_idx]
             self.unit_start_max = len(self.vp_unit) - LABEL_SAMPLE_LENGTH - TRAIN_SAMPLE_LENGTH - 1
@@ -89,7 +93,7 @@ class TestDataLoader:
         self.trace_folder = trace_folder
         self.all_vp_unit, _ = self._load_viewport_unit()
         # pick a random viewport trace file
-        self.vp_idx = np.random.randint(len(self.all_vp_unit))
+        self.vp_idx = 0
         self.vp_unit = self.all_vp_unit[self.vp_idx]
         self.unit_start_max = len(self.vp_unit) - TEST_LABEL_LENGTH - TRAIN_SAMPLE_LENGTH - 1
         self.unit_idx = 0
@@ -126,15 +130,40 @@ class TestDataLoader:
         return self
 
     def __next__(self):
-        if self.unit_idx > self.unit_start_max:
-            self.vp_idx = np.random.randint(len(self.all_vp_unit))
+        self.unit_idx += 1
+        if self.unit_idx >= self.unit_start_max:
+            self.vp_idx += 1
+            if self.vp_idx >= len(self.all_vp_unit):
+                raise StopIteration
             self.vp_unit = self.all_vp_unit[self.vp_idx]
             self.unit_start_max = len(self.vp_unit) - TEST_LABEL_LENGTH - TRAIN_SAMPLE_LENGTH - 1
             self.unit_idx = 0
         train_sample = self.vp_unit[self.unit_idx: self.unit_idx + TRAIN_SAMPLE_LENGTH]
         label_sample = self.vp_unit[self.unit_idx + TRAIN_SAMPLE_LENGTH: self.unit_idx +
                                     TRAIN_SAMPLE_LENGTH + TEST_LABEL_LENGTH]
+
         return train_sample, label_sample
+
+
+class CudaTrainLoader:
+    def __init__(self, train_data_loader, batch_size=BATCH_SIZE):
+        self.batch_size = batch_size
+        self.data_loader = train_data_loader
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        batch_train_sample = []
+        batch_label_sample = []
+        count = 0
+        for train_sample, label_sample in self.data_loader:
+            count += 1
+            batch_train_sample.append(train_sample)
+            batch_label_sample.append(label_sample)
+            if count == self.batch_size:
+                break
+        return torch.FloatTensor(batch_train_sample), torch.FloatTensor(batch_label_sample)
 
 
 if __name__ == '__main__':
@@ -149,6 +178,14 @@ if __name__ == '__main__':
     #     if count == 10:
     #         break
 
-    for train, label in data_loader:
-        print(len(train), len(label))
+    cuda_data_loader = CudaTrainLoader(data_loader)
+    count = 0
+    for train, label in cuda_data_loader:
+        # print(train.size(), label.size())
+        print(train)
+        print(label)
+        count += 1
+        if count == 1:
+            break
+
 
