@@ -31,7 +31,7 @@ def linear_regression(orientations):
     x = np.arange(len(orientations))
     y = np.array(orientations)
     A = np.vstack([x, np.ones(len(x))]).T
-    m, c = np.linalg.lstsq(A, y)[0]
+    m, c = np.linalg.lstsq(A, y, rcond=None)[0]
     return m, c
 
 

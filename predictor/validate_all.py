@@ -9,7 +9,7 @@ from predictor.lr import lr
 from predictor.lstm import LSTMPredict
 
 
-LSTM_MODEL_PATH = 'lstm-128-1.model'
+LSTM_MODEL_PATH = 'lstm-256-1.model'
 
 
 def lstm_predict(test_sample):
@@ -27,7 +27,7 @@ def validate_lstm(model, test_data_loader):
     count = 0
     for inputs, label in test_data_loader:
         # inputs = train_data[i: i+30]
-        inputs = torch.FloatTensor(inputs).view(30, 1, -1)
+        inputs = torch.FloatTensor(inputs).view(1, 30, -1)
         inputs = autograd.Variable(inputs)
         # label = torch.FloatTensor(train_data[i+30])
         label = autograd.Variable(torch.FloatTensor(label[0]))
@@ -35,7 +35,8 @@ def validate_lstm(model, test_data_loader):
         loss = loss_function(output[-1], label)
         loss_sum += loss
         count += 1
-        print(loss)
+        if count == 100000:
+            break
     return loss_sum / count
 
 
@@ -50,12 +51,42 @@ def validate_others(model, test_data_loader):
             loss += (output[k] - label[k]) * (output[k] - label[k])
         loss_sum += loss / 4
         count += 1
+        if count == 100000:
+            # print(loss_sum / count)
+            break
         print(loss)
+
     return loss_sum / count
+
+
+def init_hidden(num_layers, hidden_size):
+        hx = torch.nn.init.xavier_normal(torch.randn(num_layers, 1, hidden_size))
+        cx = torch.nn.init.xavier_normal(torch.randn(num_layers, 1, hidden_size))
+        hidden = (autograd.Variable(hx), autograd.Variable(cx))  # convert to Variable as late as possible
+        return hidden
+
+
+def get_lstm_loss(model_path, num_layers, hidden_size):
+    batch_model = torch.load(model_path, map_location='cpu')
+    batch_model.hidden = init_hidden(num_layers, hidden_size)
+    loss = validate_lstm(batch_model, test_data_loader)
+    print(model_path)
+    print(loss)
+
 
 if __name__ == '__main__':
     test_data_loader = TrainDataLoader()
-    # loss = validate_lstm(torch.load(LSTM_MODEL_PATH), test_data_loader)
-    # loss = validate_others(average, test_data_loader)
-    loss = validate_others(lr, test_data_loader)
+    loss = validate_others(average, test_data_loader)
+    print('average: ')
     print(loss)
+    loss = validate_others(lr, test_data_loader)
+    print('linear regression ')
+    print(loss)
+    get_lstm_loss('lstm-128-1.model', 1, 128)
+    get_lstm_loss('adam-lstm-128-1.model', 1, 128)
+    get_lstm_loss('lstm-128-2.model', 2, 128)
+    get_lstm_loss('adam-lstm-128-2.model', 2, 128)
+    get_lstm_loss('lstm-256-1.model', 1, 256)
+    get_lstm_loss('adam-lstm-256-1.model', 1, 256)
+    get_lstm_loss('lstm-512-1.model', 1, 512)
+
