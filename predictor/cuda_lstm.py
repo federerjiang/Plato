@@ -105,12 +105,6 @@ def train_model(model, learning_rate, data_loader, epoch=10, count_max=10000):
         # print(poch, loss_avg / count_max)
 
 
-def save_loss(losses, path):
-    with open(path, "w+") as f:
-        for loss in losses:
-            f.write(str(loss) + "\n")
-
-
 def try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoc, count_max):
     for hidden_size in hidden_size_list:
         for num_layers in num_layer_list:

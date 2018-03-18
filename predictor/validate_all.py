@@ -6,7 +6,7 @@ from data_loader import TestDataLoader
 from data_loader import TrainDataLoader
 from average import average
 from lr import lr
-from lstm import LSTMPredict
+from mp_lstm import LSTMPredict
 
 
 LSTM_MODEL_PATH = 'lstm-256-1.model'
@@ -26,17 +26,29 @@ def validate_lstm(model, test_data_loader):
     loss_sum = 0.0
     count = 0
     for inputs, label in test_data_loader:
+        # for i in range(len(inputs)):
+        #     print(inputs[i], label[i])
         # inputs = train_data[i: i+30]
-        inputs = torch.FloatTensor(inputs).view(1, 30, -1).cuda()
+        inputs = torch.FloatTensor(inputs).view(30, 1, -1)
         inputs = autograd.Variable(inputs)
         # label = torch.FloatTensor(train_data[i+30])
-        label = autograd.Variable(torch.FloatTensor(label[0]).cuda())
+        # label = autograd.Variable(torch.FloatTensor(label[0]))
         output = model(inputs)
-        loss = loss_function(output[-1], label)
-        loss_sum += loss
-        count += 1
+        # output = output.view(-1, 4)
+        # loss = loss_function(output[-1], autograd.Variable(torch.FloatTensor(label[-1])))
+        loss = loss_function(output[-1], autograd.Variable(torch.FloatTensor(label[0])))
+        # print(loss.data)
+        # loss_sum += loss
+        if count % 1000 == 0:
+            print(loss_sum / 1000)
+            loss_sum = 0.0
+            # break
+        else:
+            loss_sum += loss
         if count == 100000:
             break
+        count += 1
+
     return loss_sum / count
 
 
@@ -66,7 +78,7 @@ def init_hidden(num_layers, hidden_size):
         return hidden
 
 
-def get_lstm_loss(model_path, num_layers, hidden_size, test_data_loader):
+def get_lstm_loss_gpu(model_path, num_layers, hidden_size, test_data_loader):
     batch_model = torch.load(model_path)
     # model.load_state_dict(own_state)
     # batch_model = torch.load(model_path, map_location='cpu')
@@ -78,6 +90,10 @@ def get_lstm_loss(model_path, num_layers, hidden_size, test_data_loader):
     loss = validate_lstm(model, test_data_loader)
     print(model_path)
     print(loss)
+
+
+def get_lstm_loss_cpu(model_path, num_layers, hidden_size, test_data_loader):
+    pass
 
 
 if __name__ == '__main__':
@@ -95,6 +111,10 @@ if __name__ == '__main__':
     # model.load_state_dict(own_state)
     # loss = validate_lstm(batch_model, test_data_loader)
 
+    model = torch.load('mp-sgd-lstm-128-1.model')
+    loss = validate_lstm(model, test_data_loader)
+    print(loss)
+
 
 
     # loss = validate_others(average, test_data_loader)
@@ -103,7 +123,8 @@ if __name__ == '__main__':
     # loss = validate_others(lr, test_data_loader)
     # print('linear regression ')
     # print(loss)
-    get_lstm_loss('lstm-128-1.model', 1, 128, test_data_loader)
+
+    # get_lstm_loss('lstm-128-1.model', 1, 128, test_data_loader)
     # get_lstm_loss('adam-lstm-128-1.model', 1, 128)
     # get_lstm_loss('lstm-128-2.model', 2, 128)
     # get_lstm_loss('adam-lstm-128-2.model', 2, 128)

@@ -24,7 +24,7 @@ class TrainDataLoader:
         :param random_seed:
         :return: none
         """
-        # np.random.seed(random_seed)
+        np.random.seed(random_seed)
 
         self.trace_folder = trace_folder
         self.all_vp_unit, _ = self._load_viewport_unit()

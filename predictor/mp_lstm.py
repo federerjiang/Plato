@@ -52,18 +52,19 @@ class LSTMPredict(nn.Module):
         return tag_scores
 
 
-def train_model(rank, lock, counter, model, data_loader, epoch=10, count_max=10000, hidden_size=128, num_layers=1):
+def train_model(rank, lock, counter, model, data_loader, learning_rate=0.0001, epoch=10, count_max=10000,
+                hidden_size=128, num_layers=1):
     loss_function = nn.MSELoss()
-    batch_loss = 0.0
+
     # train_losses = []
+    # optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=0.9, nesterov=True)
+    optimizer = optim.Adam(model.parameters(), lr=learning_rate)
     for poch in range(epoch):
         count = 0
-        if poch == 0:
-            optimizer = optim.SGD(model.parameters(), lr=0.001)
-        elif poch == 1:
-            optimizer = optim.SGD(model.parameters(), lr=0.0003)
-        else:
-            optimizer = optim.SGD(model.parameters(), lr=0.00001)
+        batch_loss = 0.0
+        # optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=0.9, nesterov=True)
+        # optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+        # learning_rate *= 0.5
         for inputs, label in data_loader:
             # inputs = train_data[i: i+30]
             if count == count_max:
@@ -84,12 +85,6 @@ def train_model(rank, lock, counter, model, data_loader, epoch=10, count_max=100
             # loss = sum_loss / len(output)
             loss = loss_function(output, label)
 
-            with lock:
-                counter.value += 1
-
-            loss.backward()
-            optimizer.step()
-            # print(inputs)
             if count % 1000 == 0:
                 batch_loss = batch_loss / 1000
                 # train_losses.append(batch_loss)
@@ -97,6 +92,14 @@ def train_model(rank, lock, counter, model, data_loader, epoch=10, count_max=100
                 batch_loss = 0.0
             else:
                 batch_loss += loss
+                # print(loss)
+
+            with lock:
+                counter.value += 1
+
+            loss.backward()
+            optimizer.step()
+            # print(inputs)
 
             count += 1
 
@@ -111,17 +114,18 @@ def save_loss(losses, path):
             f.write(str(loss) + "\n")
 
 
-def main_train(data_loader, hidden_size, num_layers, num_processes, epoch=1, count_max=100000):
-    model = LSTMPredict(input_size=4, hidden_size=hidden_size, num_layers=num_layers, tag_size=4)
+def main_train(model, data_loader, hidden_size, num_layers, num_processes, epoch=1, count_max=100000):
+    # model = LSTMPredict(input_size=4, hidden_size=hidden_size, num_layers=num_layers, tag_size=4)
     model.share_memory()
 
     counter = mp.Value('i', 0)
     lock = mp.Lock()
 
+    learning_rate = 0.0001
     processes = []
     for rank in range(num_processes):
-        p = mp.Process(target=train_model, args=(rank, lock, counter, model, data_loader, epoch, count_max,
-                                                 hidden_size, num_layers))
+        p = mp.Process(target=train_model, args=(rank, lock, counter, model, data_loader, learning_rate, epoch,
+                                                 count_max, hidden_size, num_layers))
         p.start()
         processes.append(p)
     for p in processes:
@@ -132,10 +136,10 @@ def try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoch, count_m
     for hidden_size in hidden_size_list:
         for num_layers in num_layer_list:
             model = LSTMPredict(input_size=4, hidden_size=hidden_size, num_layers=num_layers, tag_size=4)
-            main_train(data_loader, hidden_size=hidden_size, num_layers=num_layers, num_processes=5, epoch=epoch,
+            main_train(model, data_loader, hidden_size=hidden_size, num_layers=num_layers, num_processes=4, epoch=epoch,
                        count_max=count_max)
             print("finished training")
-            model_name = 'lstm-' + str(hidden_size) + '-' + str(num_layers) + '.model'
+            model_name = 'mp-adam-lstm-' + str(hidden_size) + '-' + str(num_layers) + '.model'
             # loss_name = 'loss-' + str(hidden_size) + '-' + str(num_layers) + '.dat'
             torch.save(model, model_name)
             print('saved model: ' + model_name)
@@ -160,7 +164,7 @@ if __name__ == "__main__":
     data_loader = TrainDataLoader()
     hidden_size_list = [128, 256]
     num_layer_list = [1]
-    try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoch=3, count_max=50000)
+    try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoch=3, count_max=100000)
     # main_train(data_loader, hidden_size=128, num_layers=1, num_processes=15, epoch=4, count_max=300000)
 
     # model = torch.load("lstm-512-1.model")
