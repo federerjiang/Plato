@@ -29,7 +29,7 @@ def validate_lstm(model, test_data_loader):
         # for i in range(len(inputs)):
         #     print(inputs[i], label[i])
         # inputs = train_data[i: i+30]
-        inputs = torch.FloatTensor(inputs).view(1, 30, -1)
+        inputs = torch.FloatTensor(inputs).view(30, 1, -1)
         inputs = autograd.Variable(inputs, volatile=True)
         # label = torch.FloatTensor(train_data[i+30])
         # label = autograd.Variable(torch.FloatTensor(label[0]))
