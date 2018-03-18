@@ -57,4 +57,9 @@ Variable containing:
   5.5884
 [torch.FloatTensor of size 1]
 
+average:
+0.006786518134572003
+linear regression
+0.0028877711502986337
+
 
