@@ -1,0 +1,6 @@
+validate lstm predict 30 frames
+Variable containing:
+1.00000e-02 *
+  1.9003
+[torch.FloatTensor of size 1]
+
