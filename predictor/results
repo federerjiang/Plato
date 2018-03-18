@@ -15,4 +15,25 @@ Variable containing:
 1.00000e-04 *
   7.3015
 
+gpu model
+adam-lstm-256-1.model
+Variable containing:
+1.00000e-04 *
+  7.3855
+[torch.FloatTensor of size 1]
+
+gpu model
+adam-lstm-512-1.model
+Variable containing:
+1.00000e-04 *
+  9.3930
+[torch.FloatTensor of size 1]
+
+gpu model
+adam-lstm-128-2.model
+Variable containing:
+1.00000e-04 *
+  3.7016
+[torch.FloatTensor of size 1]
+
 
