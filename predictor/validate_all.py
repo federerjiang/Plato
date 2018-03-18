@@ -6,7 +6,8 @@ from data_loader import TestDataLoader
 from data_loader import TrainDataLoader
 from average import average
 from lr import lr
-from mp_lstm import LSTMPredict
+# from mp_lstm import LSTMPredict
+from cuda_lstm import LSTMPredict
 
 
 LSTM_MODEL_PATH = 'lstm-256-1.model'
@@ -29,12 +30,12 @@ def validate_lstm(model, test_data_loader):
         # for i in range(len(inputs)):
         #     print(inputs[i], label[i])
         # inputs = train_data[i: i+30]
-        inputs = torch.FloatTensor(inputs).view(30, 1, -1)
+        inputs = torch.FloatTensor(inputs).view(1, 30, -1)
         inputs = autograd.Variable(inputs, volatile=True)
         # label = torch.FloatTensor(train_data[i+30])
         # label = autograd.Variable(torch.FloatTensor(label[0]))
         output = model(inputs)
-        # output = output.view(-1, 4)
+        output = output.view(-1, 4)
         # loss = loss_function(output[-1], autograd.Variable(torch.FloatTensor(label[-1])))
         loss = loss_function(output[-1], autograd.Variable(torch.FloatTensor(label[0]), volatile=True))
         # print(loss.data)
@@ -93,12 +94,13 @@ def get_lstm_loss_cpu(model_path, num_layers, hidden_size, test_data_loader):
 if __name__ == '__main__':
     # torch.backends.cudnn.enabled = False
     test_data_loader = TestDataLoader()
-    # batch_model = torch.load('lstm-128-1.model', map_location='cpu')
-    # batch_model.hidden = init_hidden(1, 128)
+    batch_model = torch.load('adam-lstm-128-1.model', map_location='cpu')
+    batch_model.hidden = init_hidden(1, 128)
     # batch_model.lstm.flatten_parameters()
-    # loss = validate_lstm(batch_model, test_data_loader)
-    # print("gpu model ")
-    # print(loss)
+    loss = validate_lstm(batch_model, test_data_loader)
+    print("gpu model ")
+    print('adam-lstm-128-1.model')
+    print(loss)
     # print(batch_model.state_dict())
     # own_state = batch_model.state_dict()
     # print(len(own_state))
@@ -108,15 +110,15 @@ if __name__ == '__main__':
     # model.load_state_dict(own_state)
     # loss = validate_lstm(batch_model, test_data_loader)
 
-    model = torch.load('mp-sgd-lstm-128-1.model')
-    loss = validate_lstm(model, test_data_loader)
-    print("cpu model ")
-    print(loss)
+    # model = torch.load('mp-sgd-lstm-128-1.model')
+    # loss = validate_lstm(model, test_data_loader)
+    # print("cpu model ")
+    # print(loss)
 
-    model = torch.load('mp-sgd-lstm-256-1.model')
-    loss = validate_lstm(model, test_data_loader)
-    print("cpu model ")
-    print(loss)
+    # model = torch.load('mp-sgd-lstm-256-1.model')
+    # loss = validate_lstm(model, test_data_loader)
+    # print("cpu model ")
+    # print(loss)
 
     # loss = validate_others(average, test_data_loader)
     # print('average: ')
