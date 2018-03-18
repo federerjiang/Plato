@@ -4,3 +4,9 @@ Variable containing:
   1.9003
 [torch.FloatTensor of size 1]
 
+validate lstm predict 60 frames
+Variable containing:
+1.00000e-02 *
+  3.9326
+[torch.FloatTensor of size 1]
+
