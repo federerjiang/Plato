@@ -48,6 +48,7 @@ def validate_lstm_predict(test_data_loader):
         loss = loss_function(predicts, label)
         loss_sum += loss
         count += 1
+        print(loss)
         if count == 10000:
             print('validate lstm predict ' + str(TEST_LABEL_LENGTH) + ' frames')
             print(loss_sum / count)
