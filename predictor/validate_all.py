@@ -93,12 +93,12 @@ def get_lstm_loss_cpu(model_path, num_layers, hidden_size, test_data_loader):
 if __name__ == '__main__':
     # torch.backends.cudnn.enabled = False
     test_data_loader = TestDataLoader()
-    batch_model = torch.load('lstm-128-1.model', map_location='cpu')
-    batch_model.hidden = init_hidden(1, 128)
+    # batch_model = torch.load('lstm-128-1.model', map_location='cpu')
+    # batch_model.hidden = init_hidden(1, 128)
     # batch_model.lstm.flatten_parameters()
-    loss = validate_lstm(batch_model, test_data_loader)
-    print("gpu model ")
-    print(loss)
+    # loss = validate_lstm(batch_model, test_data_loader)
+    # print("gpu model ")
+    # print(loss)
     # print(batch_model.state_dict())
     # own_state = batch_model.state_dict()
     # print(len(own_state))
@@ -108,12 +108,15 @@ if __name__ == '__main__':
     # model.load_state_dict(own_state)
     # loss = validate_lstm(batch_model, test_data_loader)
 
-    # model = torch.load('mp-sgd-lstm-128-1.model')
-    # loss = validate_lstm(model, test_data_loader)
-    # print("cpu model ")
-    # print(loss)
+    model = torch.load('mp-sgd-lstm-128-1.model')
+    loss = validate_lstm(model, test_data_loader)
+    print("cpu model ")
+    print(loss)
 
-
+    model = torch.load('mp-sgd-lstm-256-1.model')
+    loss = validate_lstm(model, test_data_loader)
+    print("cpu model ")
+    print(loss)
 
     # loss = validate_others(average, test_data_loader)
     # print('average: ')
