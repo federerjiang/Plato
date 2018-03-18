@@ -92,7 +92,7 @@ def get_lstm_loss_cpu(model_path, num_layers, hidden_size, test_data_loader):
 
 
 if __name__ == '__main__':
-    test_data_loader = TestDataLoader()
+    # test_data_loader = TestDataLoader()
     # batch_model = torch.load('adam-lstm-256-1.model', map_location='cpu')
     # batch_model.hidden = init_hidden(1, 256)
     # loss = validate_lstm(batch_model, test_data_loader)
@@ -114,26 +114,26 @@ if __name__ == '__main__':
     # print('adam-lstm-128-2.model')
     # print(loss)
 
-    batch_model = torch.load('lstm-128-1.model', map_location='cpu')
-    batch_model.hidden = init_hidden(1, 128)
-    loss = validate_lstm(batch_model, test_data_loader)
-    print("gpu model ")
-    print('sgd-lstm-128-1.model')
-    print(loss)
-
-    batch_model = torch.load('lstm-128-2.model', map_location='cpu')
-    batch_model.hidden = init_hidden(2, 128)
-    loss = validate_lstm(batch_model, test_data_loader)
-    print("gpu model ")
-    print('sgd-lstm-128-2.model')
-    print(loss)
-
-    batch_model = torch.load('lstm-256-1.model', map_location='cpu')
-    batch_model.hidden = init_hidden(1, 256)
-    loss = validate_lstm(batch_model, test_data_loader)
-    print("gpu model ")
-    print('sgd-lstm-256-1.model')
-    print(loss)
+    # batch_model = torch.load('lstm-128-1.model', map_location='cpu')
+    # batch_model.hidden = init_hidden(1, 128)
+    # loss = validate_lstm(batch_model, test_data_loader)
+    # print("gpu model ")
+    # print('sgd-lstm-128-1.model')
+    # print(loss)
+    #
+    # batch_model = torch.load('lstm-128-2.model', map_location='cpu')
+    # batch_model.hidden = init_hidden(2, 128)
+    # loss = validate_lstm(batch_model, test_data_loader)
+    # print("gpu model ")
+    # print('sgd-lstm-128-2.model')
+    # print(loss)
+    #
+    # batch_model = torch.load('lstm-256-1.model', map_location='cpu')
+    # batch_model.hidden = init_hidden(1, 256)
+    # loss = validate_lstm(batch_model, test_data_loader)
+    # print("gpu model ")
+    # print('sgd-lstm-256-1.model')
+    # print(loss)
 
 
     # model = torch.load('mp-sgd-lstm-128-1.model')
@@ -147,11 +147,12 @@ if __name__ == '__main__':
     # print(loss)
 
 
-
+    test_data_loader = TestDataLoader()
     loss = validate_others(average, test_data_loader)
     print('average: ')
     print(loss)
 
+    test_data_loader = TestDataLoader()
     loss = validate_others(lr, test_data_loader)
     print('linear regression ')
     print(loss)

@@ -36,4 +36,25 @@ Variable containing:
   3.7016
 [torch.FloatTensor of size 1]
 
+gpu model
+sgd-lstm-128-1.model
+Variable containing:
+1.00000e-03 *
+  1.2617
+[torch.FloatTensor of size 1]
+
+gpu model
+sgd-lstm-128-2.model
+Variable containing:
+1.00000e-03 *
+  1.7507
+[torch.FloatTensor of size 1]
+
+gpu model
+sgd-lstm-256-1.model
+Variable containing:
+1.00000e-04 *
+  5.5884
+[torch.FloatTensor of size 1]
+
 
