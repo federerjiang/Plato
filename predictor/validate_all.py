@@ -30,13 +30,13 @@ def validate_lstm(model, test_data_loader):
         #     print(inputs[i], label[i])
         # inputs = train_data[i: i+30]
         inputs = torch.FloatTensor(inputs).view(1, 30, -1)
-        inputs = autograd.Variable(inputs)
+        inputs = autograd.Variable(inputs, volatile=True)
         # label = torch.FloatTensor(train_data[i+30])
         # label = autograd.Variable(torch.FloatTensor(label[0]))
         output = model(inputs)
         # output = output.view(-1, 4)
         # loss = loss_function(output[-1], autograd.Variable(torch.FloatTensor(label[-1])))
-        loss = loss_function(output[-1], autograd.Variable(torch.FloatTensor(label[0])))
+        loss = loss_function(output[-1], autograd.Variable(torch.FloatTensor(label[0]), volatile=True))
         # print(loss.data)
         loss_sum += loss
         if count == 100000:
@@ -66,9 +66,9 @@ def validate_others(model, test_data_loader):
 
 
 def init_hidden(num_layers, hidden_size):
-        hx = torch.nn.init.xavier_normal(torch.randn(num_layers, 1, hidden_size)).cuda()
-        cx = torch.nn.init.xavier_normal(torch.randn(num_layers, 1, hidden_size)).cuda()
-        hidden = (autograd.Variable(hx), autograd.Variable(cx))  # convert to Variable as late as possible
+        hx = torch.nn.init.xavier_normal(torch.randn(num_layers, 1, hidden_size))
+        cx = torch.nn.init.xavier_normal(torch.randn(num_layers, 1, hidden_size))
+        hidden = (autograd.Variable(hx, volatile=True), autograd.Variable(cx, volatile=True))  # convert to Variable as late as possible
         return hidden
 
 
