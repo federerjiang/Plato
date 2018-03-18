@@ -13,15 +13,6 @@ from cuda_lstm import LSTMPredict
 LSTM_MODEL_PATH = 'lstm-256-1.model'
 
 
-def lstm_predict(test_sample):
-    model = torch.load(LSTM_MODEL_PATH)
-    outputs = []
-    for _ in range(TEST_LABEL_LENGTH):
-        output = model(test_sample)
-        outputs.append(output)
-        test_sample
-
-
 def validate_lstm(model, test_data_loader):
     loss_function = nn.MSELoss()
     loss_sum = 0.0
