@@ -30,13 +30,13 @@ def validate_lstm(model, test_data_loader):
         #     print(inputs[i], label[i])
         # inputs = train_data[i: i+30]
         inputs = torch.FloatTensor(inputs).view(1, 30, -1)
-        inputs = autograd.Variable(inputs, volatile=True)
+        inputs = autograd.Variable(inputs)
         # label = torch.FloatTensor(train_data[i+30])
         # label = autograd.Variable(torch.FloatTensor(label[0]))
         output = model(inputs)
         # output = output.view(-1, 4)
         # loss = loss_function(output[-1], autograd.Variable(torch.FloatTensor(label[-1])))
-        loss = loss_function(output[-1], autograd.Variable(torch.FloatTensor(label[0]), volatile=True))
+        loss = loss_function(output[-1], autograd.Variable(torch.FloatTensor(label[0])))
         # print(loss.data)
         loss_sum += loss
         if count == 100000:
