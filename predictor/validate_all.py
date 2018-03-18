@@ -97,6 +97,7 @@ def get_lstm_loss_cpu(model_path, num_layers, hidden_size, test_data_loader):
 
 
 if __name__ == '__main__':
+    torch.backends.cudnn.enabled = False
     test_data_loader = TestDataLoader()
     # batch_model = torch.load('lstm-128-1.model', map_location='cpu')
     # batch_model.hidden = init_hidden(1, 128)
