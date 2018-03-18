@@ -30,13 +30,13 @@ def validate_lstm(model, test_data_loader):
         #     print(inputs[i], label[i])
         # inputs = train_data[i: i+30]
         inputs = torch.FloatTensor(inputs).view(30, 1, -1)
-        inputs = autograd.Variable(inputs)
+        inputs = autograd.Variable(inputs, volatile=True)
         # label = torch.FloatTensor(train_data[i+30])
         # label = autograd.Variable(torch.FloatTensor(label[0]))
         output = model(inputs)
         # output = output.view(-1, 4)
         # loss = loss_function(output[-1], autograd.Variable(torch.FloatTensor(label[-1])))
-        loss = loss_function(output[-1], autograd.Variable(torch.FloatTensor(label[0])))
+        loss = loss_function(output[-1], autograd.Variable(torch.FloatTensor(label[0]), volatile=True))
         # print(loss.data)
         # loss_sum += loss
         if count % 1000 == 0:
@@ -97,7 +97,7 @@ def get_lstm_loss_cpu(model_path, num_layers, hidden_size, test_data_loader):
 
 
 if __name__ == '__main__':
-    torch.backends.cudnn.enabled = False
+    # torch.backends.cudnn.enabled = False
     test_data_loader = TestDataLoader()
     # batch_model = torch.load('lstm-128-1.model', map_location='cpu')
     # batch_model.hidden = init_hidden(1, 128)
