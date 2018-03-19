@@ -96,8 +96,8 @@ def validate_lstm_rotation_acc(test_data_loader, model_path, num_layers, hidden_
         for unit in units:
             _, pitch, yaw = unit_to_rotation(unit)
             rotation = list()
-            # rotation.append(pitch)
-            rotation.append(yaw)
+            rotation.append(pitch)
+            # rotation.append(yaw)
             rotations.append(rotation)
         return rotations
 
