@@ -1,27 +1,12 @@
-from validate_prediction_loss import lstm_predict
-from validate_prediction_loss import other_predict
 from average import average
 from lr import lr
 from cuda_lstm import LSTMPredict
 from data_loader import TestDataLoader
+from data_loader import TEST_LABEL_LENGTH
 
 import torch
 from torch.autograd import Variable
 import math
-
-
-def unit_to_rotation(unit):
-    q0 = unit[0]
-    q1 = unit[1]
-    q2 = unit[2]
-    q3 = unit[3]
-
-    roll = math.atan2(2.0 * (q3 * q2 + q0 * q1), 1.0 - 2.0 * (q1 * q1 + q2 * q2))
-    val = 2.0 * (q2 * q0 - q3 * q1)
-    val = max(-1, min(1, val))
-    pitch = math.asin(val)
-    yaw = math.atan2(2.0 * (q3 * q0 + q1 * q2), -1.0 + 2.0 * (q0 * q0 + q1 * q1))
-    return roll*180/math.pi, pitch*180/math.pi, yaw*180/math.pi
 
 
 def rotation_to_vp_tile(yaw, pitch, tile_column, tile_row, vp_length, vp_height, tile_map, tag):
@@ -84,22 +69,38 @@ def rotation_to_tile(yaw, pitch, tile_column, tile_row, vp_length, vp_height, ad
     return tile_map
 
 
+def lstm_predict(model, inputs, length=TEST_LABEL_LENGTH):
+    outputs = []
+    inputs = torch.FloatTensor(inputs).view(1, 30, 3)
+    inputs = Variable(inputs, volatile=True)
+    for _ in range(length):
+        output = model(inputs)
+        outputs.append(output[-1].data.numpy().tolist())
+        t = Variable(torch.randn(1, 30, 3), volatile=True)
+        t[:, 0:29, :] = inputs[:, 1:30, :]
+        t[:, 29, :] = output.view(1, 30, 3)[:, 29, :]
+        inputs = t
+
+    return outputs
+
+
+def other_predict(model, inputs, length=TEST_LABEL_LENGTH):
+    outputs = []
+    for _ in range(length):
+        output = model(inputs)
+        outputs.append(output)
+        inputs.pop(0)
+        inputs.append(output)
+    # print(len(outputs))
+    return outputs
+
+
 def validate_lstm_rotation_acc(test_data_loader, model_path, num_layers, hidden_size):
     def init_hidden(num_layers, hidden_size):
         hx = torch.nn.init.xavier_normal(torch.randn(num_layers, 1, hidden_size))
         cx = torch.nn.init.xavier_normal(torch.randn(num_layers, 1, hidden_size))
         hidden = (Variable(hx, volatile=True), Variable(cx, volatile=True))  # convert to Variable as late as possible
         return hidden
-
-    def units_to_rotations(units):
-        rotations = []
-        for unit in units:
-            _, pitch, yaw = unit_to_rotation(unit)
-            rotation = list()
-            rotation.append(pitch)
-            # rotation.append(yaw)
-            rotations.append(rotation)
-        return rotations
 
     model = torch.load(model_path, map_location='cpu')
     model.hidden = init_hidden(num_layers, hidden_size)
@@ -110,14 +111,12 @@ def validate_lstm_rotation_acc(test_data_loader, model_path, num_layers, hidden_
     count_acc = 0
     for inputs, label in test_data_loader:
         predicts = lstm_predict(model, inputs)
-        predict_rotations = units_to_rotations(predicts)
-        label_rotations = units_to_rotations(label)
-        predict_rotations = torch.FloatTensor(predict_rotations)
-        predict_rotations = Variable(predict_rotations, volatile=True)
-        label_rotations = torch.FloatTensor(label_rotations)
-        label_rotations = Variable(label_rotations, volatile=True)
-        loss = loss_function(predict_rotations, label_rotations)
-        loss = math.sqrt(loss)
+        predicts = torch.FloatTensor(predicts)
+        predicts = Variable(predicts, volatile=True)
+        label = torch.FloatTensor(label)
+        label = Variable(label, volatile=True)
+        loss = loss_function(predicts, label)
+        loss = math.sqrt(loss) * 180
         print(loss)
         if loss <= 10:
             count_acc += 1
@@ -136,15 +135,6 @@ def validate_lstm_tile_acc(test_data_loader, model_path, num_layers, hidden_size
 
 
 def validate_other_rotation_acc(model, test_data_loader):
-    def units_to_rotations(units):
-        rotations = []
-        for unit in units:
-            _, pitch, yaw = unit_to_rotation(unit)
-            rotation = list()
-            rotation.append(pitch)
-            # rotation.append(yaw)
-            rotations.append(rotation)
-        return rotations
 
     loss_function = torch.nn.MSELoss()
     loss_sum = 0.0
@@ -152,14 +142,12 @@ def validate_other_rotation_acc(model, test_data_loader):
     count_acc = 0
     for inputs, label in test_data_loader:
         predicts = other_predict(model, inputs)
-        predict_rotations = units_to_rotations(predicts)
-        label_rotations = units_to_rotations(label)
-        predict_rotations = torch.FloatTensor(predict_rotations)
-        predict_rotations = Variable(predict_rotations, volatile=True)
-        label_rotations = torch.FloatTensor(label_rotations)
-        label_rotations = Variable(label_rotations, volatile=True)
-        loss = loss_function(predict_rotations, label_rotations)
-        loss = math.sqrt(loss)
+        predicts = torch.FloatTensor(predicts)
+        predicts = Variable(predicts, volatile=True)
+        labels = torch.FloatTensor(label)
+        labels = Variable(labels, volatile=True)
+        loss = loss_function(predicts, labels)
+        loss = math.sqrt(loss) * 180
         print(loss)
         if loss <= 10:
             count_acc += 1
@@ -175,8 +163,8 @@ def validate_other_rotation_acc(model, test_data_loader):
 
 if __name__ == "__main__":
     test_data_loader = TestDataLoader()
-    validate_lstm_rotation_acc(test_data_loader, 'adam-lstm-256-1.model', 1, 256)
-    # validate_other_rotation_acc(average, test_data_loader)
+    # validate_lstm_rotation_acc(test_data_loader, 'adam-lstm-128-1.model', 1, 128)
+    validate_other_rotation_acc(average, test_data_loader)
     # validate_other_rotation_acc(lr, test_data_loader)
 
 

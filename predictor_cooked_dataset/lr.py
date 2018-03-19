@@ -5,15 +5,13 @@ def lr(test_sample):
     x = []
     y = []
     z = []
-    w = []
 
     for unit in test_sample:
         x.append(unit[0])
         y.append(unit[1])
         z.append(unit[2])
-        w.append(unit[3])
 
-    output = np.zeros(4)
+    output = np.zeros(3)
     sample_length = len(test_sample)
     m, c = linear_regression(x)
     output[0] = m * sample_length + c
@@ -21,9 +19,6 @@ def lr(test_sample):
     output[1] = m * sample_length + c
     m, c = linear_regression(z)
     output[2] = m * sample_length + c
-    m, c = linear_regression(w)
-    output[3] = m * sample_length + c
-
     return output
 
 
@@ -49,8 +44,8 @@ def linear_regression(orientations):
 #     return train_data
 
 if __name__ == "__main__":
-    x = np.array([0, 1, 2, 3])
-    y = np.array([-1, 0.2, 0.9, 2.1])
+    x = np.array([0, 1, 2])
+    y = np.array([-1, 0.2, 0.9])
     print(linear_regression(y))
     # train_data = data_loader("../datasets/pre_train.csv")
     # loss_sum = 0.0

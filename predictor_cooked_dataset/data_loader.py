@@ -9,7 +9,7 @@ TRAIN_DATASET = VIEWPORT_TRACE + 'cooked_train_dataset/'
 TEST_DATASET = VIEWPORT_TRACE + 'cooked_test_dataset/'
 TRAIN_SAMPLE_LENGTH = 30
 LABEL_SAMPLE_LENGTH = 30  # for TrainDataLoader
-TEST_LABEL_LENGTH = 30  # for TestDataLoader
+TEST_LABEL_LENGTH = 90  # for TestDataLoader
 BATCH_SIZE = 32
 
 
