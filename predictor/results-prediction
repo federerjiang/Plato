@@ -46,3 +46,10 @@ Variable containing:
   2.1859
 [torch.FloatTensor of size 1]
 
+validate other predict 60 frames
+Variable containing:
+1.00000e-02 *
+  7.3595
+[torch.FloatTensor of size 1]
+
+

@@ -48,8 +48,8 @@ def validate_lstm_predict(test_data_loader):
         loss = loss_function(predicts, label)
         loss_sum += loss
         count += 1
-        print(loss)
-        if count == 10000:
+        print(count, loss)
+        if count == 100000:
             print('validate lstm predict ' + str(TEST_LABEL_LENGTH) + ' frames')
             print(loss_sum / count)
             break
@@ -62,7 +62,7 @@ def other_predict(model, inputs, length=TEST_LABEL_LENGTH):
         outputs.append(output)
         inputs.pop(0)
         inputs.append(output)
-    print(len(outputs))
+    # print(len(outputs))
     return outputs
 
 
@@ -81,7 +81,7 @@ def validate_other_predict(model, test_data_loader):
         loss = loss_function(predicts, label)
         loss_sum += loss
         count += 1
-        print(loss)
+        print(count, loss)
         if count == 100000:
             print('validate other predict ' + str(TEST_LABEL_LENGTH) + ' frames')
             print(loss_sum / count)
@@ -90,12 +90,12 @@ def validate_other_predict(model, test_data_loader):
 
 if __name__ == "__main__":
     test_data_loader = TestDataLoader()
-    # validate_lstm_predict(test_data_loader)
+    validate_lstm_predict(test_data_loader)
 
     # print('average results ')
     # validate_other_predict(average, test_data_loader)
-    print('lr results')
-    validate_other_predict(lr, test_data_loader)
+    # print('lr results')
+    # validate_other_predict(lr, test_data_loader)
 
 
 
