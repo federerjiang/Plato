@@ -8,17 +8,7 @@ from lr import lr
 from cuda_lstm import LSTMPredict
 
 
-def lstm_predict(model_path, num_layers, hidden_size, inputs, length=TEST_LABEL_LENGTH):
-
-    def init_hidden(num_layers, hidden_size):
-        hx = torch.nn.init.xavier_normal(torch.randn(num_layers, 1, hidden_size))
-        cx = torch.nn.init.xavier_normal(torch.randn(num_layers, 1, hidden_size))
-        hidden = (Variable(hx, volatile=True), Variable(cx, volatile=True))  # convert to Variable as late as possible
-        return hidden
-
-    model = torch.load(model_path, map_location='cpu')
-    model.hidden = init_hidden(num_layers, hidden_size)
-
+def lstm_predict(model, inputs, length=TEST_LABEL_LENGTH):
     outputs = []
     inputs = torch.FloatTensor(inputs).view(1, 30, 4)
     inputs = Variable(inputs, volatile=True)
@@ -33,12 +23,21 @@ def lstm_predict(model_path, num_layers, hidden_size, inputs, length=TEST_LABEL_
     return outputs
 
 
-def validate_lstm_predict(test_data_loader):
+def validate_lstm_predict(test_data_loader, model_path, num_layers, hidden_size):
+    def init_hidden(num_layers, hidden_size):
+        hx = torch.nn.init.xavier_normal(torch.randn(num_layers, 1, hidden_size))
+        cx = torch.nn.init.xavier_normal(torch.randn(num_layers, 1, hidden_size))
+        hidden = (Variable(hx, volatile=True), Variable(cx, volatile=True))  # convert to Variable as late as possible
+        return hidden
+
+    model = torch.load(model_path, map_location='cpu')
+    model.hidden = init_hidden(num_layers, hidden_size)
+
     loss_function = nn.MSELoss()
     loss_sum = 0.0
     count = 0
     for inputs, label in test_data_loader:
-        predicts = lstm_predict('adam-lstm-128-2.model', 2, 128, inputs)
+        predicts = lstm_predict(model, inputs)
         predicts = torch.FloatTensor(predicts)
         # for i in predicts:
         #     print(i)
@@ -48,7 +47,7 @@ def validate_lstm_predict(test_data_loader):
         loss = loss_function(predicts, label)
         loss_sum += loss
         count += 1
-        print(count, loss)
+        # print(count, loss)
         if count == 100000:
             print('validate lstm predict ' + str(TEST_LABEL_LENGTH) + ' frames')
             print(loss_sum / count)
@@ -90,7 +89,7 @@ def validate_other_predict(model, test_data_loader):
 
 if __name__ == "__main__":
     test_data_loader = TestDataLoader()
-    validate_lstm_predict(test_data_loader)
+    validate_lstm_predict(test_data_loader, 'adam-lstm-128-2.model', 2, 128)
 
     # print('average results ')
     # validate_other_predict(average, test_data_loader)
