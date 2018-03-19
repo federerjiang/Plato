@@ -1,3 +1,4 @@
+(adam-lstm-128-2)
 validate lstm predict 30 frames
 Variable containing:
 1.00000e-02 *
@@ -8,5 +9,40 @@ validate lstm predict 60 frames
 Variable containing:
 1.00000e-02 *
   3.9326
+[torch.FloatTensor of size 1]
+
+validate lstm predict 90 frames
+Variable containing:
+1.00000e-02 *
+  5.6409
+
+
+average: with 100000 samples
+
+validate other predict 30 frames
+Variable containing:
+1.00000e-02 *
+  1.4220
+[torch.FloatTensor of size 1]
+
+validate other predict 60 frames
+Variable containing:
+1.00000e-02 *
+  2.3366
+[torch.FloatTensor of size 1]
+
+validate other predict 90 frames
+Variable containing:
+1.00000e-02 *
+  3.2024
+[torch.FloatTensor of size 1]
+
+
+lr (with 100000 samples)
+
+validate other predict 30 frames
+Variable containing:
+1.00000e-02 *
+  2.1859
 [torch.FloatTensor of size 1]
 
