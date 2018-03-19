@@ -108,20 +108,20 @@ def train_model(model, learning_rate, data_loader, epoch=10, count_max=10000):
                 break
             inputs = torch.FloatTensor(inputs)
             label = units_to_rotations(label)
-            label = torch.FloatTensor(label)
+            target = torch.FloatTensor(label)
             if use_cuda:
-                inputs, label = inputs.cuda(), label.cuda()
+                inputs, target = inputs.cuda(), target.cuda()
                 # print('change inputs, label to cuda type')
 
             inputs = autograd.Variable(inputs)
-            label = autograd.Variable(label)
+            target = autograd.Variable(target)
 
             model.zero_grad()
             model.hidden = model.init_hidden()
 
             output = model(inputs)
             output = units_to_rotations(output.view(-1, 4).data.numpy().tolist())
-            loss = loss_function(output, label)
+            loss = loss_function(output, target)
             loss.backward()
             optimizer.step()
 
