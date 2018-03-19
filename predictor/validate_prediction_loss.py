@@ -47,7 +47,7 @@ def validate_lstm_predict(test_data_loader, model_path, num_layers, hidden_size)
         loss = loss_function(predicts, label)
         loss_sum += loss
         count += 1
-        # print(count, loss)
+        print(count, loss)
         if count == 100000:
             print('validate lstm predict ' + str(TEST_LABEL_LENGTH) + ' frames')
             print(loss_sum / count)
