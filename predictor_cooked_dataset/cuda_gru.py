@@ -51,7 +51,7 @@ class GRUPredict(nn.Module):
         # orientation_seq is a 3 dimensional tensor with shape [batch_size, seq_len, tag_size]
         # lstm_in is a 2 dimensional tensor with shape [seq_len, input_size]
         # inputs is a 3 dimensional tensor with shape [batch_size, seq_len, tag_size]
-        gru_out = self.gru(orientations, self.hidden)
+        gru_out, hn = self.gru(orientations, self.hidden)
         # print(lstm_out.size())
         tag_scores = F.tanh(self.gru2tag(gru_out.contiguous().view(-1, self.hidden_size)))
         # print(tag_scores.size())
