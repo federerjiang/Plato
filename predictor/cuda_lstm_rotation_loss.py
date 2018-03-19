@@ -6,7 +6,7 @@ import torch.optim as optim
 # from predictor.data_loader import CudaTrainLoader  # in mac
 from data_loader import TrainDataLoader  # in ubuntu
 from data_loader import CudaTrainLoader  # in ubuntu
-# import math
+import math
 
 BATCH_SIZE = 32
 SEQ_LEN = 30
@@ -70,7 +70,7 @@ def unit_to_rotation(unit):
     # val = max(-1, min(1, val))
     pitch = torch.asin(val)
     yaw = torch.atan2(2.0 * (q3 * q0 + q1 * q2), -1.0 + 2.0 * (q0 * q0 + q1 * q1))
-    return roll*180/torch.pi, pitch*180/torch.pi, yaw*180/torch.pi
+    return roll*180/math.pi, pitch*180/math.pi, yaw*180/math.pi
 
 
 def units_to_rotations(units):
