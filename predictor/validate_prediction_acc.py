@@ -127,6 +127,7 @@ def validate_lstm_rotation_acc(test_data_loader, model_path, num_layers, hidden_
             break
     print(count_acc)
     print(count_acc / count)
+    print(loss_sum / count)
     return loss_sum / count
 
 
