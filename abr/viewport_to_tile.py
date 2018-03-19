@@ -3,7 +3,6 @@ import fnmatch
 import math
 
 
-# viewport_trace = '/Users/federerjiang/research-project/vr-dataset'
 viewport_trace = '../datasets/viewport_trace/'
 fr_dataset = viewport_trace + 'fr-dataset/'
 

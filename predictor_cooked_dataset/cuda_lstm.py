@@ -3,14 +3,14 @@ import torch.autograd as autograd
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-# from predictor.data_loader import CudaTrainLoader  # in mac
+
 from data_loader import TrainDataLoader  # in ubuntu
 from data_loader import CudaTrainLoader  # in ubuntu
 import math
 
 BATCH_SIZE = 32
 SEQ_LEN = 30
-TAG_SIZE = 4
+TAG_SIZE = 3
 CUDA = True
 
 
@@ -59,31 +59,6 @@ class LSTMPredict(nn.Module):
         return tag_scores.view(-1, self.tag_size)
 
 
-def unit_to_rotation(unit):
-    q0 = unit[0]
-    q1 = unit[1]
-    q2 = unit[2]
-    q3 = unit[3]
-
-    roll = torch.atan2(2.0 * (q3 * q2 + q0 * q1), 1.0 - 2.0 * (q1 * q1 + q2 * q2))
-    val = 2.0 * (q2 * q0 - q3 * q1)
-    # val = max(-1, min(1, val))
-    pitch = torch.asin(val)
-    yaw = torch.atan2(2.0 * (q3 * q0 + q1 * q2), -1.0 + 2.0 * (q0 * q0 + q1 * q1))
-    return roll*180/math.pi, pitch*180/math.pi, yaw*180/math.pi
-
-
-def units_to_rotations(units):
-        rotations = []
-        for unit in units:
-            _, pitch, yaw = unit_to_rotation(unit)
-            rotation = list()
-            rotation.append(pitch)
-            rotation.append(yaw)
-            rotations.append(rotation)
-        return rotations
-
-
 def train_model(model, learning_rate, data_loader, epoch=10, count_max=10000):
     use_cuda = torch.cuda.is_available()
     print('cuda: ' + str(use_cuda))
@@ -107,21 +82,19 @@ def train_model(model, learning_rate, data_loader, epoch=10, count_max=10000):
             if count == count_max:
                 break
             inputs = torch.FloatTensor(inputs)
-            label = units_to_rotations(label)
-            target = torch.FloatTensor(label)
+            label = torch.FloatTensor(label)
             if use_cuda:
-                inputs, target = inputs.cuda(), target.cuda()
+                inputs, label = inputs.cuda(), label.cuda()
                 # print('change inputs, label to cuda type')
 
             inputs = autograd.Variable(inputs)
-            target = autograd.Variable(target)
+            label = autograd.Variable(label).view(-1, TAG_SIZE)
 
             model.zero_grad()
             model.hidden = model.init_hidden()
 
             output = model(inputs)
-            output = units_to_rotations(output.view(-1, 4).data.numpy().tolist())
-            loss = loss_function(output, target)
+            loss = loss_function(output, label)
             loss.backward()
             optimizer.step()
 
@@ -136,7 +109,7 @@ def train_model(model, learning_rate, data_loader, epoch=10, count_max=10000):
 def try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoc, count_max):
     for hidden_size in hidden_size_list:
         for num_layers in num_layer_list:
-            model = LSTMPredict(input_size=4, hidden_size=hidden_size, num_layers=num_layers, tag_size=4)
+            model = LSTMPredict(input_size=TAG_SIZE, hidden_size=hidden_size, num_layers=num_layers, tag_size=TAG_SIZE)
             train_model(model, learning_rate=0.001, data_loader=data_loader, epoch=epoc, count_max=count_max)
             print("finished training")
             model_name = 'adam-lstm-' + str(hidden_size) + '-' + str(num_layers) + '.model'
