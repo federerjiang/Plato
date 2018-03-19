@@ -96,7 +96,7 @@ def validate_lstm_rotation_acc(test_data_loader, model_path, num_layers, hidden_
         for unit in units:
             _, pitch, yaw = unit_to_rotation(unit)
             rotation = list()
-            rotation.append(pitch)
+            # rotation.append(pitch)
             rotation.append(yaw)
             rotations.append(rotation)
         return rotations
@@ -141,7 +141,7 @@ def validate_other_rotation_acc(model, test_data_loader):
             _, pitch, yaw = unit_to_rotation(unit)
             rotation = list()
             rotation.append(pitch)
-            rotation.append(yaw)
+            # rotation.append(yaw)
             rotations.append(rotation)
         return rotations
 
@@ -168,12 +168,13 @@ def validate_other_rotation_acc(model, test_data_loader):
             break
     print(count_acc)
     print(count_acc / count)
+    print(loss_sum / count)
     return loss_sum / count
 
 
 if __name__ == "__main__":
     test_data_loader = TestDataLoader()
-    validate_lstm_rotation_acc(test_data_loader, 'adam-lstm-128-2.model', 2, 128)
+    validate_lstm_rotation_acc(test_data_loader, 'adam-lstm-256-1.model', 1, 256)
     # validate_other_rotation_acc(average, test_data_loader)
     # validate_other_rotation_acc(lr, test_data_loader)
 
