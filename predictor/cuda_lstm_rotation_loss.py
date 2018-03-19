@@ -67,7 +67,7 @@ def unit_to_rotation(unit):
 
     roll = torch.atan2(2.0 * (q3 * q2 + q0 * q1), 1.0 - 2.0 * (q1 * q1 + q2 * q2))
     val = 2.0 * (q2 * q0 - q3 * q1)
-    val = max(-1, min(1, val))
+    # val = max(-1, min(1, val))
     pitch = torch.asin(val)
     yaw = torch.atan2(2.0 * (q3 * q0 + q1 * q2), -1.0 + 2.0 * (q0 * q0 + q1 * q1))
     return roll*180/torch.pi, pitch*180/torch.pi, yaw*180/torch.pi
