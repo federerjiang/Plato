@@ -114,7 +114,7 @@ def main_validate_lstm(args, hidden_size, num_layers):
     file_names = []
     for rank in range(len(sub_paths)):
         file_names.append(str(rank) + '.txt')
-    with open('30lstm-128-1-loss.txt', 'w') as outfile:
+    with open(str(args.test_label_length) + 'lstm-128-1-error.txt', 'w') as outfile:
         for fname in file_names:
             with open(fname) as infile:
                 for line in infile:
