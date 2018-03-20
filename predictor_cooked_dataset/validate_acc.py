@@ -198,9 +198,9 @@ def validate_other_rotation_acc(model, test_data_loader):
 
 if __name__ == "__main__":
     test_data_loader = TestDataLoader()
-    # validate_lstm_rotation_acc(test_data_loader, 'adam-lstm-128-1.model', 1, 128)
+    validate_lstm_rotation_acc(test_data_loader, 'adam-lstm-128-1.model', 1, 128)
     # validate_other_rotation_acc(average, test_data_loader)
-    validate_other_rotation_acc(lr, test_data_loader)
+    # validate_other_rotation_acc(lr, test_data_loader)
 
 
 
