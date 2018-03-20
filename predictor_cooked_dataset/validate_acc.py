@@ -136,7 +136,7 @@ def validate_lstm_rotation_acc(test_data_loader, model_path, num_layers, hidden_
     loss_sum = 0.0
     count = 0
     count_acc = 0
-    with open('lstm-128-1-loss.txt', 'w') as f:
+    with open(str(TEST_LABEL_LENGTH) + 'lstm-128-1-loss.txt', 'w') as f:
         for inputs, label in test_data_loader:
             predicts = lstm_predict(model, inputs)
             predict_rolls, predict_pitchs, predict_yaws, label_rolls, label_pitchs, label_yaws = get_rotations(predicts,
@@ -150,7 +150,7 @@ def validate_lstm_rotation_acc(test_data_loader, model_path, num_layers, hidden_
         # print(loss)
         # if loss <= 10:
         #     count_acc += 1
-        # count += 1
+            count += 1
         # loss_sum += loss
             if count == 100000:
                 break
