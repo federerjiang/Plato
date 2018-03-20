@@ -5,8 +5,8 @@ import math
 
 train_dataset = 'train-dataset/'
 test_dataset = 'test-dataset/'
-cooked_train_dataset = 'cooked_train_dataset/'
-cooked_test_dataset = 'cooked_test_dataset/'
+cooked_train_dataset = 'new_cooked_train_dataset/'
+cooked_test_dataset = 'new_cooked_test_dataset/'
 
 
 def str_to_float(str_list):
@@ -45,12 +45,16 @@ if __name__ == '__main__':
             if not os.path.isdir(cooked_dir):
                 os.mkdir(cooked_dir)
             with open(file_path, 'r') as fr, open(cooked_file, 'w') as fw:
+                count = -1
                 for line in fr:
-                    count += 1
+                    # count += 1
                     if len(line) > 10:
                         parse = line.split()
                         time = str(parse[0])
-                        roll, pitch, yaw = unit_to_rotation(str_to_float(parse[2:6]))
-                        fw.write(time + ' ' + str(roll) + ' ' + str(pitch) + ' ' + str(yaw) + '\n')
-                        # print()
+                        frame = int(parse[1])
+                        if frame > count:
+                            roll, pitch, yaw = unit_to_rotation(str_to_float(parse[2:6]))
+                            fw.write(time + ' ' + str(frame) + ' ' + str(roll) + ' ' + str(pitch) + ' ' + str(yaw) + '\n')
+                            count = frame
+
     print(count)

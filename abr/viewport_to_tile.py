@@ -4,7 +4,7 @@ import math
 
 
 viewport_trace = '../datasets/viewport_trace/'
-fr_dataset = viewport_trace + 'fr-dataset/'
+fr_dataset = viewport_trace + 'train-dataset/'
 
 
 def get_size(file):
@@ -108,7 +108,7 @@ def test_rotation_tile(unit_trace):
         yaw = sample_rotation[2]
         # tile_map = rotation_to_vp_tile(yaw, pitch, 12, 6, 110, 90)
         # print(tile_map)
-        tile_map = rotation_to_tile(yaw, pitch, 12, 6, 110, 90, 120, 100)
+        tile_map = rotation_to_tile(yaw, pitch, 12, 6, 110, 90, 150, 110)
         print_tile(tile_map, 12, 6)
 
 
@@ -123,6 +123,7 @@ if __name__ == '__main__':
             # count += 1
             # print(root, filename)
             sample_file = os.path.join(root, filename)
+            break
 
     vp_trace = []
     with open(sample_file, 'r') as f:

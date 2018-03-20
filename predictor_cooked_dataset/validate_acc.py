@@ -138,11 +138,11 @@ def validate_lstm_rotation_acc(test_data_loader, model_path, num_layers, hidden_
     loss_sum = 0.0
     count = 0
     count_acc = 0
-    with open(str(TEST_LABEL_LENGTH) + 'lstm-128-1-loss.txt', 'w') as f:
+    with open(str(TEST_LABEL_LENGTH) + '(30-60)lstm-128-1-loss.txt', 'w') as f:
         for inputs, label in test_data_loader:
             predicts = lstm_predict(model, inputs)
-            predict_rolls, predict_pitchs, predict_yaws, label_rolls, label_pitchs, label_yaws = get_rotations(predicts,
-                                                                                                               label)
+            predict_rolls, predict_pitchs, predict_yaws, label_rolls, label_pitchs, label_yaws = \
+                get_rotations(predicts[30:60], label[30:60])
             roll_loss = get_loss(loss_function, predict_rolls, label_rolls)
             pitch_loss = get_loss(loss_function, predict_pitchs, label_pitchs)
             yaw_loss = get_loss(loss_function, predict_yaws, label_yaws)
@@ -172,11 +172,11 @@ def validate_other_rotation_acc(model, test_data_loader):
     loss_sum = 0.0
     count = 0
     count_acc = 0
-    with open(str(TEST_LABEL_LENGTH) + 'lr-loss.txt', 'w') as f:
+    with open(str(TEST_LABEL_LENGTH) + '(30-60)lr-loss.txt', 'w') as f:
         for inputs, label in test_data_loader:
             predicts = other_predict(model, inputs)
-            predict_rolls, predict_pitchs, predict_yaws, label_rolls, label_pitchs, label_yaws = get_rotations(predicts,
-                                                                                                               label)
+            predict_rolls, predict_pitchs, predict_yaws, label_rolls, label_pitchs, label_yaws = \
+                get_rotations(predicts[30:60], label[30:60])
             roll_loss = get_loss(loss_function, predict_rolls, label_rolls)
             pitch_loss = get_loss(loss_function, predict_pitchs, label_pitchs)
             yaw_loss = get_loss(loss_function, predict_yaws, label_yaws)
@@ -198,9 +198,9 @@ def validate_other_rotation_acc(model, test_data_loader):
 
 if __name__ == "__main__":
     test_data_loader = TestDataLoader()
-    validate_lstm_rotation_acc(test_data_loader, 'adam-lstm-128-1.model', 1, 128)
+    # validate_lstm_rotation_acc(test_data_loader, 'adam-lstm-128-1.model', 1, 128)
     # validate_other_rotation_acc(average, test_data_loader)
-    # validate_other_rotation_acc(lr, test_data_loader)
+    validate_other_rotation_acc(lr, test_data_loader)
 
 
 
