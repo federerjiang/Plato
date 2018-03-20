@@ -12,7 +12,7 @@ from args import Args
 import os
 
 
-def lstm_predict(model, inputs, args):
+def lstm_predict(args, model, inputs):
     outputs = []
     length = args.test_label_length
     inputs = torch.FloatTensor(inputs).view(1, 30, 3)
@@ -27,7 +27,7 @@ def lstm_predict(model, inputs, args):
     return outputs
 
 
-def other_predict(model, inputs, args):
+def other_predict(args, model, inputs):
     outputs = []
     length = args.test_label_length
     for _ in range(length):
@@ -93,9 +93,9 @@ def validate_lstm_rotation_acc(args, test_data_loader, rank, model_path, num_lay
 
             f.write(str(roll_loss) + ' ' + str(pitch_loss) + ' ' + str(yaw_loss) + '\n')
             print(roll_loss, pitch_loss, yaw_loss)
-            count += 1
-            if count == 100000:
-                break
+            # count += 1
+            # if count == 100000:
+            #     break
     print(count_acc)
     print(count_acc / count)
     print(loss_sum / count)
@@ -107,20 +107,20 @@ def validate_other_rotation_acc(args, model, test_data_loader):
     loss_function = torch.nn.MSELoss()
     loss_sum = 0.0
     count = 0
-    with open(str(args.test_label_length) + '(30-60)lr-loss.txt', 'w') as f:
+    with open(str(args.test_label_length) + 'lr-loss.txt', 'w') as f:
         for inputs, label in test_data_loader:
-            predicts = other_predict(model, inputs)
+            predicts = other_predict(args, model, inputs)
             predict_rolls, predict_pitchs, predict_yaws, label_rolls, label_pitchs, label_yaws = \
-                get_rotations(predicts[30:60], label[30:60])
+                get_rotations(predicts, label)
             roll_loss = get_loss(loss_function, predict_rolls, label_rolls)
             pitch_loss = get_loss(loss_function, predict_pitchs, label_pitchs)
             yaw_loss = get_loss(loss_function, predict_yaws, label_yaws)
 
             f.write(str(roll_loss) + ' ' + str(pitch_loss) + ' ' + str(yaw_loss) + '\n')
             print(roll_loss, pitch_loss, yaw_loss)
-            count += 1
-            if count == 100000:
-                break
+            # count += 1
+            # if count == 100000:
+            #     break
     return loss_sum / count
 
 
@@ -129,19 +129,21 @@ if __name__ == "__main__":
     test_data_loader = TestDataLoader(args)  # total 114857 samples for test
 
     # validate_lstm_rotation_acc(test_data_loader, 'adam-lstm-128-1.model', 1, 128)
-    # validate_other_rotation_acc(average, test_data_loader)
-    # validate_other_rotation_acc(lr, test_data_loader)
-    new_cooked_test_dataset = '../datasets/viewport_trace/new_cooked_test_dataset/'
-    sub_paths = []
-    for uid in os.listdir(new_cooked_test_dataset):
-        sub_paths.append(os.path.join(new_cooked_test_dataset, uid))
-    # print(os.listdir(new_cooked_test_dataset))
-    count = 0
-    for sub_path in sub_paths:
-        test_data_loader = TestDataLoader(args, trace_folder=sub_path)
-        count = 0
-        for i in test_data_loader:
-            count += 1
-        print(count)
+    # validate_other_rotation_acc(args, average, test_data_loader)
+    validate_other_rotation_acc(args, lr, test_data_loader)
+
+
+    # new_cooked_test_dataset = '../datasets/viewport_trace/new_cooked_test_dataset/'
+    # sub_paths = []
+    # for uid in os.listdir(new_cooked_test_dataset):
+    #     sub_paths.append(os.path.join(new_cooked_test_dataset, uid))
+    # # print(os.listdir(new_cooked_test_dataset))
+    # count = 0
+    # for sub_path in sub_paths:
+    #     test_data_loader = TestDataLoader(args, trace_folder=sub_path)
+    #     count = 0
+    #     for i in test_data_loader:
+    #         count += 1
+    #     print(count)
 
 
