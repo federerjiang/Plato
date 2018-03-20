@@ -94,6 +94,7 @@ def validate_lstm_rotation_acc(args, test_data_loader, rank, model_path, num_lay
 
 def main_validate_lstm(args, data_loader, hidden_size, num_layers):
     new_cooked_test_dataset = '../datasets/viewport_trace/new_cooked_test_dataset/'
+    model_path = 'adam-lstm-128-1.model'
     sub_paths = []
     for uid in os.listdir(new_cooked_test_dataset):
         sub_paths.append(os.path.join(new_cooked_test_dataset, uid))
@@ -103,12 +104,21 @@ def main_validate_lstm(args, data_loader, hidden_size, num_layers):
         test_data_loaders.append(test_data_loader)
     processes = []
     for rank in range(len(test_data_loaders)):
-        p = mp.Process(target=validate_lstm_rotation_acc, args=(args, test_data_loaders[rank], rank, lock, counter, model, data_loader, learning_rate, epoch,
-                                                 count_max, hidden_size, num_layers))
+        p = mp.Process(target=validate_lstm_rotation_acc, args=(args, test_data_loaders[rank], rank,
+                                                                model_path, num_layers, hidden_size, args.test_label_length))
         p.start()
         processes.append(p)
     for p in processes:
         p.join()
+
+    file_names = []
+    for rank in range(len(sub_paths)):
+        file_names.append(str(rank) + '.txt')
+    with open('30lstm-128-1-loss.txt', 'w') as outfile:
+        for fname in file_names:
+            with open(fname) as infile:
+                for line in infile:
+                    outfile.write(line)
 
 
 def validate_other_rotation_acc(args, model, test_data_loader):

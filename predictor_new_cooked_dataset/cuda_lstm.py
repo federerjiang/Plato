@@ -128,4 +128,4 @@ if __name__ == "__main__":
     # num_layer_list = [1, 2]
     hidden_size_list = [128]
     num_layer_list = [2]
-    try_hyper_para(hidden_size_list, num_layer_list, cuda_data_loader, epoc=1, count_max=20000)
+    try_hyper_para(hidden_size_list, num_layer_list, cuda_data_loader, epoc=10, count_max=20000)
