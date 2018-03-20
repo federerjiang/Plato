@@ -119,18 +119,19 @@ def main_validate_lstm(args, data_loader, hidden_size, num_layers):
             with open(fname) as infile:
                 for line in infile:
                     outfile.write(line)
+            os.remove(fname)
 
 
-def validate_other_rotation_acc(args, model, test_data_loader):
+def validate_other_rotation_acc(args, model, test_data_loader, rank, length):
 
     loss_function = torch.nn.MSELoss()
     loss_sum = 0.0
     count = 0
-    with open(str(args.test_label_length) + 'lr-loss.txt', 'w') as f:
+    with open(str(rank) + '.txt', 'w') as f:
         for inputs, label in test_data_loader:
             predicts = other_predict(args, model, inputs)
             predict_rolls, predict_pitchs, predict_yaws, label_rolls, label_pitchs, label_yaws = \
-                get_rotations(predicts, label)
+                get_rotations(predicts[length-30: length], label[length-30: length])
             roll_loss = get_loss(loss_function, predict_rolls, label_rolls)
             pitch_loss = get_loss(loss_function, predict_pitchs, label_pitchs)
             yaw_loss = get_loss(loss_function, predict_yaws, label_yaws)
@@ -143,13 +144,43 @@ def validate_other_rotation_acc(args, model, test_data_loader):
     return loss_sum / count
 
 
+def main_validate_other(args, model, data_loader, hidden_size, num_layers):
+    new_cooked_test_dataset = '../datasets/viewport_trace/new_cooked_test_dataset/'
+    sub_paths = []
+    for uid in os.listdir(new_cooked_test_dataset):
+        sub_paths.append(os.path.join(new_cooked_test_dataset, uid))
+    test_data_loaders = []
+    for sub_path in sub_paths:
+        test_data_loader = TestDataLoader(args, trace_folder=sub_path)
+        test_data_loaders.append(test_data_loader)
+    processes = []
+    for rank in range(len(test_data_loaders)):
+        p = mp.Process(target=validate_other_rotation_acc, args=(args, model, test_data_loaders[rank], rank, args.test_label_length))
+        p.start()
+        processes.append(p)
+    for p in processes:
+        p.join()
+
+    file_names = []
+    for rank in range(len(sub_paths)):
+        file_names.append(str(rank) + '.txt')
+    with open('30lstm-128-1-loss.txt', 'w') as outfile:
+        for fname in file_names:
+            with open(fname) as infile:
+                for line in infile:
+                    outfile.write(line)
+            os.remove(fname)
+
+
 if __name__ == "__main__":
+    torch.set_num_threads(1)
+    print(torch.get_num_threads())
     args = Args()
-    test_data_loader = TestDataLoader(args)  # total 114857 samples for test
+    # test_data_loader = TestDataLoader(args)  # total 114857 samples for test
 
     # validate_lstm_rotation_acc(test_data_loader, 'adam-lstm-128-1.model', 1, 128)
     # validate_other_rotation_acc(args, average, test_data_loader)
-    validate_other_rotation_acc(args, lr, test_data_loader)
+    # validate_other_rotation_acc(args, lr, test_data_loader)
 
 
 
