@@ -7,6 +7,7 @@ import torch.optim as optim
 from data_loader import TrainDataLoader  # in ubuntu
 from data_loader import CudaTrainLoader  # in ubuntu
 import math
+from args import Args
 
 BATCH_SIZE = 32
 SEQ_LEN = 30
@@ -120,8 +121,9 @@ def try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoc, count_ma
             # print('saved loss data: ' + loss_name)
 
 if __name__ == "__main__":
-    data_loader = TrainDataLoader()
-    cuda_data_loader = CudaTrainLoader(data_loader)
+    args = Args()
+    data_loader = TrainDataLoader(args)
+    cuda_data_loader = CudaTrainLoader(args, data_loader)
     # hidden_size_list = [128, 256, 512]
     # num_layer_list = [1, 2]
     hidden_size_list = [128, 256]
