@@ -92,7 +92,7 @@ def validate_lstm_rotation_acc(args, test_data_loader, rank, model_path, num_lay
             print(roll_loss, pitch_loss, yaw_loss)
 
 
-def main_validate_lstm(args, data_loader, hidden_size, num_layers):
+def main_validate_lstm(args, hidden_size, num_layers):
     new_cooked_test_dataset = '../datasets/viewport_trace/new_cooked_test_dataset/'
     model_path = 'adam-lstm-128-1.model'
     sub_paths = []
@@ -137,14 +137,10 @@ def validate_other_rotation_acc(args, model, test_data_loader, rank, length):
             yaw_loss = get_loss(loss_function, predict_yaws, label_yaws)
 
             f.write(str(roll_loss) + ' ' + str(pitch_loss) + ' ' + str(yaw_loss) + '\n')
-            print(roll_loss, pitch_loss, yaw_loss)
-            # count += 1
-            # if count == 100000:
-            #     break
-    return loss_sum / count
+            print(rank, roll_loss, pitch_loss, yaw_loss)
 
 
-def main_validate_other(args, model, data_loader, hidden_size, num_layers):
+def main_validate_other(args, model, name):
     new_cooked_test_dataset = '../datasets/viewport_trace/new_cooked_test_dataset/'
     sub_paths = []
     for uid in os.listdir(new_cooked_test_dataset):
@@ -164,7 +160,7 @@ def main_validate_other(args, model, data_loader, hidden_size, num_layers):
     file_names = []
     for rank in range(len(sub_paths)):
         file_names.append(str(rank) + '.txt')
-    with open('30lstm-128-1-loss.txt', 'w') as outfile:
+    with open(str(args.test_label_length) + '-' + name + '-error.txt', 'w') as outfile:
         for fname in file_names:
             with open(fname) as infile:
                 for line in infile:
@@ -175,12 +171,18 @@ def main_validate_other(args, model, data_loader, hidden_size, num_layers):
 if __name__ == "__main__":
     torch.set_num_threads(1)
     print(torch.get_num_threads())
-    args = Args()
+
     # test_data_loader = TestDataLoader(args)  # total 114857 samples for test
 
     # validate_lstm_rotation_acc(test_data_loader, 'adam-lstm-128-1.model', 1, 128)
     # validate_other_rotation_acc(args, average, test_data_loader)
     # validate_other_rotation_acc(args, lr, test_data_loader)
+    for length in [30, 60, 90]:
+        args = Args(length)
+        main_validate_other(args, lr)
+    for length in [30, 60, 90]:
+        args = Args(length)
+        main_validate_other(args, average)
 
 
 
