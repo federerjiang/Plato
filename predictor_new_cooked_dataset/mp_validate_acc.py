@@ -68,7 +68,7 @@ def get_loss(loss_function, predicts, label):
     return loss
 
 
-def validate_lstm_rotation_acc(args, test_data_loader, rank, model_path, num_layers, hidden_size):
+def validate_lstm_rotation_acc(args, test_data_loader, rank, model_path, num_layers, hidden_size, length):
     def init_hidden(num_layers, hidden_size):
         hx = torch.nn.init.xavier_normal(torch.randn(num_layers, 1, hidden_size))
         cx = torch.nn.init.xavier_normal(torch.randn(num_layers, 1, hidden_size))
@@ -79,27 +79,36 @@ def validate_lstm_rotation_acc(args, test_data_loader, rank, model_path, num_lay
     model.hidden = init_hidden(num_layers, hidden_size)
 
     loss_function = torch.nn.MSELoss()
-    loss_sum = 0.0
-    count = 0
-    count_acc = 0
-    with open(str(rank) + '-' + str(args.test_label_length) + '(30-60)lstm-128-1-loss.txt', 'w') as f:
+    with open(str(rank) + '.txt', 'w') as f:
         for inputs, label in test_data_loader:
             predicts = lstm_predict(model, inputs)
             predict_rolls, predict_pitchs, predict_yaws, label_rolls, label_pitchs, label_yaws = \
-                get_rotations(predicts[30:60], label[30:60])
+                get_rotations(predicts[length-30: length], label[length-30: length])
             roll_loss = get_loss(loss_function, predict_rolls, label_rolls)
             pitch_loss = get_loss(loss_function, predict_pitchs, label_pitchs)
             yaw_loss = get_loss(loss_function, predict_yaws, label_yaws)
 
             f.write(str(roll_loss) + ' ' + str(pitch_loss) + ' ' + str(yaw_loss) + '\n')
             print(roll_loss, pitch_loss, yaw_loss)
-            # count += 1
-            # if count == 100000:
-            #     break
-    print(count_acc)
-    print(count_acc / count)
-    print(loss_sum / count)
-    return loss_sum / count
+
+
+def main_validate_lstm(args, data_loader, hidden_size, num_layers):
+    new_cooked_test_dataset = '../datasets/viewport_trace/new_cooked_test_dataset/'
+    sub_paths = []
+    for uid in os.listdir(new_cooked_test_dataset):
+        sub_paths.append(os.path.join(new_cooked_test_dataset, uid))
+    test_data_loaders = []
+    for sub_path in sub_paths:
+        test_data_loader = TestDataLoader(args, trace_folder=sub_path)
+        test_data_loaders.append(test_data_loader)
+    processes = []
+    for rank in range(len(test_data_loaders)):
+        p = mp.Process(target=validate_lstm_rotation_acc, args=(args, test_data_loaders[rank], rank, lock, counter, model, data_loader, learning_rate, epoch,
+                                                 count_max, hidden_size, num_layers))
+        p.start()
+        processes.append(p)
+    for p in processes:
+        p.join()
 
 
 def validate_other_rotation_acc(args, model, test_data_loader):
@@ -133,17 +142,6 @@ if __name__ == "__main__":
     validate_other_rotation_acc(args, lr, test_data_loader)
 
 
-    # new_cooked_test_dataset = '../datasets/viewport_trace/new_cooked_test_dataset/'
-    # sub_paths = []
-    # for uid in os.listdir(new_cooked_test_dataset):
-    #     sub_paths.append(os.path.join(new_cooked_test_dataset, uid))
-    # # print(os.listdir(new_cooked_test_dataset))
-    # count = 0
-    # for sub_path in sub_paths:
-    #     test_data_loader = TestDataLoader(args, trace_folder=sub_path)
-    #     count = 0
-    #     for i in test_data_loader:
-    #         count += 1
-    #     print(count)
+
 
 
