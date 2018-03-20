@@ -81,7 +81,7 @@ def validate_lstm_rotation_acc(args, test_data_loader, rank, model_path, num_lay
     loss_function = torch.nn.MSELoss()
     with open(str(rank) + '.txt', 'w') as f:
         for inputs, label in test_data_loader:
-            predicts = lstm_predict(model, inputs)
+            predicts = lstm_predict(args, model, inputs)
             predict_rolls, predict_pitchs, predict_yaws, label_rolls, label_pitchs, label_yaws = \
                 get_rotations(predicts[length-30: length], label[length-30: length])
             roll_loss = get_loss(loss_function, predict_rolls, label_rolls)
@@ -92,9 +92,8 @@ def validate_lstm_rotation_acc(args, test_data_loader, rank, model_path, num_lay
             print(roll_loss, pitch_loss, yaw_loss)
 
 
-def main_validate_lstm(args, hidden_size, num_layers):
+def main_validate_lstm(args, model_path, hidden_size, num_layers):
     new_cooked_test_dataset = '../datasets/viewport_trace/new_cooked_test_dataset/'
-    model_path = 'adam-lstm-128-1.model'
     sub_paths = []
     for uid in os.listdir(new_cooked_test_dataset):
         sub_paths.append(os.path.join(new_cooked_test_dataset, uid))
@@ -171,18 +170,23 @@ def main_validate_other(args, model, name):
 if __name__ == "__main__":
     torch.set_num_threads(1)
     print(torch.get_num_threads())
-
+    model_path = 'adam-lstm-128-1.model'
+    hidden_size = 128
+    num_layers = 1
     # test_data_loader = TestDataLoader(args)  # total 114857 samples for test
 
     # validate_lstm_rotation_acc(test_data_loader, 'adam-lstm-128-1.model', 1, 128)
     # validate_other_rotation_acc(args, average, test_data_loader)
     # validate_other_rotation_acc(args, lr, test_data_loader)
-    for length in [30, 60, 90]:
+    # for length in [30, 60, 90]:
+    #     args = Args(length)
+    #     main_validate_other(args, lr)
+    # for length in [30, 60, 90]:
+    #     args = Args(length)
+    #     main_validate_other(args, average)
+    for length in [30]:
         args = Args(length)
-        main_validate_other(args, lr)
-    for length in [30, 60, 90]:
-        args = Args(length)
-        main_validate_other(args, average)
+        main_validate_lstm(args, model_path, hidden_size, num_layers)
 
 
 
