@@ -2,77 +2,19 @@ from average import average
 from lr import lr
 from cuda_lstm import LSTMPredict
 from data_loader import TestDataLoader
-from data_loader import TEST_LABEL_LENGTH
-
 
 import torch
 from torch.autograd import Variable
 import torch.multiprocessing as mp
 import math
+from args import Args
+
+import os
 
 
-def rotation_to_vp_tile(yaw, pitch, tile_column, tile_row, vp_length, vp_height, tile_map, tag):
-    tile_length = 360 / tile_column
-    tile_height = 180 / tile_row
-
-    vp_pitch = pitch + 90
-    vp_up = vp_pitch + vp_height / 2
-    if vp_up > 180:
-        vp_up = 179
-    vp_down = vp_pitch - vp_height / 2
-    if vp_down < 0:
-        vp_down = 0
-
-    vp_yaw = yaw + 180
-    vp_part = 1
-    vp_left = vp_yaw - vp_length / 2
-    vp_right = vp_yaw + vp_length / 2
-    if vp_left < 0:
-        vp_part = 2
-        vp_left_1 = 0
-        vp_left_2 = vp_left + 360
-        vp_right_1 = vp_right
-        vp_right_2 = 359
-    if vp_right > 360:
-        vp_part = 2
-        vp_right_1 = vp_right - 360
-        vp_right_2 = 359
-        vp_left_1 = 0
-        vp_left_2 = vp_left
-
-    def get_tiles(left, right, up, down, tag):
-        col_start = math.floor(left / tile_length)
-        col_end = math.floor(right / tile_length)
-        row_start = math.floor(down / tile_height)
-        row_end = math.floor(up / tile_height)
-        count = 0
-        for row in range(row_start, row_end + 1):
-            for col in range(col_start, col_end + 1):
-                count += 1
-                if tile_map[row][col] == 0:
-                    tile_map[row][col] = tag
-        return count
-
-    tile_count = 0
-    if vp_part == 1:
-        tile_count = get_tiles(vp_left, vp_right, vp_up, vp_down, tag)
-    if vp_part == 2:
-        tile_count = get_tiles(vp_left_1, vp_right_1, vp_up, vp_down, tag)
-        tile_count += get_tiles(vp_left_2, vp_right_2, vp_up, vp_down, tag)
-
-    print(tile_count)
-    return tile_map
-
-
-def rotation_to_tile(yaw, pitch, tile_column, tile_row, vp_length, vp_height, ad_length, ad_height):
-    tile_map = [x[:] for x in [[0] * tile_column] * tile_row]
-    tile_map = rotation_to_vp_tile(yaw, pitch, 12, 6, vp_length, vp_height, tile_map, 1)
-    tile_map = rotation_to_vp_tile(yaw, pitch, 12, 6, ad_length, ad_height, tile_map, 2)
-    return tile_map
-
-
-def lstm_predict(model, inputs, length=TEST_LABEL_LENGTH):
+def lstm_predict(model, inputs, args):
     outputs = []
+    length = args.test_label_length
     inputs = torch.FloatTensor(inputs).view(1, 30, 3)
     inputs = Variable(inputs, volatile=True)
     for _ in range(length):
@@ -82,12 +24,12 @@ def lstm_predict(model, inputs, length=TEST_LABEL_LENGTH):
         t[:, 0:29, :] = inputs[:, 1:30, :]
         t[:, 29, :] = output.view(1, 30, 3)[:, 29, :]
         inputs = t
-
     return outputs
 
 
-def other_predict(model, inputs, length=TEST_LABEL_LENGTH):
+def other_predict(model, inputs, args):
     outputs = []
+    length = args.test_label_length
     for _ in range(length):
         output = model(inputs)
         outputs.append(output)
@@ -126,7 +68,7 @@ def get_loss(loss_function, predicts, label):
     return loss
 
 
-def validate_lstm_rotation_acc(test_data_loader, rank, model_path, num_layers, hidden_size):
+def validate_lstm_rotation_acc(args, test_data_loader, rank, model_path, num_layers, hidden_size):
     def init_hidden(num_layers, hidden_size):
         hx = torch.nn.init.xavier_normal(torch.randn(num_layers, 1, hidden_size))
         cx = torch.nn.init.xavier_normal(torch.randn(num_layers, 1, hidden_size))
@@ -140,7 +82,7 @@ def validate_lstm_rotation_acc(test_data_loader, rank, model_path, num_layers, h
     loss_sum = 0.0
     count = 0
     count_acc = 0
-    with open(str(rank) + '-' + str(TEST_LABEL_LENGTH) + '(30-60)lstm-128-1-loss.txt', 'w') as f:
+    with open(str(rank) + '-' + str(args.test_label_length) + '(30-60)lstm-128-1-loss.txt', 'w') as f:
         for inputs, label in test_data_loader:
             predicts = lstm_predict(model, inputs)
             predict_rolls, predict_pitchs, predict_yaws, label_rolls, label_pitchs, label_yaws = \
@@ -160,16 +102,12 @@ def validate_lstm_rotation_acc(test_data_loader, rank, model_path, num_layers, h
     return loss_sum / count
 
 
-def validate_lstm_tile_acc(test_data_loader, model_path, num_layers, hidden_size):
-    pass
-
-
-def validate_other_rotation_acc(model, test_data_loader):
+def validate_other_rotation_acc(args, model, test_data_loader):
 
     loss_function = torch.nn.MSELoss()
     loss_sum = 0.0
     count = 0
-    with open(str(TEST_LABEL_LENGTH) + '(30-60)lr-loss.txt', 'w') as f:
+    with open(str(args.test_label_length) + '(30-60)lr-loss.txt', 'w') as f:
         for inputs, label in test_data_loader:
             predicts = other_predict(model, inputs)
             predict_rolls, predict_pitchs, predict_yaws, label_rolls, label_pitchs, label_yaws = \
@@ -187,10 +125,23 @@ def validate_other_rotation_acc(model, test_data_loader):
 
 
 if __name__ == "__main__":
-    test_data_loader = TestDataLoader()
+    args = Args()
+    test_data_loader = TestDataLoader(args)  # total 114857 samples for test
+
     # validate_lstm_rotation_acc(test_data_loader, 'adam-lstm-128-1.model', 1, 128)
     # validate_other_rotation_acc(average, test_data_loader)
-    validate_other_rotation_acc(lr, test_data_loader)
-
+    # validate_other_rotation_acc(lr, test_data_loader)
+    new_cooked_test_dataset = '../datasets/viewport_trace/new_cooked_test_dataset/'
+    sub_paths = []
+    for uid in os.listdir(new_cooked_test_dataset):
+        sub_paths.append(os.path.join(new_cooked_test_dataset, uid))
+    # print(os.listdir(new_cooked_test_dataset))
+    count = 0
+    for sub_path in sub_paths:
+        test_data_loader = TestDataLoader(args, trace_folder=sub_path)
+        count = 0
+        for i in test_data_loader:
+            count += 1
+        print(count)
 
 
