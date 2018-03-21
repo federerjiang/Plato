@@ -129,7 +129,7 @@ def main_validate_lstm(args, model_path, hidden_size, num_layers):
     file_names = []
     for rank in range(len(sub_paths)):
         file_names.append(str(rank) + '.txt')
-    with open(str(args.test_label_length) + 'lstm-128-1-error.txt', 'w') as outfile:
+    with open(str(args.test_label_length) + 'lstm-256-1-error.txt', 'w') as outfile:
         for fname in file_names:
             with open(fname) as infile:
                 for line in infile:
@@ -186,8 +186,8 @@ def main_validate_other(args, model, name):
 if __name__ == "__main__":
     torch.set_num_threads(1)
     print(torch.get_num_threads())
-    model_path = 'adam-lstm-128-1.model'
-    hidden_size = 128
+    model_path = 'adam-lstm-256-1.model'
+    hidden_size = 256
     num_layers = 1
     # test_data_loader = TestDataLoader(args)  # total 114857 samples for test
 
@@ -198,9 +198,9 @@ if __name__ == "__main__":
     # for length in [30, 60, 90]:
     #     args = Args(length)
     #     main_validate_other(args, average, 'average')
-    for length in [30, 60, 90]:
-        args = Args(length)
-        main_validate_other(args, lr_cal, 'lr_cal')
+    # for length in [30, 60, 90]:
+    #     args = Args(length)
+    #     main_validate_other(args, lr_cal, 'lr_cal')
     for length in [30, 60, 90]:
         args = Args(length)
         main_validate_lstm(args, model_path, hidden_size, num_layers)
