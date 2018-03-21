@@ -1,6 +1,7 @@
 from average import average
 from lr import lr
 from cuda_lstm import LSTMPredict
+from lr import LinearRegressionModel
 from data_loader import TestDataLoader
 
 import torch
@@ -178,15 +179,15 @@ if __name__ == "__main__":
     # validate_lstm_rotation_acc(test_data_loader, 'adam-lstm-128-1.model', 1, 128)
     # validate_other_rotation_acc(args, average, test_data_loader)
     # validate_other_rotation_acc(args, lr, test_data_loader)
-    # for length in [30, 60, 90]:
-    #     args = Args(length)
-    #     main_validate_other(args, lr, 'lr')
+    for length in [30, 60, 90]:
+        args = Args(length)
+        main_validate_other(args, lr, 'lr')
     # for length in [30, 60, 90]:
     #     args = Args(length)
     #     main_validate_other(args, average, 'average')
-    for length in [30]:
-        args = Args(length)
-        main_validate_lstm(args, model_path, hidden_size, num_layers)
+    # for length in [30, 60, 90]:
+    #     args = Args(length)
+    #     main_validate_lstm(args, model_path, hidden_size, num_layers)
 
 
 
