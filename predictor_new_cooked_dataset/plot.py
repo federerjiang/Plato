@@ -49,14 +49,14 @@ def get_count_arr(file, interval):
 
 
 def plot_cdf(averages, lrs, lstms, interval):
-    average_roll, average_pitch, average_yaw = get_count_arr(averages[2], interval)
-    lr_roll, lr_pitch, lr_yaw = get_count_arr(lrs[2], interval)
-    lstm_roll, lstm_pitch, lstm_yaw = get_count_arr(lstms[2], interval)
+    average_roll, average_pitch, average_yaw = get_count_arr(averages[1], interval)
+    lr_roll, lr_pitch, lr_yaw = get_count_arr(lrs[1], interval)
+    lstm_roll, lstm_pitch, lstm_yaw = get_count_arr(lstms[1], interval)
     X = np.arange(0, 180, interval)
 
-    plt.plot(X, average_yaw, 'go')
-    plt.plot(X, lr_yaw, 'y>')
-    plt.plot(X, lstm_yaw, 'r*')
+    plt.plot(X, average_yaw, 'go-')
+    plt.plot(X, lr_yaw, 'y>-')
+    plt.plot(X, lstm_yaw, 'r*-')
     plt.title('Prediction error (degree) CDF')
     plt.xlabel('degree')
     plt.ylabel('accuracy')
@@ -69,4 +69,4 @@ if __name__ == "__main__":
     lrs = ['30-lr_cal-error.txt', '60-lr_cal-error.txt', '90-lr_cal-error.txt']
     lstms = ['30lstm-128-1-error.txt', '60lstm-128-1-error.txt', '90lstm-128-1-error.txt']
     # get_count_arr('30-average-error.txt', 5)
-    plot_cdf(averages, lrs, lstms, 5)
+    plot_cdf(averages, lrs, lstms, 10)
