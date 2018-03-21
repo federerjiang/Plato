@@ -19,15 +19,15 @@ def get_count_arr(file, interval):
             pitchs.append(errors[1])
             yaws.append(errors[2])
 
-    roll_count = np.zeros(int(360/interval))
-    pitch_count = np.zeros(int(360/interval))
-    yaw_count = np.zeros(int(360/interval))
+    roll_count = np.zeros(int(180/interval))
+    pitch_count = np.zeros(int(180/interval))
+    yaw_count = np.zeros(int(180/interval))
     for index in range(len(rolls)):
         roll_count[int(np.floor(rolls[index]/interval))] += 1
         pitch_count[int(np.floor(pitchs[index]/interval))] += 1
         yaw_count[int(np.floor(yaws[index]/interval))] += 1
 
-    X = np.arange(0, 360, interval)
+    X = np.arange(0, 180, interval)
     # print(len(X), len(roll_count))
     roll_count /= roll_count.sum()
     pitch_count /= pitch_count.sum()
@@ -52,7 +52,7 @@ def plot_cdf(averages, lrs, lstms, interval):
     average_roll, average_pitch, average_yaw = get_count_arr(averages[2], interval)
     lr_roll, lr_pitch, lr_yaw = get_count_arr(lrs[2], interval)
     lstm_roll, lstm_pitch, lstm_yaw = get_count_arr(lstms[2], interval)
-    X = np.arange(0, 360, interval)
+    X = np.arange(0, 180, interval)
 
     plt.plot(X, average_yaw, 'go')
     plt.plot(X, lr_yaw, 'y>')
