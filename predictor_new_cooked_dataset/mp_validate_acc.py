@@ -194,15 +194,16 @@ if __name__ == "__main__":
     # validate_lstm_rotation_acc(test_data_loader, 'adam-lstm-128-1.model', 1, 128)
     # validate_other_rotation_acc(args, average, test_data_loader)
     # validate_other_rotation_acc(args, lr, test_data_loader)
+
     # for length in [30, 60, 90]:
     #     args = Args(length)
-    #     main_validate_other(args, lr_cal, 'lr_cal')
+    #     main_validate_other(args, average, 'average')
     for length in [30, 60, 90]:
         args = Args(length)
-        main_validate_other(args, average, 'average')
-    # for length in [30, 60, 90]:
-    #     args = Args(length)
-    #     main_validate_lstm(args, model_path, hidden_size, num_layers)
+        main_validate_other(args, lr_cal, 'lr_cal')
+    for length in [30, 60, 90]:
+        args = Args(length)
+        main_validate_lstm(args, model_path, hidden_size, num_layers)
 
 
 
