@@ -70,14 +70,14 @@ def train_model(model, learning_rate, data_loader, epoch=10, count_max=10000):
 
     loss_function = nn.MSELoss()
     # optimizer = optim.Adam(model.parameters(), lr=learning_rate)
-    # optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=0.9, nesterov=True)
+    optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=0.9, nesterov=True)
     # optimizer = optim.SGD(model.parameters(), lr=learning_rate)
     for poch in range(epoch):
         count = 0
         loss_avg = 0.0
         # optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=0.9, nesterov=True)
-        optimizer = optim.Adam(model.parameters(), lr=learning_rate)
-        learning_rate *= 0.2
+        # optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+        # learning_rate *= 0.2
         for inputs, label in data_loader:
             # inputs = train_data[i: i+30]
             if count == count_max:
@@ -111,9 +111,9 @@ def try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoc, count_ma
     for hidden_size in hidden_size_list:
         for num_layers in num_layer_list:
             model = LSTMPredict(input_size=TAG_SIZE, hidden_size=hidden_size, num_layers=num_layers, tag_size=TAG_SIZE)
-            train_model(model, learning_rate=0.01, data_loader=data_loader, epoch=epoc, count_max=count_max)
+            train_model(model, learning_rate=0.00001, data_loader=data_loader, epoch=epoc, count_max=count_max)
             print("finished training")
-            model_name = 'test-adam-lstm-' + str(hidden_size) + '-' + str(num_layers) + '.model'
+            model_name = 'test-sgd-lstm-' + str(hidden_size) + '-' + str(num_layers) + '.model'
             # loss_name = 'loss-' + str(hidden_size) + '-' + str(num_layers) + '.dat'
             torch.save(model, model_name)
             print('saved model: ' + model_name)
@@ -127,5 +127,5 @@ if __name__ == "__main__":
     # hidden_size_list = [128, 256, 512]
     # num_layer_list = [1, 2]
     hidden_size_list = [128]
-    num_layer_list = [2]
+    num_layer_list = [1]
     try_hyper_para(hidden_size_list, num_layer_list, cuda_data_loader, epoc=10, count_max=20000)
