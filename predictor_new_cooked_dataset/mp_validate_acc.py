@@ -70,6 +70,18 @@ def get_loss(loss_function, predicts, label):
     return loss
 
 
+def get_loss_360(predicts, label):
+    sum_error = 0
+    length = len(predicts)
+    for i in range(length):
+        err = abs(predicts[i] - label[i])
+        if err > 1:  # it's in a sphere, the largest error is one (half sphere)
+            err = 2 - err
+        sum_error += err
+    loss = (sum_error / length) * 180
+    return loss
+
+
 def validate_lstm_rotation_acc(args, test_data_loader, rank, model_path, num_layers, hidden_size, length):
     def init_hidden(num_layers, hidden_size):
         hx = torch.nn.init.xavier_normal(torch.randn(num_layers, 1, hidden_size))
@@ -86,9 +98,11 @@ def validate_lstm_rotation_acc(args, test_data_loader, rank, model_path, num_lay
             predicts = lstm_predict(args, model, inputs)
             predict_rolls, predict_pitchs, predict_yaws, label_rolls, label_pitchs, label_yaws = \
                 get_rotations(predicts[length-30: length], label[length-30: length])
-            roll_loss = get_loss(loss_function, predict_rolls, label_rolls)
+            # roll_loss = get_loss_360(loss_function, predict_rolls, label_rolls)
+            roll_loss = get_loss_360(predict_rolls, label_rolls)
             pitch_loss = get_loss(loss_function, predict_pitchs, label_pitchs)
-            yaw_loss = get_loss(loss_function, predict_yaws, label_yaws)
+            yaw_loss = get_loss_360(predict_yaws, label_yaws)
+            # yaw_loss = get_loss_360(loss_function, predict_yaws, label_yaws)
 
             f.write(str(roll_loss) + ' ' + str(pitch_loss) + ' ' + str(yaw_loss) + '\n')
             print(roll_loss, pitch_loss, yaw_loss)
@@ -133,9 +147,9 @@ def validate_other_rotation_acc(args, model, test_data_loader, rank, length):
             predicts = other_predict(args, model, inputs)
             predict_rolls, predict_pitchs, predict_yaws, label_rolls, label_pitchs, label_yaws = \
                 get_rotations(predicts[length-30: length], label[length-30: length])
-            roll_loss = get_loss(loss_function, predict_rolls, label_rolls)
+            roll_loss = get_loss_360(predict_rolls, label_rolls)
             pitch_loss = get_loss(loss_function, predict_pitchs, label_pitchs)
-            yaw_loss = get_loss(loss_function, predict_yaws, label_yaws)
+            yaw_loss = get_loss_360(predict_yaws, label_yaws)
 
             f.write(str(roll_loss) + ' ' + str(pitch_loss) + ' ' + str(yaw_loss) + '\n')
             print(rank, roll_loss, pitch_loss, yaw_loss)
@@ -180,12 +194,12 @@ if __name__ == "__main__":
     # validate_lstm_rotation_acc(test_data_loader, 'adam-lstm-128-1.model', 1, 128)
     # validate_other_rotation_acc(args, average, test_data_loader)
     # validate_other_rotation_acc(args, lr, test_data_loader)
-    for length in [30, 60, 90]:
-        args = Args(length)
-        main_validate_other(args, lr_cal, 'lr_cal')
     # for length in [30, 60, 90]:
     #     args = Args(length)
-    #     main_validate_other(args, average, 'average')
+    #     main_validate_other(args, lr_cal, 'lr_cal')
+    for length in [30, 60, 90]:
+        args = Args(length)
+        main_validate_other(args, average, 'average')
     # for length in [30, 60, 90]:
     #     args = Args(length)
     #     main_validate_lstm(args, model_path, hidden_size, num_layers)
