@@ -48,10 +48,10 @@ def get_count_arr(file, interval):
     return roll_cdf, pitch_cdf, yaw_cdf
 
 
-def plot_cdf(averages, lrs, lstms, interval):
-    average_roll, average_pitch, average_yaw = get_count_arr(averages[1], interval)
-    lr_roll, lr_pitch, lr_yaw = get_count_arr(lrs[1], interval)
-    lstm_roll, lstm_pitch, lstm_yaw = get_count_arr(lstms[1], interval)
+def plot_yaw_cdf(averages, lrs, lstms, interval, time):
+    average_roll, average_pitch, average_yaw = get_count_arr(averages[time], interval)
+    lr_roll, lr_pitch, lr_yaw = get_count_arr(lrs[time], interval)
+    lstm_roll, lstm_pitch, lstm_yaw = get_count_arr(lstms[time], interval)
     X = np.arange(0, 180, interval)
 
     plt.plot(X, average_yaw, 'go-')
@@ -64,9 +64,52 @@ def plot_cdf(averages, lrs, lstms, interval):
     plt.show()
 
 
+def plot_pitch_cdf(averages, lrs, lstms, interval, time):
+    average_roll, average_pitch, average_yaw = get_count_arr(averages[time], interval)
+    lr_roll, lr_pitch, lr_yaw = get_count_arr(lrs[time], interval)
+    lstm_roll, lstm_pitch, lstm_yaw = get_count_arr(lstms[time], interval)
+    X = np.arange(0, 180, interval)
+
+    plt.plot(X, average_pitch, 'go-')
+    plt.plot(X, lr_pitch, 'y>-')
+    plt.plot(X, lstm_pitch, 'r*-')
+    plt.title('Prediction error (degree) CDF of time: ' + str(time+1) + ' second')
+    plt.xlabel('degree')
+    plt.ylabel('accuracy')
+    plt.grid()
+    plt.show()
+
+
+def plot_roll_cdf(averages, lrs, lstms, interval, time):
+    average_roll, average_pitch, average_yaw = get_count_arr(averages[time], interval)
+    lr_roll, lr_pitch, lr_yaw = get_count_arr(lrs[time], interval)
+    lstm_roll, lstm_pitch, lstm_yaw = get_count_arr(lstms[time], interval)
+    X = np.arange(0, 180, interval)
+
+    plt.plot(X, average_roll, 'go-')
+    plt.plot(X, lr_roll, 'y>-')
+    plt.plot(X, lstm_roll, 'r*-')
+    plt.title('Prediction error (degree) CDF')
+    plt.xlabel('degree')
+    plt.ylabel('accuracy')
+    plt.grid()
+    plt.show()
+
+
 if __name__ == "__main__":
     averages = ['30-average-error.txt', '60-average-error.txt', '90-average-error.txt']
     lrs = ['30-lr_cal-error.txt', '60-lr_cal-error.txt', '90-lr_cal-error.txt']
     lstms = ['30lstm-128-1-error.txt', '60lstm-128-1-error.txt', '90lstm-128-1-error.txt']
+    lstm256 = ['30lstm-256-1-error.txt', '60lstm-256-1-error.txt', '90lstm-256-1-error.txt']
     # get_count_arr('30-average-error.txt', 5)
-    plot_cdf(averages, lrs, lstms, 10)
+    plot_yaw_cdf(averages, lrs, lstms, 10, 0)
+    plot_yaw_cdf(averages, lrs, lstms, 10, 1)
+    plot_yaw_cdf(averages, lrs, lstms, 10, 2)
+    plot_pitch_cdf(averages, lrs, lstms, 10, 0)
+    plot_pitch_cdf(averages, lrs, lstms, 10, 1)
+    plot_pitch_cdf(averages, lrs, lstms, 10, 2)
+    plot_roll_cdf(averages, lrs, lstms, 10, 0)
+    plot_roll_cdf(averages, lrs, lstms, 10, 1)
+    plot_roll_cdf(averages, lrs, lstms, 10, 2)
+
+
