@@ -105,7 +105,7 @@ def validate_lstm_rotation_acc(args, test_data_loader, rank, model_path, num_lay
             # yaw_loss = get_loss_360(loss_function, predict_yaws, label_yaws)
 
             f.write(str(roll_loss) + ' ' + str(pitch_loss) + ' ' + str(yaw_loss) + '\n')
-            print(roll_loss, pitch_loss, yaw_loss)
+            print(rank, roll_loss, pitch_loss, yaw_loss)
 
 
 def main_validate_lstm(args, model_path, hidden_size, num_layers):
@@ -129,7 +129,7 @@ def main_validate_lstm(args, model_path, hidden_size, num_layers):
     file_names = []
     for rank in range(len(sub_paths)):
         file_names.append(str(rank) + '.txt')
-    with open(str(args.test_label_length) + 'lstm-256-1-error.txt', 'w') as outfile:
+    with open(str(args.test_label_length) + 'lstm-64-1-error.txt', 'w') as outfile:
         for fname in file_names:
             with open(fname) as infile:
                 for line in infile:
@@ -186,8 +186,8 @@ def main_validate_other(args, model, name):
 if __name__ == "__main__":
     torch.set_num_threads(1)
     print(torch.get_num_threads())
-    model_path = 'adam-lstm-256-1.model'
-    hidden_size = 256
+    model_path = 'adam-lstm-64-1.model'
+    hidden_size = 64
     num_layers = 1
     # test_data_loader = TestDataLoader(args)  # total 114857 samples for test
 
@@ -201,7 +201,7 @@ if __name__ == "__main__":
     # for length in [30, 60, 90]:
     #     args = Args(length)
     #     main_validate_other(args, lr_cal, 'lr_cal')
-    for length in [30, 60, 90]:
+    for length in [60, 90]:
         args = Args(length)
         main_validate_lstm(args, model_path, hidden_size, num_layers)
 
