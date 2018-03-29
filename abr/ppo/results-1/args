@@ -1,0 +1,4 @@
+rebuf_penalty = 43
+smooth_penalty = 1.0
+cv_penalty = 5.0
+blank_penalty = 5.0

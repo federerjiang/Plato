@@ -2,7 +2,8 @@ import os
 import fnmatch
 
 VIEWPORT_TRACE = '../datasets/viewport_trace/'
-TRAIN_DATASET = VIEWPORT_TRACE + 'train-dataset/'
+TRAIN_DATASET = VIEWPORT_TRACE + 'new_cooked_train_dataset/'
+TEST_DATASET = VIEWPORT_TRACE + 'new_cooked_test_dataset/'
 
 
 def load_viewport_unit(trace_folder=TRAIN_DATASET):
@@ -20,14 +21,14 @@ def load_viewport_unit(trace_folder=TRAIN_DATASET):
                     if len(line) > 10:
                         parse = line.split()
                         vp_time.append(float(parse[0]))
-                        vp_unit.append(str_to_float(parse[2:6]))
+                        vp_unit.append(_str_to_float(parse[2:5]))
             all_vp_time.append(vp_time)
             all_vp_unit.append(vp_unit)
 
     return all_vp_time, all_vp_unit
 
 
-def str_to_float(str_list):
+def _str_to_float(str_list):
     float_list = []
     for string in str_list:
         float_list.append(float(string))

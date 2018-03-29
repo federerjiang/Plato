@@ -61,7 +61,7 @@ def try_error(error1, error2, error3):
 
 def get_average_error():
     print('0 - 30 frames: 1st second')
-    result = get_average_rotation('30lstm-256-1-error.txt')
+    result = get_average_rotation('30lstm-128-1-error.txt')
     print(result)
     result = get_average_rotation('30-lr_cal-error.txt')
     print(result)
@@ -69,7 +69,7 @@ def get_average_error():
     print(result)
 
     print('30 - 60 frames: 2nd second')
-    result = get_average_rotation('60lstm-256-1-error.txt')
+    result = get_average_rotation('60lstm-128-1-error.txt')
     print(result)
     result = get_average_rotation('60-lr_cal-error.txt')
     print(result)
@@ -77,7 +77,7 @@ def get_average_error():
     print(result)
 
     print('60 - 90 frames: 3rd second')
-    result = get_average_rotation('90lstm-256-1-error.txt')
+    result = get_average_rotation('90lstm-128-1-error.txt')
     print(result)
     result = get_average_rotation('90-lr_cal-error.txt')
     print(result)
@@ -87,5 +87,5 @@ def get_average_error():
 
 if __name__ == "__main__":
 
-    try_error(30, 30, 40)
+    try_error(30, 30, 50)
     # get_average_error()

@@ -1,5 +1,8 @@
 import numpy as np
-import matplotlib.pyplot as plt
+from matplotlib import pyplot as plt
+from matplotlib import rcParams
+import matplotlib
+matplotlib.use('Agg')
 
 
 def get_count_arr(file, interval):
@@ -54,14 +57,24 @@ def plot_yaw_cdf(averages, lrs, lstms, interval, time):
     lstm_roll, lstm_pitch, lstm_yaw = get_count_arr(lstms[time], interval)
     X = np.arange(0, 180, interval)
 
-    plt.plot(X, average_yaw, 'go-')
-    plt.plot(X, lr_yaw, 'y>-')
-    plt.plot(X, lstm_yaw, 'r*-')
-    plt.title('Prediction error (degree) CDF')
-    plt.xlabel('degree')
-    plt.ylabel('accuracy')
+    rcParams.update({'figure.autolayout': True})
+    rcParams['lines.linewidth'] = 2
+    params = {'legend.fontsize': 20, 'legend.handlelength': 1.5}
+    plt.rcParams.update(params)
+    fig = plt.figure()
+
+    line_average, = plt.plot(X, average_yaw, 'go:', label='average')
+    line_lr, = plt.plot(X, lr_yaw, 'y-', label='lr')
+    line_lstm, = plt.plot(X, lstm_yaw, 'r*-', label='lstm')
+    plt.legend(handles=[line_lstm, line_lr, line_average])
+    plt.title('error (yaw degree) CDF of time: ' + str(time+1) + 's', fontsize=20)
+    plt.xlabel('degree', fontsize=20)
+    plt.ylabel('accuracy', fontsize=20)
     plt.grid()
-    plt.show()
+    # plt.show()
+    plt.tick_params(axis='x', labelsize=15)
+    plt.tick_params(axis='y', labelsize=15)
+    fig.savefig('yaw-' + str(time) + '.eps', format='eps', dpi=1000)
 
 
 def plot_pitch_cdf(averages, lrs, lstms, interval, time):
@@ -70,14 +83,24 @@ def plot_pitch_cdf(averages, lrs, lstms, interval, time):
     lstm_roll, lstm_pitch, lstm_yaw = get_count_arr(lstms[time], interval)
     X = np.arange(0, 180, interval)
 
-    plt.plot(X, average_pitch, 'go-')
-    plt.plot(X, lr_pitch, 'y>-')
-    plt.plot(X, lstm_pitch, 'r*-')
-    plt.title('Prediction error (degree) CDF of time: ' + str(time+1) + ' second')
-    plt.xlabel('degree')
-    plt.ylabel('accuracy')
+    rcParams.update({'figure.autolayout': True})
+    rcParams['lines.linewidth'] = 2
+    params = {'legend.fontsize': 20, 'legend.handlelength': 1.5}
+    plt.rcParams.update(params)
+    fig = plt.figure()
+
+    line_average, = plt.plot(X, average_pitch, 'go:', label='average')
+    line_lr, = plt.plot(X, lr_pitch, 'y-', label='lr')
+    line_lstm, = plt.plot(X, lstm_pitch, 'r*-', label='lstm')
+    plt.legend(handles=[line_lstm, line_lr, line_average])
+    plt.title('error (pitch degree) CDF of time: ' + str(time+1) + 's', fontsize=20)
+    plt.xlabel('degree', fontsize=20)
+    plt.ylabel('accuracy', fontsize=20)
     plt.grid()
-    plt.show()
+    # plt.show()
+    plt.tick_params(axis='x', labelsize=15)
+    plt.tick_params(axis='y', labelsize=15)
+    fig.savefig('pitch-' + str(time) + '.eps', format='eps', dpi=1000)
 
 
 def plot_roll_cdf(averages, lrs, lstms, interval, time):
@@ -86,14 +109,24 @@ def plot_roll_cdf(averages, lrs, lstms, interval, time):
     lstm_roll, lstm_pitch, lstm_yaw = get_count_arr(lstms[time], interval)
     X = np.arange(0, 180, interval)
 
-    plt.plot(X, average_roll, 'go-')
-    plt.plot(X, lr_roll, 'y>-')
-    plt.plot(X, lstm_roll, 'r*-')
-    plt.title('Prediction error (degree) CDF')
-    plt.xlabel('degree')
-    plt.ylabel('accuracy')
+    rcParams.update({'figure.autolayout': True})
+    rcParams['lines.linewidth'] = 2
+    params = {'legend.fontsize': 20, 'legend.handlelength': 1.5}
+    plt.rcParams.update(params)
+    fig = plt.figure()
+
+    line_average, = plt.plot(X, average_roll, 'go:', label='average')
+    line_lr, = plt.plot(X, lr_roll, 'y-', label='lr')
+    line_lstm, = plt.plot(X, lstm_roll, 'r*-', label='lstm')
+    plt.legend(handles=[line_lstm, line_lr, line_average])
+    plt.title('error (roll degree) CDF of time: ' + str(time+1) + 's', fontsize=20)
+    plt.xlabel('degree', fontsize=20)
+    plt.ylabel('accuracy', fontsize=20)
     plt.grid()
-    plt.show()
+    # plt.show()
+    plt.tick_params(axis='x', labelsize=15)
+    plt.tick_params(axis='y', labelsize=15)
+    fig.savefig('roll-' + str(time) + '.eps', format='eps', dpi=1000)
 
 
 if __name__ == "__main__":
@@ -102,14 +135,14 @@ if __name__ == "__main__":
     lstms = ['30lstm-128-1-error.txt', '60lstm-128-1-error.txt', '90lstm-128-1-error.txt']
     lstm256 = ['30lstm-256-1-error.txt', '60lstm-256-1-error.txt', '90lstm-256-1-error.txt']
     # get_count_arr('30-average-error.txt', 5)
-    plot_yaw_cdf(averages, lrs, lstms, 10, 0)
-    plot_yaw_cdf(averages, lrs, lstms, 10, 1)
-    plot_yaw_cdf(averages, lrs, lstms, 10, 2)
-    plot_pitch_cdf(averages, lrs, lstms, 10, 0)
-    plot_pitch_cdf(averages, lrs, lstms, 10, 1)
-    plot_pitch_cdf(averages, lrs, lstms, 10, 2)
-    plot_roll_cdf(averages, lrs, lstms, 10, 0)
-    plot_roll_cdf(averages, lrs, lstms, 10, 1)
-    plot_roll_cdf(averages, lrs, lstms, 10, 2)
+    # plot_yaw_cdf(averages, lrs, lstms, 20, 0)
+    # plot_yaw_cdf(averages, lrs, lstms, 20, 1)
+    # plot_yaw_cdf(averages, lrs, lstms, 20, 2)
+    # plot_pitch_cdf(averages, lrs, lstms, 20, 0)
+    # plot_pitch_cdf(averages, lrs, lstms, 20, 1)
+    # plot_pitch_cdf(averages, lrs, lstms, 20, 2)
+    # plot_roll_cdf(averages, lrs, lstms, 20, 0)
+    # plot_roll_cdf(averages, lrs, lstms, 20, 1)
+    plot_roll_cdf(averages, lrs, lstms, 20, 2)
 
 

@@ -155,7 +155,7 @@ class Environment:
         # add a multiplicative noise to the delay
         delay *= np.random.uniform(NOISE_LOW, NOISE_HIGH)
 
-        # rebuffer time
+        # rebuffer time (stall time)
         rebuf = np.maximum(delay - self.buffer_size, 0.0)
 
         # update the buffer
@@ -211,7 +211,7 @@ class Environment:
             self.mahimahi_ptr = np.random.randint(1, len(self.cooked_bw))
             self.last_mahimahi_time = self.cooked_time[self.mahimahi_ptr - 1]
 
-        self.last_vp_time += (delay + sleep_time) / MILLISECONDS_IN_SECOND  # vp time in seconds
+        # self.last_vp_time += (delay + sleep_time) / MILLISECONDS_IN_SECOND  # vp time in seconds
 
         next_video_seg_sizes = []
         for i in range(BITRATE_LEVELS):
@@ -230,6 +230,14 @@ class Environment:
     # @staticmethod
     # def reset():
     #     return np.zeros((S_INFO, S_LEN))
+
+    def step(self):
+        pass
+        # return states, reward, done, info
+
+    def sample_action(self):
+        pass
+        # return action
 
 
 if __name__ == '__main__':
