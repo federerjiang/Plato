@@ -269,7 +269,7 @@ class Environment:
         ad_size = self.ad_sizes[ad_quality] if ad_quality >= 0 else 0
         out_size = self.out_sizes[out_quality] if out_quality >= 0 else 0
         video_seg_size = vp_size + ad_size + out_size
-        # print(vp_quality, ad_quality, out_quality)
+        print(vp_quality, ad_quality, out_quality)
         # print(vp_size/1000000, ad_size/1000000, out_size/1000000)
         # use the delivery opportunity of mahimahi
         delay = 0.0  # seconds

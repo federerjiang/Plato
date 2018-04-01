@@ -33,6 +33,9 @@ def chief(args, actor, critic, update_events, rolling_events, state_queue, queue
         batch_size = returns.shape[0]
         values = critic(states, batch_size=batch_size)
         advantages = returns - values
+        adv_mean = advantages.mean()
+        adv_std = advantages.std()
+        advantages = (advantages - adv_mean) / adv_std
         actions = Variable(torch.LongTensor(actions))
         # advantages = Variable(torch.FloatTensor(advantages))
         print('chief get data')
