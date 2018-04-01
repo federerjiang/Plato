@@ -1,6 +1,6 @@
 import torch
 import torch.nn.functional as F
-import gym
+#import gym
 import numpy as np
 from torch.autograd import Variable
 from env import Environment

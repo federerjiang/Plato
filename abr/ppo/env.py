@@ -4,7 +4,8 @@ from torch.autograd import Variable
 import math
 
 # from args import Args
-from abr.ppo.args import Args, LSTMPredict
+#from abr.ppo.args import Args, LSTMPredict
+from args import Args, LSTMPredict
 
 
 class Environment:
