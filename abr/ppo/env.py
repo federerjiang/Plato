@@ -269,7 +269,7 @@ class Environment:
         ad_size = self.ad_sizes[ad_quality] if ad_quality >= 0 else 0
         out_size = self.out_sizes[out_quality] if out_quality >= 0 else 0
         video_seg_size = vp_size + ad_size + out_size
-        print(vp_quality, ad_quality, out_quality)
+        # print(vp_quality, ad_quality, out_quality)
         # print(vp_size/1000000, ad_size/1000000, out_size/1000000)
         # use the delivery opportunity of mahimahi
         delay = 0.0  # seconds
@@ -383,13 +383,14 @@ class Environment:
 
         self.last_real_vp_bitrate = real_vp_bitrate
 
+        print('action: ', vp_quality, ad_quality, out_quality)
         # print('buffer size:', self.buffer_size)
-        print('rebuffer time:', rebuf)
-        print('cv', cv)
-        print('blank', blank_ratio)
+        print('rebuffer time: ', rebuf)
+        print('cv ', cv)
+        print('blank ', blank_ratio)
         # print('delay', delay)
-        print('real vp bitrate:', real_vp_bitrate)
-        print('reward:', reward)
+        print('real vp bitrate: ', real_vp_bitrate)
+        print('reward: ', reward)
 
         # print('state:', self.state)
         print('')
