@@ -21,7 +21,7 @@ def chief(args, actor, critic, update_events, rolling_events, state_queue, queue
         data = [queue.get() for _ in range(queue.qsize())]
         data = np.vstack(data)
         # state_data = [state_queue.get() for _ in range(queue_size.get())]
-        state_data = [state_queue.get() for _ in range(queue.qsize())]
+        state_data = [state_queue.get() for _ in range(state_queue.qsize())]
         queue_size.reset()
         states = []
         for worker_states in state_data:
