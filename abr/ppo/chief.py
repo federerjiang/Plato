@@ -17,9 +17,11 @@ def chief(args, actor, critic, update_events, rolling_events, state_queue, queue
         actor_old = ActorModel()
         actor_old.load_state_dict(actor.state_dict())  # update old actor parameters
         print('chief queue_size:', queue_size.get())
-        data = [queue.get() for _ in range(queue_size.get())]  # receive collected data from workers
+        # data = [queue.get() for _ in range(queue_size.get())]  # receive collected data from workers
+        data = [queue.get() for _ in range(queue.qsize())]
         data = np.vstack(data)
-        state_data = [state_queue.get() for _ in range(queue_size.get())]
+        # state_data = [state_queue.get() for _ in range(queue_size.get())]
+        state_data = [state_queue.get() for _ in range(queue.qsize())]
         queue_size.reset()
         states = []
         for worker_states in state_data:
