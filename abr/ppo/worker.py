@@ -74,10 +74,10 @@ def worker(rank, args, actor, critic, update_events, rolling_events, state_queue
                 buffer_s, buffer_a, buffer_r, buffer_v = [], [], [], []
                 # print(np.hstack((bs, ba, badv)).shape)
                 queue_size.increment()
-                if counter_val >= args.min_batch_size:
+                if counter_val >= args.batch_size:
                     rolling_events[rank].clear()  # stop collecting data
                     update_events[rank].set()  # update policy adn value network
-                    print('counter is larger than min_batch_size', counter_val, queue_size.get())
+                    print('counter is larger than batch_size', counter_val, queue_size.get())
                     break
             # print(step)
 

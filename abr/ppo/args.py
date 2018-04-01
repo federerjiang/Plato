@@ -46,7 +46,6 @@ class Args:
         self.ent_coef = 0.
         self.num_epoch = 10
         self.num_steps = 100
-        self.min_batch_size = 64
         self.num_processes = 12
         self.update_steps = 20
         self.update_threshold = self.num_processes - 1
