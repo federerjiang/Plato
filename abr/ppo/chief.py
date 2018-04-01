@@ -14,9 +14,7 @@ def chief(args, actor, critic, update_events, rolling_events, state_queue, queue
         for rank in range(args.num_processes):
             update_events[rank].wait()  # wait while get batch of data
         actor_old = ActorModel()
-        critic_old = CriticModel()
         actor_old.load_state_dict(actor.state_dict())  # update old actor parameters
-        critic_old.load_state_dict(critic.state_dict())  # update old critic parameters
         print('chief queue_size:', queue_size.get())
         data = [queue.get() for _ in range(queue_size.get())]  # receive collected data from workers
         data = np.vstack(data)
@@ -31,19 +29,19 @@ def chief(args, actor, critic, update_events, rolling_events, state_queue, queue
         returns = Variable(torch.FloatTensor(returns))
         print(states.shape, actions.shape, returns.shape)
         batch_size = returns.shape[0]
-        values = critic(states, batch_size=batch_size)
-        advantages = returns - values
-        adv_mean = advantages.mean()
-        adv_std = advantages.std()
-        advantages = (advantages - adv_mean) / adv_std
         actions = Variable(torch.LongTensor(actions))
-        # advantages = Variable(torch.FloatTensor(advantages))
         print('chief get data')
         # print(states)
         # print(actions)
         # print(advantages)
         for _ in range(args.update_steps):
             # update actor and critic
+            values = critic(states, batch_size=batch_size)
+            advantages = returns - values
+            adv_mean = advantages.mean()
+            adv_std = advantages.std()
+            advantages = (advantages - adv_mean) / adv_std
+
             logit = actor(states, batch_size=batch_size)
             log_probs = F.log_softmax(logit)
             # print('log_probs', log_probs)
@@ -64,8 +62,8 @@ def chief(args, actor, critic, update_events, rolling_events, state_queue, queue
             critic_optimizer.zero_grad()
             actor_loss.backward(retain_graph=True)
             critic_loss.backward(retain_graph=True)
-            torch.nn.utils.clip_grad_norm(actor.parameters(), 0.5)
-            torch.nn.utils.clip_grad_norm(critic.parameters(), 0.5)
+            # torch.nn.utils.clip_grad_norm(actor.parameters(), 0.5)
+            # torch.nn.utils.clip_grad_norm(critic.parameters(), 0.5)
             actor_optimizer.step()
             critic_optimizer.step()
             print('update')
