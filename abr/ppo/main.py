@@ -9,8 +9,8 @@ from worker import worker
 from chief import chief
 from model import ActorModel, CriticModel
 from args import Args, LSTMPredict
-from abr.load_bw_traces import load_trace
-from abr.load_viewport_trace import load_viewport_unit
+# from abr.load_bw_traces import load_trace
+# from abr.load_viewport_trace import load_viewport_unit
 
 
 class Counter:
@@ -40,6 +40,12 @@ if __name__ == '__main__':
     os.environ['OMP_NUM_THREADS'] = '1'
     torch.set_num_threads(1)
 
+    import sys, inspect
+    current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+    parent_dir = os.path.dirname(current_dir)
+    sys.path.insert(0, parent_dir)
+    from load_bw_traces import load_trace
+    from load_viewport_trace import load_viewport_unit
     bw_trace_folder = '../../datasets/bw_trace/sim_belgium/'
     vp_trace_folder = '../../datasets/viewport_trace/new_cooked_train_dataset/'
     args = Args()
