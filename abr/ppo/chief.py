@@ -17,11 +17,11 @@ def chief(args, actor, critic, update_events, rolling_events, state_queue, queue
         actor_old = ActorModel()
         actor_old.load_state_dict(actor.state_dict())  # update old actor parameters
         print('chief queue_size:', queue_size.get())
-        # data = [queue.get() for _ in range(queue_size.get())]  # receive collected data from workers
-        data = [queue.get() for _ in range(queue.qsize())]
+        data = [queue.get() for _ in range(queue_size.get())]  # receive collected data from workers
+        # data = [queue.get() for _ in range(queue.qsize())]
         data = np.vstack(data)
-        # state_data = [state_queue.get() for _ in range(queue_size.get())]
-        state_data = [state_queue.get() for _ in range(state_queue.qsize())]
+        state_data = [state_queue.get() for _ in range(queue_size.get())]
+        # state_data = [state_queue.get() for _ in range(state_queue.qsize())]
         queue_size.reset()
         states = []
         for worker_states in state_data:
@@ -44,7 +44,7 @@ def chief(args, actor, critic, update_events, rolling_events, state_queue, queue
             adv_mean = advantages.mean()
             adv_std = advantages.std()
             advantages = (advantages - adv_mean) / adv_std
-
+            print('adv', values.mean())
             logit = actor(states, batch_size=batch_size)
             log_probs = F.log_softmax(logit)
             # print('log_probs', log_probs)
@@ -61,8 +61,10 @@ def chief(args, actor, critic, update_events, rolling_events, state_queue, queue
             actor_loss = -torch.min(surr1, surr2).mean()
             critic_loss = advantages.pow(2).mean()
             print('loss', actor_loss, critic_loss)
-            actor_optimizer.zero_grad()
-            critic_optimizer.zero_grad()
+            # actor_optimizer.zero_grad()
+            # critic_optimizer.zero_grad()
+            actor.zero_grad()
+            critic.zero_grad()
             actor_loss.backward(retain_graph=True)
             critic_loss.backward(retain_graph=True)
             torch.nn.utils.clip_grad_norm(actor.parameters(), 0.5)
