@@ -38,8 +38,8 @@ class Args:
 
         # model training parameters
         self.batch_size = 64
-        self.a_lr = 3e-6
-        self.c_lr = 1e-6
+        self.a_lr = 3e-4
+        self.c_lr = 1e-4
         self.gamma = 0.99
         self.gae = 0.95
         self.clip = 0.2
