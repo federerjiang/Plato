@@ -79,7 +79,7 @@ if __name__ == '__main__':
     processes = []
     p = mp.Process(target=chief, args=(args, actor_model_shared, critic_model_shared,
                                        update_events, rolling_events, state_queue, queue, counter, queue_size,
-                                       actor_optimizer, critic_optimizer))
+                                       ))
     p.start()
     processes.append(p)
     for rank in range(0, args.num_processes):
