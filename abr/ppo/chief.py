@@ -6,9 +6,10 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 
 
-def chief(args, actor, critic, update_events, rolling_events, state_queue, queue, counter, queue_size,
-          actor_optimizer, critic_optimizer):
+def chief(args, actor, critic, update_events, rolling_events, state_queue, queue, counter, queue_size):
     epoch = 0
+    actor_optimizer = optim.Adam(actor.parameters(), lr=args.a_lr)
+    critic_optimizer = optim.Adam(critic.parameters(), lr=args.c_lr)
     while True:
         epoch += 1
         for rank in range(args.num_processes):

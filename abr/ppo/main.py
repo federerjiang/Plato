@@ -58,8 +58,8 @@ if __name__ == '__main__':
     actor_model_shared.share_memory()
     critic_model_shared.share_memory()
 
-    actor_optimizer = optim.Adam(actor_model_shared.parameters(), lr=args.a_lr)
-    critic_optimizer = optim.Adam(critic_model_shared.parameters(), lr=args.c_lr)
+    # actor_optimizer = optim.Adam(actor_model_shared.parameters(), lr=args.a_lr)
+    # critic_optimizer = optim.Adam(critic_model_shared.parameters(), lr=args.c_lr)
 
     update_events = []
     rolling_events = []
