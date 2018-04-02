@@ -16,19 +16,26 @@ def worker(rank, args, model, update_events, rolling_events, state_queue, queue,
         env.reset()
         action = 144
         state, reward, done = env.step(action)
-        buffer_s, buffer_a, buffer_r, buffer_v = [], [], [], []
+        buffer_s, buffer_a, buffer_r, buffer_v, buffer_log = [], [], [], [], []
         # epoch += 1
         for step in range(args.num_steps):  # perform K steps.
             if not rolling_events[rank].is_set():  # while chief is updating
                 rolling_events[rank].wait()  # wait until chief finished updating
-                buffer_s, buffer_a, buffer_r, buffer_v = [], [], [], []
+                buffer_s, buffer_a, buffer_r, buffer_v, buffer_log = [], [], [], [], []
 
             # state = Variable(torch.Tensor(state).unsqueeze(0))
             state = Variable(torch.FloatTensor(state))
             logit, value = model(state.view(-1, 11, 8))
             prob = F.softmax(logit, dim=1)
+            log_probs = F.log_softmax(logit)
+
             # action = prob.multinomial().data
             _, action = torch.max(prob, 1)
+            # action = Variable(torch.LongTensor(action))
+            # action = action.view(1, -1)
+            print(action.shape, log_probs.shape)
+            action_log_prob = log_probs.gather(1, action.view(1, -1))
+
             action = action.data
             # print('state', state)
             # print('prob', prob)
@@ -41,6 +48,7 @@ def worker(rank, args, model, update_events, rolling_events, state_queue, queue,
             buffer_r.append(reward)
             buffer_a.append(action)
             buffer_v.append(value.data)
+            buffer_log.append(action_log_prob.data)
 
             counter.increment()
             counter_val = counter.get()
@@ -58,22 +66,23 @@ def worker(rank, args, model, update_events, rolling_events, state_queue, queue,
                     # print(value)
                 returns.reverse()
                 # print('buffer_v', buffer_v)
-                # np_v = np.array(buffer_v)
+                np_v = np.array(buffer_v)
                 # print(returns)
                 # print('returns', len(returns))
                 np_returns = np.array(returns)
 
-                # np_advantages = np_returns - np_v
+                np_advantages = np_returns - np_v
+                np_log = np.array(buffer_log)
                 # print('np_v', np_v)
                 # print('np_returns', np_returns)
                 # print('np_advantages', np_advantages)
-                ba, badv = np.vstack(buffer_a), np.vstack(np_returns)
+                ba, br, badv, blog = np.vstack(buffer_a), np.vstack(np_returns), np.vstack(np_advantages), np.vstack(np_log)
                 # print(bs)
                 # print(ba)
                 # print(badv)
                 state_queue.put(buffer_s)
-                queue.put(np.hstack((ba, badv)))  # put data in the queue
-                buffer_s, buffer_a, buffer_r, buffer_v = [], [], [], []
+                queue.put(np.hstack((ba, br, badv, blog)))  # put data in the queue
+                buffer_s, buffer_a, buffer_r, buffer_v, buffer_log = [], [], [], [], []
                 # print(np.hstack((bs, ba, badv)).shape)
                 queue_size.increment()
                 if counter_val >= args.batch_size:

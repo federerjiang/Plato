@@ -37,7 +37,8 @@ class Args:
         self.video_bitrate = [180, 150, 120, 90, 60]  # for each tile, in Kbp/s
 
         # model training parameters
-        self.batch_size = 64
+        self.batch_size = 16
+        self.num_mini_batch = 4
         self.a_lr = 3e-4
         self.c_lr = 1e-4
         self.gamma = 0.99
@@ -46,7 +47,7 @@ class Args:
         self.ent_coef = 0.
         self.num_epoch = 10
         self.num_steps = 100
-        self.num_processes = 2
+        self.num_processes = 1
         self.update_steps = 20
         self.update_threshold = self.num_processes - 1
         self.max_episode_length = 100
