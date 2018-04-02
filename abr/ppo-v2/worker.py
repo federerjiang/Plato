@@ -33,7 +33,7 @@ def worker(rank, args, model, update_events, rolling_events, state_queue, queue,
             _, action = torch.max(prob, 1)
             # action = Variable(torch.LongTensor(action))
             # action = action.view(1, -1)
-            print(action.shape, log_probs.shape)
+            # print(action.shape, log_probs.shape)
             action_log_prob = log_probs.gather(1, action.view(1, -1))
 
             action = action.data
