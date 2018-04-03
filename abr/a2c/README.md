@@ -1,1 +1,1 @@
-Advantage Actor Critic (A2C), a synchronous deterministic version of [A3C](https://arxiv.org/pdf/1602.01783v1.pdf)
+Proximal Policy Optimization [PPO](https://arxiv.org/pdf/1707.06347.pdf)
