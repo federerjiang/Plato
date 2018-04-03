@@ -382,7 +382,7 @@ class Environment:
                  - self.args.blank_penalty * blank_ratio
 
         self.last_real_vp_bitrate = real_vp_bitrate
-
+        print('action: ', action)
         print('action: ', vp_quality, ad_quality, out_quality)
         # print('buffer size:', self.buffer_size)
         print('rebuffer time: ', rebuf)
