@@ -375,7 +375,7 @@ class Environment:
 
         # reward is video quality (Mbps) - rebuffer penalty - smooth penalty - spatial variance - blank tiles percentage
         # the reward function is not complete now, needed to be modified later
-        reward = self.quality_penalty * real_vp_bitrate \
+        reward = self.args.quality_penalty * real_vp_bitrate \
                  - self.args.rebuf_penalty * rebuf / 1000 \
                  - self.args.smooth_penalty * np.abs(real_vp_bitrate - self.last_real_vp_bitrate) \
                  - self.args.cv_penalty * cv \

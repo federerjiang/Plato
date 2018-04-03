@@ -44,7 +44,7 @@ def worker(rank, args, model, update_events, rolling_events, state_queue, queue,
             # print('action', action)
             state, reward, done = env.step(action.numpy()[0])
             print('action: ', action.numpy()[0])
-            print('state: ', state)
+            # print('state: ', state)
             # ep_r += reward
             # print(reward)
 

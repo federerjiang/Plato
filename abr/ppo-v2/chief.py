@@ -17,7 +17,7 @@ def chief(args, model, update_events, rolling_events, state_queue, queue, counte
         mini_batch_size = int(batch_size / num_mini_batch)
         # sampler = BatchSampler(SubsetRandomSampler(range(batch_size)), mini_batch_size, drop_last=True)
         indices = np.arange(0, num_mini_batch, 1) * mini_batch_size
-        print('indices', indices)
+        # print('indices', indices)
         for indice in indices:
             # indices = torch.LongTensor(indices)
             state_batch = states[indice: indice + mini_batch_size]
@@ -37,7 +37,7 @@ def chief(args, model, update_events, rolling_events, state_queue, queue, counte
             update_events[rank].wait()  # wait while get batch of data
         model_old = Model()
         model_old.load_state_dict(model.state_dict())  # update old actor parameters
-        print('chief queue_size:', queue_size.get())
+        # print('chief queue_size:', queue_size.get())
         data = [queue.get() for _ in range(queue_size.get())]  # receive collected data from workers
         # data = [queue.get() for _ in range(queue.qsize())]
         data = np.vstack(data)
