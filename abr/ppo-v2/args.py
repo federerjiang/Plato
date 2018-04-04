@@ -15,9 +15,9 @@ class Args:
         self.tile_row = 6
         self.buffer_thresh = 3000.0  # max video length in buffer (3 segments)
         self.buffer_norm_factor = 3.0  # used for reward function
-        self.quality_penalty = 1.0
+        self.quality_penalty = 0.0
         self.rebuf_penalty = 0
-        self.smooth_penalty = 0.0
+        self.smooth_penalty = 1.0
         self.cv_penalty = 0.0
         self.blank_penalty = 0.0
         self.drain_buffer_sleep_time = 500.0  # milliseconds
@@ -38,8 +38,8 @@ class Args:
         self.video_bitrate = [180, 150, 120, 90, 60]  # for each tile, in Kbp/s
 
         # model training parameters
-        self.batch_size = 640
-        self.num_mini_batch = 64
+        self.batch_size = 128
+        self.num_mini_batch = 32
         self.a_lr = 3e-4
         self.c_lr = 1e-4
         self.gamma = 0.99
@@ -48,7 +48,7 @@ class Args:
         self.ent_coef = 0.
         self.num_epoch = 10
         self.num_steps = 100
-        self.num_processes = 10
+        self.num_processes = 4
         self.max_episode_length = 100
         self.seed = 30
 
