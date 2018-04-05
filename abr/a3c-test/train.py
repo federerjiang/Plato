@@ -7,6 +7,14 @@ from env import create_atari_env
 from model import ActorCritic
 
 
+def ensure_shared_grads(model, shared_model):
+    for param, shared_param in zip(model.parameters(),
+                                   shared_model.parameters()):
+        if shared_param.grad is not None:
+            return
+        shared_param._grad = param.grad
+
+
 def train(rank, args, share_model, counter, lock):
     torch.manual_seed(args.seed + rank)
 
@@ -95,5 +103,6 @@ def train(rank, args, share_model, counter, lock):
         optimizer.zero_grad()
         (policy_loss + args.value_loss_coef * value_loss).backward()
         torch.nn.utils.clip_grad_norm(model.parameters(), args.max_grad_norm)
+        ensure_shared_grads(model, share_model)
         optimizer.step()
         # break
