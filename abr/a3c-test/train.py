@@ -67,6 +67,7 @@ def train(rank, args, share_model, counter, lock):
             rewards.append(reward)
 
             if done:
+                print('rank: ', rank)
                 print('reward: ', reward_sum)
                 reward_sum = 0
                 break
