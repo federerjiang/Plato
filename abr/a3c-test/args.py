@@ -1,6 +1,6 @@
 class Args:
     def __init__(self):
-        self.env = 'PongDeterministic-v4'
+        self.env = 'PongDeterministic-v3'
         self.lr = 0.0001
         self.gamma = 0.99
         self.tau = 1.00
