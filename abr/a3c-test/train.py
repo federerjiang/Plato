@@ -20,7 +20,7 @@ def train(rank, args, share_model, counter, lock):
     state = env.reset()
     state = torch.FloatTensor(state)
     done = True
-    reward_sum = 0
+    # reward_sum = 0
     episode_length = 0
     while True:
         model.load_state_dict(share_model.state_dict())
@@ -51,7 +51,7 @@ def train(rank, args, share_model, counter, lock):
             # print('reward', reward)
             done = done or episode_length >= args.max_episode_length
             reward = max(min(reward, 1), -1)
-            reward_sum += reward
+            # reward_sum += reward
             # print(reward)
 
             with lock:

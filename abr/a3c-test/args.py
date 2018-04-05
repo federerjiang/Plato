@@ -8,7 +8,7 @@ class Args:
         self.value_loss_coef = 0.5
         self.max_grad_norm = 50
         self.seed = 1
-        self.num_processes = 12
+        self.num_processes = 24
         self.num_steps = 20000
         self.max_episode_length = 1000000
         self.no_shared = False
