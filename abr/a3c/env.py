@@ -239,7 +239,7 @@ class Environment:
         ad_bitrate = self.args.video_bitrate[ad] if ad >= 0 else 0
         out_bitrate = self.args.video_bitrate[out] if out >= 0 else 0
         real_vp_bitrate = vp_count * vp_bitrate + ad_count * ad_bitrate + out_count * out_bitrate
-        print(vp_count, ad_count, out_count)
+        # print(vp_count, ad_count, out_count)
 
         # get accuracy
         total_count = vp_count + ad_count + out_count
@@ -382,19 +382,19 @@ class Environment:
                  - self.args.blank_penalty * blank_ratio
 
         self.last_real_vp_bitrate = real_vp_bitrate
-        print('action: ', action)
-        print('action: ', vp_quality, ad_quality, out_quality)
+        # print('action: ', action)
+        # print('action: ', vp_quality, ad_quality, out_quality)
         # print('buffer size:', self.buffer_size)
-        print('rebuffer time: ', rebuf)
-        print('cv ', cv)
-        print('blank ', blank_ratio)
+        # print('rebuffer time: ', rebuf)
+        # print('cv ', cv)
+        # print('blank ', blank_ratio)
         # print('delay', delay)
-        print('real vp bitrate: ', real_vp_bitrate)
-        print('reward: ', reward)
+        # print('real vp bitrate: ', real_vp_bitrate)
+        # print('reward: ', reward)
 
         # print('state:', self.state)
-        print('')
-        return self.state, reward, done
+        # print('')
+        return self.state, reward, done, (action, vp_quality, ad_quality, out_quality, rebuf, cv, blank_ratio, reward)
 
     def reset(self):
         self.buffer_size = 0

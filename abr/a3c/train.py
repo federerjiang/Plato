@@ -50,7 +50,7 @@ def train(rank, args, share_model, counter, lock,
             _, action = torch.max(prob, 1)
             log_prob = log_prob.gather(1, action.view(1, -1))
 
-            state, reward, done = env.step(action.data.numpy()[0])
+            state, reward, done, _ = env.step(action.data.numpy()[0])
             # print('reward', reward)
             done = done or episode_length >= args.max_episode_length
             # reward = max(min(reward, 1), -1)
@@ -100,5 +100,5 @@ def train(rank, args, share_model, counter, lock,
         torch.nn.utils.clip_grad_norm(model.parameters(), args.max_grad_norm)
         ensure_shared_grads(model, share_model)
         optimizer.step()
-        print('update loss', rank)
+        print('update', rank)
         # break

@@ -37,7 +37,8 @@ def test(rank, args, shared_model, counter,
         logit, value = model(state.view(-1, 11, 8))
         prob = F.softmax(logit, dim=1)
         _, action = torch.max(prob, 1)
-        state, reward, done = env.step(action.data.numpy()[0])
+        state, reward, done, (action, vp_quality, ad_quality, out_quality, rebuf, cv, blank_ratio, reward) \
+            = env.step(action.data.numpy()[0])
         done = done or episode_length >= args.max_episode_length
         done = True
         reward_sum = reward
@@ -47,10 +48,13 @@ def test(rank, args, shared_model, counter,
         #     done = True
 
         if done:
-            print("Time {}, num steps {}, FPS {:.0f}, episode reward {}, episode length {}".format(
+            print("Time {}, action {}, ({},{},{}), rebuf {:.3f}, cv {:.3f}, black_ratio {:.3f}, reward {:.3f}".format(
                 time.strftime("%Hh %Mm %Ss", time.gmtime(time.time() - state_time)),
-                counter.value, counter.value / (time.time() - state_time),
-                reward_sum, episode_length))
+                action, vp_quality, ad_quality, out_quality, rebuf, cv, blank_ratio,
+                reward_sum))
+            # print('Time {}'.format(time.strftime("%Hh %Mm %Ss", time.gmtime(time.time() - state_time))))
+            # print('time: ', time.gmtime(time.time() - state_time))
+
             episode_length = 0
             actions.clear()
             state = env.reset()
