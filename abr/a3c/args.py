@@ -52,7 +52,7 @@ class Args:
         self.tau = 1.00
         self.entropy_coef = 0.01
         self.value_loss_coef = 0.5
-        self.max_grad_norm = 50
+        self.max_grad_norm = 5
         self.seed = 1
         self.num_processes = 10
         self.num_steps = 20000
