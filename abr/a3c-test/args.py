@@ -2,7 +2,7 @@ class Args:
     def __init__(self):
         self.env = 'PongDeterministic-v4'  # BreakoutDeterministic-v4
         # self.env = 'BreakoutDeterministic-v4'
-        self.lr = 0.0001
+        self.lr = 1e-5
         self.gamma = 0.99
         self.tau = 1.00
         self.entropy_coef = 0.01
