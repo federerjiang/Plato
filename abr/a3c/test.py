@@ -1,0 +1,57 @@
+import time
+from collections import deque
+
+import torch
+import torch.nn.functional as F
+from torch.autograd import Variable
+
+from env import Environment
+from model import ActorCritic
+
+
+def test(rank, args, shared_model, counter,
+         all_cooked_time, all_cooked_bw, all_vp_time, all_vp_unit):
+    torch.manual_seed(args.seed + rank)
+
+    env = Environment(args, all_cooked_time, all_cooked_bw, all_vp_time, all_vp_unit, random_seed=args.seed + rank)
+
+    model = ActorCritic()
+
+    model.eval()
+
+    state = env.reset()
+    reward_sum = 0
+    done = True
+
+    state_time = time.time()
+
+    actions = deque(maxlen=100)
+    episode_length = 0
+
+    while True:
+        episode_length += 1
+        if done:
+            model.load_state_dict(shared_model.state_dict())
+
+        state = Variable(torch.FloatTensor(state))
+        logit, value = model(state.view(-1, 11, 8))
+        prob = F.softmax(logit, dim=1)
+        _, action = torch.max(prob, 1)
+        state, reward, done = env.step(action.data.numpy()[0])
+        done = done or episode_length >= args.max_episode_length
+        done = True
+        reward_sum = reward
+
+        # actions.append(action[0, 0])
+        # if actions.count(actions[0]) >= actions.maxlen:
+        #     done = True
+
+        if done:
+            print("Time {}, num steps {}, FPS {:.0f}, episode reward {}, episode length {}".format(
+                time.strftime("%Hh %Mm %Ss", time.gmtime(time.time() - state_time)),
+                counter.value, counter.value / (time.time() - state_time),
+                reward_sum, episode_length))
+            episode_length = 0
+            actions.clear()
+            state = env.reset()
+            time.sleep(1)
