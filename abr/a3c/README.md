@@ -1,1 +1,0 @@
-Asynchronous Advantage Actor Critic [A3C](https://arxiv.org/pdf/1602.01783v1.pdf)
