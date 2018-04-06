@@ -27,7 +27,7 @@ def test(rank, args, shared_model, counter,
 
     actions = deque(maxlen=100)
     episode_length = 0
-    log = open('log.txt', 'r+b')
+    log = open('log.txt', 'r+')
     while True:
         episode_length += 1
         if done:
