@@ -22,7 +22,7 @@ def train(rank, args, share_model, counter, lock):
     env.seed(args.seed + rank)
 
     model = ActorCritic(env.observation_space.shape[0], env.action_space)
-    optimizer = optim.Adam(model.parameters(), lr=args.lr)
+    optimizer = optim.Adam(share_model.parameters(), lr=args.lr)
     model.train()
 
     state = env.reset()
