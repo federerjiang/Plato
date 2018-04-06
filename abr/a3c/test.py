@@ -27,7 +27,7 @@ def test(rank, args, shared_model, counter,
 
     actions = deque(maxlen=100)
     episode_length = 0
-
+    log = open('log.txt', 'w')
     while True:
         episode_length += 1
         if done:
@@ -52,6 +52,9 @@ def test(rank, args, shared_model, counter,
                 time.strftime("%Hh %Mm %Ss", time.gmtime(time.time() - state_time)),
                 action, vp_quality, ad_quality, out_quality, rebuf, cv, blank_ratio,
                 reward_sum, episode_length))
+            log.write('action: ' + str(action) + ' (' + str(vp_quality) + ',' + str(ad_quality) + ',' + str(out_quality)
+                      + ') rebuf: ' + str(rebuf) + ' black_ratio: ' + str(blank_ratio) + ' reward: ' + str(reward)
+                      + ' episode: ' + str(episode_length) + '\n')
             # print('Time {}'.format(time.strftime("%Hh %Mm %Ss", time.gmtime(time.time() - state_time))))
             # print('time: ', time.gmtime(time.time() - state_time))
             if episode_length % 100 == 0:
