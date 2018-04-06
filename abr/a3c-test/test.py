@@ -28,6 +28,7 @@ def test(rank, args, shared_model, counter):
 
     actions = deque(maxlen=100)
     episode_length = 0
+
     while True:
         episode_length += 1
         if done:
