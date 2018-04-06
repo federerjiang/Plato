@@ -48,14 +48,18 @@ def test(rank, args, shared_model, counter,
         #     done = True
 
         if done:
-            print("Time {}, action {}, ({},{},{}), rebuf {:.3f}, cv {:.3f}, black_ratio {:.3f}, reward {:.3f}".format(
+            print("Time {}, action {}, ({},{},{}), rebuf {:.3f}, cv {:.3f}, black_ratio {:.3f}, reward {:.3f}, episode {}".format(
                 time.strftime("%Hh %Mm %Ss", time.gmtime(time.time() - state_time)),
                 action, vp_quality, ad_quality, out_quality, rebuf, cv, blank_ratio,
-                reward_sum))
+                reward_sum, episode_length))
             # print('Time {}'.format(time.strftime("%Hh %Mm %Ss", time.gmtime(time.time() - state_time))))
             # print('time: ', time.gmtime(time.time() - state_time))
+            if episode_length % 100 == 0:
+                path = 'results/actor.pt-' + str(episode_length / 100)
+                torch.save(model.state_dict(), path)
+                print('saved one model in epoch:', episode_length)
 
-            episode_length = 0
+            # episode_length = 0
             actions.clear()
             state = env.reset()
             time.sleep(1)
