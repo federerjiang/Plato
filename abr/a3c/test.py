@@ -66,4 +66,4 @@ def test(rank, args, shared_model, counter,
             # episode_length = 0
             actions.clear()
             state = env.reset()
-            time.sleep(5)
+            # time.sleep(5)
