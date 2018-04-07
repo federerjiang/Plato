@@ -16,7 +16,7 @@ class Args:
         self.buffer_thresh = 3000.0  # max video length in buffer (3 segments)
         self.buffer_norm_factor = 3.0  # used for reward function
         self.quality_penalty = 1
-        self.rebuf_penalty = 0
+        self.rebuf_penalty = 10
         self.smooth_penalty = 0.0
         self.cv_penalty = 0.0
         self.blank_penalty = 0.0
@@ -52,7 +52,7 @@ class Args:
         self.tau = 1.00
         self.entropy_coef = 0.01
         self.value_loss_coef = 0.5
-        self.max_grad_norm = 5
+        self.max_grad_norm = 1
         self.seed = 1
         self.num_processes = 10
         self.num_steps = 20000
