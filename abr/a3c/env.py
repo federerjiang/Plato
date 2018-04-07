@@ -58,6 +58,12 @@ class Environment:
 
         self.last_real_vp_bitrate = 1  # should be the default quality for viewport
 
+        # normalize state
+        self.state_mean = 0
+        self.state_std = 0
+        self.alpha = 0.999
+        self.num_steps = 0
+
     def _init_vp_history(self):
         self.vp_idx = np.random.randint(len(self.all_vp_time))
         self.vp_time = self.all_vp_time[self.vp_idx]
@@ -373,6 +379,14 @@ class Environment:
         self.state[9, -1] = ad_acc  # pred_ad accuracy
         self.state[10, -1] = out_acc  # pred_out accuracy
 
+        # normalize state
+        self.num_steps += 1
+        self.state_mean = self.state_mean * self.alpha + self.state.mean() * (1 - self.alpha)
+        self.state_std = self.state_std * self.alpha + self.state.mean() * (1 - self.alpha)
+        unbiased_mean = self.state_mean / (1 - pow(self.alpha, self.num_steps))
+        unbiased_std = self.std / (1 - pow(self.alpha, self.num_steps))
+        self.state = (self.state - unbiased_mean) / (unbiased_std + 1e-8)
+
         # reward is video quality (Mbps) - rebuffer penalty - smooth penalty - spatial variance - blank tiles percentage
         # the reward function is not complete now, needed to be modified later
         reward = self.args.quality_penalty * real_vp_bitrate \
@@ -415,6 +429,13 @@ class Environment:
         self.vp_history = self._init_vp_history()
         self.pred_tile_map = self._update_tile_map([[0.0, 0.0, 0.0]])
         self.real_tile_map = self._update_tile_map([[0.0, 0.0, 0.0]])
+
+        # normalize state
+        self.state_mean = 0
+        self.state_std = 0
+        self.alpha = 0.999
+        self.num_steps = 0
+
         return self.state
 
     @staticmethod
