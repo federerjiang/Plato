@@ -384,7 +384,7 @@ class Environment:
         self.state_mean = self.state_mean * self.alpha + self.state.mean() * (1 - self.alpha)
         self.state_std = self.state_std * self.alpha + self.state.mean() * (1 - self.alpha)
         unbiased_mean = self.state_mean / (1 - pow(self.alpha, self.num_steps))
-        unbiased_std = self.std / (1 - pow(self.alpha, self.num_steps))
+        unbiased_std = self.state_std / (1 - pow(self.alpha, self.num_steps))
         self.state = (self.state - unbiased_mean) / (unbiased_std + 1e-8)
 
         # reward is video quality (Mbps) - rebuffer penalty - smooth penalty - spatial variance - blank tiles percentage
