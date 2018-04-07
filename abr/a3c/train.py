@@ -26,6 +26,7 @@ def train(rank, args, share_model, counter, lock,
     model.train()
 
     state = env.reset()
+    state = Variable(torch.FloatTensor(state))
     done = True
     # reward_sum = 0
     episode_length = 0
@@ -39,7 +40,6 @@ def train(rank, args, share_model, counter, lock,
 
         for step in range(args.num_steps):
             episode_length += 1
-            state = Variable(torch.FloatTensor(state))
             logit, value = model(state.view(-1, 11, 8))
             prob = F.softmax(logit, dim=1)
             log_prob = F.log_softmax(logit, dim=1)
@@ -51,6 +51,7 @@ def train(rank, args, share_model, counter, lock,
             log_prob = log_prob.gather(1, action.view(1, -1))
 
             state, reward, done, _ = env.step(action.data.numpy()[0])
+            state = Variable(torch.FloatTensor(state))
             # print('reward', reward)
             done = done or episode_length >= args.max_episode_length
             # reward = max(min(reward, 1), -1)
@@ -63,6 +64,7 @@ def train(rank, args, share_model, counter, lock,
             if done:
                 episode_length = 0
                 state = env.reset()
+                state = Variable(torch.FloatTensor(state))
 
             # state = torch.FloatTensor(state)
             values.append(value)
@@ -77,7 +79,6 @@ def train(rank, args, share_model, counter, lock,
 
         R = torch.zeros(1, 1)
         if not done:
-            state = Variable(torch.FloatTensor(state))
             logit, value = model(state.view(-1, 11, 8))
             R = value.data
 
