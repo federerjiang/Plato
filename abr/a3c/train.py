@@ -77,7 +77,7 @@ def train(rank, args, share_model, counter, lock,
 
         R = torch.zeros(1, 1)
         if not done:
-            logit, value, _ = model(Variable(torch.FloatTensor(state)))
+            logit, value, _ = model(Variable(torch.FloatTensor(state)).view(-1, 11, 8))
             R = value.data
 
         values.append(Variable(R))
