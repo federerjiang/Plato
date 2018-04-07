@@ -69,7 +69,7 @@ def train(rank, args, share_model, counter, lock,
             log_probs.append(log_prob)
             rewards.append(reward)
 
-            if done:
+            if done or episode_length == args.max_update_step:
                 # print('rank: ', rank)
                 # print('reward: ', reward_sum)
                 # reward_sum = 0
