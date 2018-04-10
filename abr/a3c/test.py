@@ -36,10 +36,12 @@ def test(rank, args, shared_model, counter,
         state = Variable(torch.FloatTensor(state))
         logit, value = model(state.view(-1, 11, 8))
         prob = F.softmax(logit, dim=1)
-        # _, action = torch.max(prob, 1)
-        action = prob.multinomial()
+        _, action = torch.max(prob, 1)
         state, reward, done, (action, vp_quality, ad_quality, out_quality, rebuf, cv, blank_ratio, reward) \
-            = env.step(action.data.numpy()[0][0])
+            = env.step(action.data.numpy()[0])
+        # action = prob.multinomial()
+        # state, reward, done, (action, vp_quality, ad_quality, out_quality, rebuf, cv, blank_ratio, reward) \
+        #     = env.step(action.data.numpy()[0][0])
         done = done or episode_length >= args.max_episode_length
         done = True
         reward_sum = reward

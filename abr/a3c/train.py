@@ -47,7 +47,10 @@ def train(rank, args, share_model, counter, lock,
             entropies.append(entropy)
 
             action = prob.multinomial()
-            # _, action = torch.max(prob, 1)
+            # print(prob)
+            # action_value, action = torch.max(prob, 1)
+            # print(action, action_value)
+            # state, reward, done, _ = env.step(action.data.numpy()[0])
             log_prob = log_prob.gather(1, action.view(1, -1))
             # print('action: ', action)
             # print(action.data.numpy()[0][0])
