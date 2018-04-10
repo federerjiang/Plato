@@ -49,8 +49,9 @@ def train(rank, args, share_model, counter, lock,
             action = prob.multinomial()
             # _, action = torch.max(prob, 1)
             log_prob = log_prob.gather(1, action.view(1, -1))
-
-            state, reward, done, _ = env.step(action.data.numpy()[0])
+            # print('action: ', action)
+            # print(action.data.numpy()[0][0])
+            state, reward, done, _ = env.step(action.data.numpy()[0][0])
             state = Variable(torch.FloatTensor(state))
             # print('reward', reward)
             done = done or episode_length >= args.max_episode_length
