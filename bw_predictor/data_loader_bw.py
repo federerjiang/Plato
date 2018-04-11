@@ -11,7 +11,7 @@ TEST_DATASET = BW_TRACE + 'test_sim_traces/'
 
 
 class TrainDataLoader:
-    def __init__(self, args, trace_folder=TRAIN_DATASET, random_seed=14):
+    def __init__(self, args, trace_folder=TRAIN_DATASET_BK, random_seed=14):
         np.random.seed(random_seed)
 
         self.label_sample_length = args.label_sample_length
