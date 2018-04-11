@@ -104,7 +104,7 @@ def try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoc, count_ma
             model = BWPredict(input_size=TAG_SIZE, hidden_size=hidden_size, num_layers=num_layers, tag_size=TAG_SIZE)
             train_model(model, learning_rate=0.0001, data_loader=data_loader, epoch=epoc, count_max=count_max)
             print("finished training")
-            model_name = 'adam-bw-e-5' + str(hidden_size) + '-' + str(num_layers) + '.model'
+            model_name = 'adam-bw-e-5-' + str(hidden_size) + '-' + str(num_layers) + '.model'
             # loss_name = 'loss-' + str(hidden_size) + '-' + str(num_layers) + '.dat'
             torch.save(model, model_name)
             print('saved model: ' + model_name)
@@ -118,7 +118,7 @@ if __name__ == "__main__":
     cuda_data_loader = CudaTrainLoader(args, data_loader)
     # hidden_size_list = [128, 256, 512]
     # num_layer_list = [1, 2]
-    hidden_size_list = [128]
-    num_layer_list = [1]
+    hidden_size_list = [64, 128]
+    num_layer_list = [1, 2]
     try_hyper_para(hidden_size_list, num_layer_list, cuda_data_loader, epoc=10, count_max=50000)
 
