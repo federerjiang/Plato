@@ -33,7 +33,7 @@ class TrainDataLoader:
                 with open(trace_file, 'r') as f:
                     for line in f:
                         parse = line.split()
-                        bw.append(float(parse[1]) / 10)
+                        bw.append(float(parse[1]))
                 if len(bw) > 50:
                     all_bw.append(bw)
         return all_bw

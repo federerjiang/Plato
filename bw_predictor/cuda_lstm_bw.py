@@ -47,7 +47,7 @@ class BWPredict(nn.Module):
 
     def forward(self, inputs):
         lstm_out, self.hidden = self.lstm(inputs, self.hidden)
-        tag_scores = F.tanh(self.lstm2tag(lstm_out.contiguous().view(-1, self.hidden_size)))
+        tag_scores = self.lstm2tag(lstm_out.contiguous().view(-1, self.hidden_size))
         return tag_scores.view(-1, self.tag_size)
 
 
