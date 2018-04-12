@@ -21,7 +21,7 @@ class ActorCritic(nn.Module):
         self.a_fc9 = nn.Linear(1, 128)
         self.a_fc10 = nn.Linear(1, 128)
         self.a_fc = nn.Linear(21*128, 128)
-        self.a_actor_linear = nn.Linear(128, self.a_dim)
+        self.a_actor_linear = nn.Softmax(nn.Linear(128, self.a_dim))
 
         # critic model
         self.c_fc0 = nn.Linear(1, 128)
