@@ -35,6 +35,7 @@ def test(rank, args, shared_model, counter,
         if done or load:
             model.load_state_dict(shared_model.state_dict())
             load = False
+            print('update model parameters')
 
         state = Variable(torch.FloatTensor(state))
         # print('state', state)
@@ -48,7 +49,7 @@ def test(rank, args, shared_model, counter,
         #     = env.step(action.data.numpy()[0][0])
         # update = done or episode_length >= args.max_episode_length
         update = True
-        load = episode_length >= args.max_episode_length
+        load = (episode_length % args.max_episode_length == 0)
         reward_sum = reward
 
         # actions.append(action[0, 0])
