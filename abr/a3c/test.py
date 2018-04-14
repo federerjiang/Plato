@@ -27,6 +27,7 @@ def test(rank, args, shared_model, counter,
 
     actions = deque(maxlen=100)
     episode_length = 0
+    update = False
     # log = open('log-2.txt', 'w')
     while True:
         episode_length += 1
@@ -34,6 +35,7 @@ def test(rank, args, shared_model, counter,
             model.load_state_dict(shared_model.state_dict())
 
         state = Variable(torch.FloatTensor(state))
+        # print('state', state)
         logit, value = model(state.view(-1, 11, 8))
         prob = F.softmax(logit, dim=1)
         _, action = torch.max(prob, 1)
@@ -42,15 +44,15 @@ def test(rank, args, shared_model, counter,
         # action = prob.multinomial()
         # state, reward, done, (action, vp_quality, ad_quality, out_quality, rebuf, cv, blank_ratio, reward) \
         #     = env.step(action.data.numpy()[0][0])
-        done = done or episode_length >= args.max_episode_length
-        done = True
+        # update = done or episode_length >= args.max_episode_length
+        update = True
         reward_sum = reward
 
         # actions.append(action[0, 0])
         # if actions.count(actions[0]) >= actions.maxlen:
         #     done = True
 
-        if done:
+        if update:
             print("Time {}, action {}, ({},{},{}), rebuf {:.3f}, cv {:.3f}, black_ratio {:.3f}, reward {:.3f}, episode {}".format(
                 time.strftime("%Hh %Mm %Ss", time.gmtime(time.time() - state_time)),
                 action, vp_quality, ad_quality, out_quality, rebuf, cv, blank_ratio,
@@ -68,5 +70,6 @@ def test(rank, args, shared_model, counter,
 
             # episode_length = 0
             actions.clear()
-            state = env.reset()
             time.sleep(1)
+        if done:
+            state = env.reset()

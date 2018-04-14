@@ -121,7 +121,7 @@ def try_hyper_para(hidden_size_list, num_layer_list, data_loader, epoc, count_ma
             # print('saved loss data: ' + loss_name)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  
     args = Args()
     data_loader = TrainDataLoader(args)
     cuda_data_loader = CudaTrainLoader(args, data_loader)

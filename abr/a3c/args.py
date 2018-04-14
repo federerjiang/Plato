@@ -40,7 +40,7 @@ class Args:
         # model training parameters
         self.batch_size = 1280
         self.num_mini_batch = 20
-        self.max_update_step = 5
+        self.max_update_step = 8
         self.lr = 1e-4
         self.a_lr = 3e-4
         self.c_lr = 1e-4
@@ -55,9 +55,9 @@ class Args:
         self.value_loss_coef = 0.5
         self.max_grad_norm = 1
         self.seed = 1
-        self.num_processes = 10
+        self.num_processes = 16
         self.num_steps = 20000
-        self.max_episode_length = 1000000
+        self.max_episode_length = 1
         self.seed = 30
 
 

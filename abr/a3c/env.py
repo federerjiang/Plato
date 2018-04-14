@@ -466,17 +466,17 @@ if __name__ == "__main__":
     actor = ActorModel()
     critic = CriticModel()
     print(actor)
-    tag = 1
+    tag = 10
     while tag > 0:
         action = env.sample_action()
         print('action', action)
-        state, reward, done = env.step(action)
-        print(state.shape)
+        state, reward, done, _ = env.step(action)
+        print(state)
         inputs = Variable(torch.FloatTensor([state, state]).view(-1, 11, 8))
         # logit = actor(inputs)
         # print(logit.shape)
-        v = critic(inputs)
-        print(v)
+        # v = critic(inputs)
+        # print(v)
         # print(inputs.shape)
         # out = fc(inputs[:, 0:1, -1])
         # print('linear:', out.shape)
