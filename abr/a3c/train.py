@@ -106,5 +106,5 @@ def train(rank, args, share_model, counter, lock,
         torch.nn.utils.clip_grad_norm(model.parameters(), args.max_grad_norm)
         ensure_shared_grads(model, share_model)
         optimizer.step()
-        print('update', rank)
+        # print('update', rank)
         # break
