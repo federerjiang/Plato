@@ -66,11 +66,11 @@ def test(rank, args, shared_model, counter,
             #           + ' episode: ' + str(episode_length) + '\n')
             # print('Time {}'.format(time.strftime("%Hh %Mm %Ss", time.gmtime(time.time() - state_time))))
             # print('time: ', time.gmtime(time.time() - state_time))
-            if episode_length % 1000 == 0:
-                pass
-                # path = 'results-2/actor.pt-' + str(episode_length / 1000)
-                # torch.save(model.state_dict(), path)
-                # print('saved one model in epoch:', episode_length)
+            if episode_length % 500 == 0:
+                # pass
+                path = 'results-2/actor.pt-' + str(episode_length)
+                torch.save(model.state_dict(), path)
+                print('saved one model in epoch:', episode_length)
 
             # episode_length = 0
             actions.clear()
