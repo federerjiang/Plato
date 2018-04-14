@@ -40,7 +40,7 @@ class Args:
         # model training parameters
         self.batch_size = 1280
         self.num_mini_batch = 20
-        self.max_update_step = 8
+        self.max_update_step = 5
         self.lr = 1e-4
         self.a_lr = 3e-4
         self.c_lr = 1e-4
