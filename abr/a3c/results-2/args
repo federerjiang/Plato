@@ -1,0 +1,7 @@
+self.quality_penalty = 1
+        self.rebuf_penalty = 8
+        self.smooth_penalty = 1.0
+        self.cv_penalty = 3.0
+        self.blank_penalty = 1.0
+        self.max_update_step = 4
+        self.lr = 1e-4
