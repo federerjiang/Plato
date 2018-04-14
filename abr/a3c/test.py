@@ -66,7 +66,7 @@ def test(rank, args, shared_model, counter,
             #           + ' episode: ' + str(episode_length) + '\n')
             # print('Time {}'.format(time.strftime("%Hh %Mm %Ss", time.gmtime(time.time() - state_time))))
             # print('time: ', time.gmtime(time.time() - state_time))
-            if episode_length % 10 == 0:
+            if episode_length % 500 == 0:
                 # pass
                 path = 'results/actor.pt-' + str(episode_length)
                 torch.save(model.state_dict(), path)
