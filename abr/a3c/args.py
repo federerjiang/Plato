@@ -51,13 +51,13 @@ class Args:
         self.lr = 1e-4
         self.gamma = 0.99
         self.tau = 1.00
-        self.entropy_coef = 0.5
+        self.entropy_coef = 1
         self.value_loss_coef = 0.5
         self.max_grad_norm = 1
         self.seed = 1
         self.num_processes = 16
         self.num_steps = 20000
-        self.max_episode_length = 10
+        self.max_episode_length = 5
         self.seed = 30
 
 
