@@ -57,7 +57,7 @@ class Args:
         self.seed = 1
         self.num_processes = 16
         self.num_steps = 20000
-        self.max_episode_length = 20
+        self.max_episode_length = 10
         self.seed = 30
 
 
