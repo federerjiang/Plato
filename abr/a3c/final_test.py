@@ -22,7 +22,7 @@ def test(rank, args, model_path,
     state = env.reset()
     state_time = time.time()
     episode_length = 0
-    log = open('results-2/log6000.txt', 'w')
+    log = open('results-2/log12000.txt', 'w')
     while True:
         episode_length += 1
         state = Variable(torch.FloatTensor(state))
@@ -67,5 +67,5 @@ if __name__ == '__main__':
     torch.manual_seed(args.seed)
     all_cooked_time, all_cooked_bw, _ = load_trace(bw_trace_folder)
     all_vp_time, all_vp_unit = load_viewport_unit(vp_trace_folder)
-    model_path = 'results-2/actor.pt-6000'
+    model_path = 'results-2/actor.pt-12000'
     test(1, args, model_path, all_cooked_time, all_cooked_bw, all_vp_time, all_vp_unit)
