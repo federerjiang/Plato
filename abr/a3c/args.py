@@ -16,10 +16,10 @@ class Args:
         self.buffer_thresh = 3000.0  # max video length in buffer (3 segments)
         self.buffer_norm_factor = 3.0  # used for reward function
         self.quality_penalty = 1
-        self.rebuf_penalty = 8
+        self.rebuf_penalty = 4.3
         self.smooth_penalty = 1.0
         self.cv_penalty = 1.0
-        self.blank_penalty = 3.0
+        self.blank_penalty = 2.5
         self.drain_buffer_sleep_time = 500.0  # milliseconds
         self.packet_payload_portion = 0.95
         self.link_rtt = 80  # milliseconds
@@ -41,7 +41,7 @@ class Args:
         self.batch_size = 1280
         self.num_mini_batch = 20
         self.max_update_step = 4
-        self.lr = 1e-4
+        self.lr = 1e-5
         self.a_lr = 3e-4
         self.c_lr = 1e-4
         self.gamma = 0.99
