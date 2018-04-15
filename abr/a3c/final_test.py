@@ -22,7 +22,7 @@ def test(rank, args, model_path,
     state = env.reset()
     state_time = time.time()
     episode_length = 0
-    log = open('results-2/log.txt', 'w')
+    log = open('results-2/log6000.txt', 'w')
     while True:
         episode_length += 1
         state = Variable(torch.FloatTensor(state))
