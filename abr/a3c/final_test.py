@@ -22,7 +22,7 @@ def test(rank, args, model_path,
     state = env.reset()
     state_time = time.time()
     episode_length = 0
-    # log = open('log-2.txt', 'w')
+    log = open('results-2/log.txt', 'w')
     while True:
         episode_length += 1
         state = Variable(torch.FloatTensor(state))
@@ -39,14 +39,17 @@ def test(rank, args, model_path,
                 time.strftime("%Hh %Mm %Ss", time.gmtime(time.time() - state_time)),
                 action, vp_quality, ad_quality, out_quality, rebuf, cv, blank_ratio,
                 reward, episode_length))
-            # log.write('action: ' + str(action) + ' (' + str(vp_quality) + ',' + str(ad_quality) + ',' + str(out_quality)
-            #           + ') rebuf: ' + str(rebuf) + ' black_ratio: ' + str(blank_ratio) + ' reward: ' + str(reward)
-            #           + ' episode: ' + str(episode_length) + '\n')
+            log.write('action: ' + str(action) + ' (' + str(vp_quality) + ',' + str(ad_quality) + ',' + str(out_quality)
+                      + ') rebuf: ' + str(rebuf) + ' black_ratio: ' + str(blank_ratio) + ' reward: ' + str(reward)
+                      + ' episode: ' + str(episode_length) + '\n')
             # print('Time {}'.format(time.strftime("%Hh %Mm %Ss", time.gmtime(time.time() - state_time))))
             # print('time: ', time.gmtime(time.time() - state_time))
-            time.sleep(0.5)
+            # time.sleep(0.5)
         if done:
             state = env.reset()
+        if episode_length == 100000:
+            log.close()
+            break
 
 
 if __name__ == '__main__':
@@ -64,5 +67,5 @@ if __name__ == '__main__':
     torch.manual_seed(args.seed)
     all_cooked_time, all_cooked_bw, _ = load_trace(bw_trace_folder)
     all_vp_time, all_vp_unit = load_viewport_unit(vp_trace_folder)
-    model_path = 'results/actor.pt-6000'
+    model_path = 'results-2/actor.pt-6000'
     test(1, args, model_path, all_cooked_time, all_cooked_bw, all_vp_time, all_vp_unit)
