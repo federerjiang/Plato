@@ -68,7 +68,7 @@ def test(rank, args, shared_model, counter,
             # print('time: ', time.gmtime(time.time() - state_time))
             if episode_length % 500 == 0:
                 # pass
-                path = 'new-result-3/actor.pt-' + str(episode_length)
+                path = 'new-result-1/actor.pt-' + str(episode_length)
                 torch.save(model.state_dict(), path)
                 print('saved one model in epoch:', episode_length)
 
