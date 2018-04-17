@@ -19,7 +19,7 @@ class Args:
         self.rebuf_penalty = 6
         self.smooth_penalty = 1.0
         self.cv_penalty = 1.0
-        self.blank_penalty = 2.5
+        self.blank_penalty = 2
         self.drain_buffer_sleep_time = 500.0  # milliseconds
         self.packet_payload_portion = 0.95
         self.link_rtt = 80  # milliseconds
@@ -42,13 +42,10 @@ class Args:
         self.num_mini_batch = 20
         self.max_update_step = 4
         self.lr = 1e-5
-        self.a_lr = 3e-4
-        self.c_lr = 1e-4
         self.gamma = 0.99
         self.gae = 0.95
         self.clip = 0.2
         self.ent_coef = 0.
-        self.lr = 1e-4
         self.gamma = 0.99
         self.tau = 1.00
         self.entropy_coef = 3

@@ -22,7 +22,7 @@ def test(rank, args, model_path,
     state = env.reset()
     state_time = time.time()
     episode_length = 0
-    log = open('results-2/log10000.txt', 'w')
+    log = open('results-3/test-vp-log20000.txt', 'w')
     while True:
         episode_length += 1
         state = Variable(torch.FloatTensor(state))
@@ -39,9 +39,9 @@ def test(rank, args, model_path,
                 time.strftime("%Hh %Mm %Ss", time.gmtime(time.time() - state_time)),
                 action, vp_quality, ad_quality, out_quality, rebuf, cv, blank_ratio,
                 reward, episode_length))
-            log.write('action: ' + str(action) + ' (' + str(vp_quality) + ',' + str(ad_quality) + ',' + str(out_quality)
-                      + ') rebuf: ' + str(rebuf) + ' black_ratio: ' + str(blank_ratio) + ' reward: ' + str(reward)
-                      + ' episode: ' + str(episode_length) + '\n')
+            # log.write('action: ' + str(action) + ' (' + str(vp_quality) + ',' + str(ad_quality) + ',' + str(out_quality)
+            #           + ') rebuf: ' + str(rebuf) + ' black_ratio: ' + str(blank_ratio) + ' reward: ' + str(reward)
+            #           + ' episode: ' + str(episode_length) + '\n')
             # print('Time {}'.format(time.strftime("%Hh %Mm %Ss", time.gmtime(time.time() - state_time))))
             # print('time: ', time.gmtime(time.time() - state_time))
             # time.sleep(0.5)
@@ -61,11 +61,11 @@ if __name__ == '__main__':
     from load_bw_traces import load_trace
     from load_viewport_trace import load_viewport_unit
 
-    bw_trace_folder = '../../datasets/bw_trace/sim_belgium/'
-    vp_trace_folder = '../../datasets/viewport_trace/new_cooked_train_dataset/'
+    bw_trace_folder = '../../datasets/bw_trace/test_sim_belgium/'
+    vp_trace_folder = '../../datasets/viewport_trace/new_cooked_test_dataset/'
     args = Args()
     torch.manual_seed(args.seed)
     all_cooked_time, all_cooked_bw, _ = load_trace(bw_trace_folder)
     all_vp_time, all_vp_unit = load_viewport_unit(vp_trace_folder)
-    model_path = 'results-2/actor.pt-10000'
+    model_path = 'results-3/actor.pt-20000'
     test(1, args, model_path, all_cooked_time, all_cooked_bw, all_vp_time, all_vp_unit)

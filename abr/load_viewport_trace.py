@@ -6,7 +6,7 @@ TRAIN_DATASET = VIEWPORT_TRACE + 'new_cooked_train_dataset/'
 TEST_DATASET = VIEWPORT_TRACE + 'new_cooked_test_dataset/'
 
 
-def load_viewport_unit(trace_folder=TRAIN_DATASET):
+def load_viewport_unit(trace_folder=TEST_DATASET):
     all_vp_time = []
     all_vp_unit = []
     for root, dirnames, filenames in os.walk(trace_folder):
