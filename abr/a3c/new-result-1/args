@@ -1,0 +1,6 @@
+        self.quality_penalty = 1
+        self.rebuf_penalty = 6
+        self.smooth_penalty = 1.0
+        self.cv_penalty = 1.0
+        self.blank_penalty = 2
+        self.lr = 1e-5
