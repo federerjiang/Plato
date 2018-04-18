@@ -62,7 +62,8 @@ if __name__ == '__main__':
     from load_bw_traces import load_trace
     from load_viewport_trace import load_viewport_unit
 
-    bw_trace_folder = '../../datasets/bw_trace/test_sim_belgium/'
+    # bw_trace_folder = '../../datasets/bw_trace/test_sim_belgium/'
+    bw_trace_folder = '../../datasets/bw_trace/sim_belgium/'
     vp_trace_folder = '../../datasets/viewport_trace/RL_new_cooked_test_dataset/'
     args = Args()
     torch.manual_seed(args.seed)
