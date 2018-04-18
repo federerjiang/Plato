@@ -4,3 +4,4 @@
         self.cv_penalty = 3.0
         self.blank_penalty = 1.0
         self.lr = 1e-5
+        self.entropy_coef = 1
