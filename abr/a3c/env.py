@@ -323,7 +323,7 @@ class Environment:
             # then predict the 3rd second viewport to download
             # we need to skip some network bandwidth here
             # but do not add up the delay
-            drain_buffer_time = self.buffer_size - self.args.buffer_thresh
+            drain_buffer_time = self.buffer_size - (self.args.buffer_thresh - 1000.0)
             sleep_time = np.ceil(drain_buffer_time / self.args.drain_buffer_sleep_time) * self.args.drain_buffer_sleep_time
             self.buffer_size -= sleep_time
 
