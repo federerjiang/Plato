@@ -4,6 +4,7 @@ TRACE_FOLDER = '../datasets/bw_trace/sim_belgium/'
 
 
 def load_trace(trace_folder=TRACE_FOLDER):
+    print('trace_folder: ', trace_folder)
     cooked_files = os.listdir(trace_folder)
     all_cooked_time = []
     all_cooked_bw = []
