@@ -318,8 +318,9 @@ class Environment:
 
         # sleep if the buffer gets too large
         sleep_time = 0
-        if self.buffer_size > self.args.buffer_thresh:
-            # exceed the buffer limit
+        if self.buffer_size > (self.args.buffer_thresh - 1000.0):
+            # exceed 2 seconds
+            # then predict the 3rd second viewport to download
             # we need to skip some network bandwidth here
             # but do not add up the delay
             drain_buffer_time = self.buffer_size - self.args.buffer_thresh
