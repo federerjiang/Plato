@@ -15,7 +15,7 @@ def worker(rank, args, model, update_events, rolling_events, state_queue, queue,
     while tag:
         env.reset()
         action = 144
-        state, reward, done = env.step(action)
+        state, reward, done, _ = env.step(action)
         buffer_s, buffer_a, buffer_r, buffer_v, buffer_log = [], [], [], [], []
         # epoch += 1
         for step in range(args.num_steps):  # perform K steps.
@@ -27,10 +27,10 @@ def worker(rank, args, model, update_events, rolling_events, state_queue, queue,
             state = Variable(torch.FloatTensor(state))
             logit, value = model(state.view(-1, 11, 8))
             prob = F.softmax(logit, dim=1)
-            log_probs = F.log_softmax(logit)
+            log_probs = F.log_softmax(logit, dim=1)
 
-            # action = prob.multinomial().data
-            _, action = torch.max(prob, 1)
+            action = prob.multinomial()
+            # _, action = torch.max(prob, 1)
             # print('prob', prob)
             # print('action', action.data)
             # action = Variable(torch.LongTensor(action))
@@ -42,7 +42,7 @@ def worker(rank, args, model, update_events, rolling_events, state_queue, queue,
             # print('state', state)
             # print('prob', prob)
             # print('action', action)
-            state, reward, done = env.step(action.numpy()[0])
+            state, reward, done, _ = env.step(action.numpy()[0][0])
             # print('action: ', action.numpy()[0])
             # print('state: ', state)
             # ep_r += reward

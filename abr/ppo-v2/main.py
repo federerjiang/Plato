@@ -9,6 +9,7 @@ from worker import worker
 from chief import chief
 from model import Model
 from args import Args, LSTMPredict
+from test import test
 # from abr.load_bw_traces import load_trace
 # from abr.load_viewport_trace import load_viewport_unit
 
@@ -46,8 +47,8 @@ if __name__ == '__main__':
     sys.path.insert(0, parent_dir)
     from load_bw_traces import load_trace
     from load_viewport_trace import load_viewport_unit
-    bw_trace_folder = '../../datasets/bw_trace/sim_belgium/'
-    vp_trace_folder = '../../datasets/viewport_trace/new_cooked_train_dataset/'
+    bw_trace_folder = '../../datasets/bw_trace/sim_norway/'
+    vp_trace_folder = '../../datasets/viewport_trace/RL_new_cooked_train_dataset/'
     args = Args()
     torch.manual_seed(args.seed)
     all_cooked_time, all_cooked_bw, _ = load_trace(bw_trace_folder)
@@ -75,6 +76,11 @@ if __name__ == '__main__':
     queue_size = Counter()
 
     processes = []
+    p = mp.Process(target=test, args=(args.num_processes, args, model, counter,
+                                      all_cooked_time, all_cooked_bw, all_vp_time, all_vp_unit))
+    p.start()
+    processes.append(p)
+
     p = mp.Process(target=chief, args=(args, model,
                                        update_events, rolling_events, state_queue, queue, counter, queue_size,
                                        ))

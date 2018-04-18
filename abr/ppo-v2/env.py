@@ -9,8 +9,8 @@ from args import Args, LSTMPredict
 
 
 class Environment:
-    def __init__(self, args, all_cooked_time, all_cooked_bw, all_vp_time, all_vp_unit):
-        np.random.seed(args.random_seed)
+    def __init__(self, args, all_cooked_time, all_cooked_bw, all_vp_time, all_vp_unit, random_seed=1):
+        np.random.seed(random_seed)
         self.args = args
 
         self.all_vp_time = all_vp_time
@@ -57,6 +57,12 @@ class Environment:
         self.state = np.zeros((args.s_info, args.s_len))
 
         self.last_real_vp_bitrate = 1  # should be the default quality for viewport
+
+        # normalize state
+        self.state_mean = 0
+        self.state_std = 0
+        self.alpha = 0.999
+        self.num_steps = 0
 
     def _init_vp_history(self):
         self.vp_idx = np.random.randint(len(self.all_vp_time))
@@ -239,7 +245,7 @@ class Environment:
         ad_bitrate = self.args.video_bitrate[ad] if ad >= 0 else 0
         out_bitrate = self.args.video_bitrate[out] if out >= 0 else 0
         real_vp_bitrate = vp_count * vp_bitrate + ad_count * ad_bitrate + out_count * out_bitrate
-        print(vp_count, ad_count, out_count)
+        # print(vp_count, ad_count, out_count)
 
         # get accuracy
         total_count = vp_count + ad_count + out_count
@@ -312,11 +318,12 @@ class Environment:
 
         # sleep if the buffer gets too large
         sleep_time = 0
-        if self.buffer_size > self.args.buffer_thresh:
-            # exceed the buffer limit
+        if self.buffer_size > (self.args.buffer_thresh - 1000.0):
+            # exceed 2 seconds
+            # then predict the 3rd second viewport to download
             # we need to skip some network bandwidth here
             # but do not add up the delay
-            drain_buffer_time = self.buffer_size - self.args.buffer_thresh
+            drain_buffer_time = self.buffer_size - (self.args.buffer_thresh - 1000.0)
             sleep_time = np.ceil(drain_buffer_time / self.args.drain_buffer_sleep_time) * self.args.drain_buffer_sleep_time
             self.buffer_size -= sleep_time
 
@@ -373,6 +380,14 @@ class Environment:
         self.state[9, -1] = ad_acc  # pred_ad accuracy
         self.state[10, -1] = out_acc  # pred_out accuracy
 
+        # normalize state
+        # self.num_steps += 1
+        # self.state_mean = self.state_mean * self.alpha + self.state.mean() * (1 - self.alpha)
+        # self.state_std = self.state_std * self.alpha + self.state.mean() * (1 - self.alpha)
+        # unbiased_mean = self.state_mean / (1 - pow(self.alpha, self.num_steps))
+        # unbiased_std = self.state_std / (1 - pow(self.alpha, self.num_steps))
+        # self.state = (self.state - unbiased_mean) / (unbiased_std + 1e-8)
+
         # reward is video quality (Mbps) - rebuffer penalty - smooth penalty - spatial variance - blank tiles percentage
         # the reward function is not complete now, needed to be modified later
         reward = self.args.quality_penalty * real_vp_bitrate \
@@ -382,19 +397,19 @@ class Environment:
                  - self.args.blank_penalty * blank_ratio
 
         self.last_real_vp_bitrate = real_vp_bitrate
-        print('action: ', action)
-        print('action: ', vp_quality, ad_quality, out_quality)
+        # print('action: ', action)
+        # print('action: ', vp_quality, ad_quality, out_quality)
         # print('buffer size:', self.buffer_size)
-        print('rebuffer time: ', rebuf)
-        print('cv ', cv)
-        print('blank ', blank_ratio)
+        # print('rebuffer time: ', rebuf)
+        # print('cv ', cv)
+        # print('blank ', blank_ratio)
         # print('delay', delay)
-        print('real vp bitrate: ', real_vp_bitrate)
-        print('reward: ', reward)
+        # print('real vp bitrate: ', real_vp_bitrate)
+        # print('reward: ', reward)
 
         # print('state:', self.state)
-        print('')
-        return self.state, reward, done
+        # print('')
+        return self.state, reward, done, (action, vp_quality, ad_quality, out_quality, rebuf, cv, blank_ratio, reward)
 
     def reset(self):
         self.buffer_size = 0
@@ -415,6 +430,14 @@ class Environment:
         self.vp_history = self._init_vp_history()
         self.pred_tile_map = self._update_tile_map([[0.0, 0.0, 0.0]])
         self.real_tile_map = self._update_tile_map([[0.0, 0.0, 0.0]])
+
+        # normalize state
+        self.state_mean = 0
+        self.state_std = 0
+        self.alpha = 0.999
+        self.num_steps = 0
+
+        return self.state
 
     @staticmethod
     def sample_action():
@@ -444,17 +467,17 @@ if __name__ == "__main__":
     actor = ActorModel()
     critic = CriticModel()
     print(actor)
-    tag = 1
+    tag = 10
     while tag > 0:
         action = env.sample_action()
         print('action', action)
-        state, reward, done = env.step(action)
-        print(state.shape)
+        state, reward, done, _ = env.step(action)
+        print(state)
         inputs = Variable(torch.FloatTensor([state, state]).view(-1, 11, 8))
         # logit = actor(inputs)
         # print(logit.shape)
-        v = critic(inputs)
-        print(v)
+        # v = critic(inputs)
+        # print(v)
         # print(inputs.shape)
         # out = fc(inputs[:, 0:1, -1])
         # print('linear:', out.shape)

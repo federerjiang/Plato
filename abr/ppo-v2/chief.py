@@ -29,7 +29,7 @@ def chief(args, model, update_events, rolling_events, state_queue, queue, counte
             yield state_batch, action_batch, return_batch, adv_batch, old_action_log_batch, mini_batch_size
 
     epoch = 0
-    optimizer = optim.Adam(model.parameters(), lr=args.a_lr)
+    optimizer = optim.Adam(model.parameters(), lr=args.lr)
 
     while True:
         epoch += 1
@@ -55,7 +55,7 @@ def chief(args, model, update_events, rolling_events, state_queue, queue, counte
         # batch_size = returns.shape[0]
 
         # actions = Variable(torch.LongTensor(actions))
-        print('chief get data')
+        # print('chief get data')
         # print(states)
         # print(actions)
         # print(advantages)
@@ -78,10 +78,10 @@ def chief(args, model, update_events, rolling_events, state_queue, queue, counte
             value_loss = (Variable(torch.FloatTensor(return_batch)) - values).pow(2).mean()
 
             optimizer.zero_grad()
-            (action_loss + value_loss + dist_entropy * 0.01).backward()
+            (action_loss + value_loss + dist_entropy * 1).backward()
             torch.nn.utils.clip_grad_norm(model.parameters(), 0.5)
             optimizer.step()
-            print('update')
+            # print('update')
 
 
         # for _ in range(args.update_steps):
@@ -122,8 +122,8 @@ def chief(args, model, update_events, rolling_events, state_queue, queue, counte
             rolling_events[rank].set()
         counter.reset()
         queue_size.reset()
-        if epoch % 1000 == 0:
-            path = 'results-1/actor.pt-' + str(epoch/1000)
+        if epoch % 100 == 0:
+            path = 'results-1/actor.pt-' + str(epoch/100)
             torch.save(model.state_dict(), path)
             print('saved one model in epoch:', epoch)
 

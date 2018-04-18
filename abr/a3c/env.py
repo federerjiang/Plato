@@ -117,6 +117,7 @@ class Environment:
             return outputs
         model = self.vp_predictor
         buffer_frame_len = math.floor(self.buffer_size / 33.3)
+        print('vp history: ', len(self.vp_history))
         outputs = lstm_predict(model, self.vp_history, buffer_frame_len+30)
         return outputs[buffer_frame_len: buffer_frame_len+30]
 
