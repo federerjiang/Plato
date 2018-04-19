@@ -47,7 +47,7 @@ class Args:
         self.ent_coef = 0.
         self.gamma = 0.99
         self.tau = 1.00
-        self.entropy_coef = 5
+        self.entropy_coef = 3
         self.value_loss_coef = 0.5
         self.max_grad_norm = 1
         self.seed = 1

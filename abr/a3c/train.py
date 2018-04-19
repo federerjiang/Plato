@@ -39,8 +39,8 @@ def train(rank, args, share_model, counter, lock,
         log_probs = []
         rewards = []
         entropies = []
-        entropy_coef *= 0.95
-        entropy_coef = max(entropy_coef, 0.1)
+        # entropy_coef *= 0.95
+        # entropy_coef = max(entropy_coef, 0.1)
         for step in range(args.num_steps):
             episode_length += 1
             count += 1
