@@ -22,9 +22,9 @@ def test(rank, args, model_path,
     state = env.reset()
     state_time = time.time()
     episode_length = 0
-    # log = open('new-result-1/test-vp-log40000.txt', 'w')
+    log = open('new-result-1/test-vp-log20000.txt', 'w')
     # log = open('results-3/test-vp-log14000.txt', 'w')
-    log = open('train_norway_result-2/test_log3000.txt', 'w')
+    # log = open('train_norway_result-2/test_log3000.txt', 'w')
     while True:
         episode_length += 1
         state = Variable(torch.FloatTensor(state))
@@ -41,9 +41,9 @@ def test(rank, args, model_path,
                 time.strftime("%Hh %Mm %Ss", time.gmtime(time.time() - state_time)),
                 action, vp_quality, ad_quality, out_quality, rebuf, cv, blank_ratio,
                 reward, episode_length))
-            # log.write('action: ' + str(action) + ' (' + str(vp_quality) + ',' + str(ad_quality) + ',' + str(out_quality)
-            #           + ') rebuf: ' + str(rebuf) + ' black_ratio: ' + str(blank_ratio) + ' reward: ' + str(reward)
-            #           + ' episode: ' + str(episode_length) + '\n')
+            log.write('action: ' + str(action) + ' (' + str(vp_quality) + ',' + str(ad_quality) + ',' + str(out_quality)
+                      + ') rebuf: ' + str(rebuf) + ' black_ratio: ' + str(blank_ratio) + ' reward: ' + str(reward)
+                      + ' episode: ' + str(episode_length) + '\n')
             # print('Time {}'.format(time.strftime("%Hh %Mm %Ss", time.gmtime(time.time() - state_time))))
             # print('time: ', time.gmtime(time.time() - state_time))
             # time.sleep(0.5)
@@ -71,6 +71,6 @@ if __name__ == '__main__':
     all_cooked_time, all_cooked_bw, _ = load_trace(bw_trace_folder)
     all_vp_time, all_vp_unit = load_viewport_unit(vp_trace_folder)
     # model_path = 'train_norway_result-2/actor.pt-3000'
-    # model_path = 'new-result-1/actor.pt-40000'
-    model_path = 'results-3/actor.pt-20000'
+    model_path = 'new-result-1/actor.pt-20000'
+    # model_path = 'results-3/actor.pt-20000'
     test(1, args, model_path, all_cooked_time, all_cooked_bw, all_vp_time, all_vp_unit)
