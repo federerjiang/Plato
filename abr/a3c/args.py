@@ -52,7 +52,7 @@ class Args:
         self.max_grad_norm = 1
         self.seed = 1
         self.num_processes = 64
-        self.num_steps = 5000
+        self.num_steps = 100
         self.max_episode_length = 25
         self.seed = 30
 
