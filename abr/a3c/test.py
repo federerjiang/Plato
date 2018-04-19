@@ -35,7 +35,7 @@ def test(rank, args, shared_model, counter,
         if done or load:
             model.load_state_dict(shared_model.state_dict())
             load = False
-            # time.sleep(5)
+            time.sleep(5)
             print('update model parameters')
 
         state = Variable(torch.FloatTensor(state))
@@ -67,7 +67,7 @@ def test(rank, args, shared_model, counter,
             #           + ' episode: ' + str(episode_length) + '\n')
             # print('Time {}'.format(time.strftime("%Hh %Mm %Ss", time.gmtime(time.time() - state_time))))
             # print('time: ', time.gmtime(time.time() - state_time))
-            if episode_length % 300 == 0:
+            if episode_length % 500 == 0:
                 # pass
                 path = 'train_sim_result-1/actor.pt-' + str(episode_length)
                 torch.save(model.state_dict(), path)

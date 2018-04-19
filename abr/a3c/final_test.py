@@ -23,7 +23,7 @@ def test(rank, args, model_path,
     state_time = time.time()
     episode_length = 0
     # log = open('new-result-1/test-vp-log20000.txt', 'w')
-    log = open('results-3/log20000.txt', 'w')
+    # log = open('results-3/log20000.txt', 'w')
     # log = open('train_norway_result-2/test_log3000.txt', 'w')
     while True:
         episode_length += 1
@@ -41,16 +41,16 @@ def test(rank, args, model_path,
                 time.strftime("%Hh %Mm %Ss", time.gmtime(time.time() - state_time)),
                 action, vp_quality, ad_quality, out_quality, rebuf, cv, blank_ratio,
                 reward, episode_length))
-            log.write('action: ' + str(action) + ' (' + str(vp_quality) + ',' + str(ad_quality) + ',' + str(out_quality)
-                      + ') rebuf: ' + str(rebuf) + ' black_ratio: ' + str(blank_ratio) + ' reward: ' + str(reward)
-                      + ' episode: ' + str(episode_length) + '\n')
+            # log.write('action: ' + str(action) + ' (' + str(vp_quality) + ',' + str(ad_quality) + ',' + str(out_quality)
+            #           + ') rebuf: ' + str(rebuf) + ' black_ratio: ' + str(blank_ratio) + ' reward: ' + str(reward)
+            #           + ' episode: ' + str(episode_length) + '\n')
             # print('Time {}'.format(time.strftime("%Hh %Mm %Ss", time.gmtime(time.time() - state_time))))
             # print('time: ', time.gmtime(time.time() - state_time))
             # time.sleep(0.5)
         if done:
             state = env.reset()
         if episode_length == 10000:
-            log.close()
+            # log.close()
             break
 
 
@@ -64,7 +64,7 @@ if __name__ == '__main__':
     from load_viewport_trace import load_viewport_unit
 
     # bw_trace_folder = '../../datasets/bw_trace/test_sim_belgium/'
-    bw_trace_folder = '../../datasets/bw_trace/sim_norway/'
+    bw_trace_folder = '../../datasets/bw_trace/train_sim_traces/'
     vp_trace_folder = '../../datasets/viewport_trace/RL_new_cooked_test_dataset/'
     args = Args()
     torch.manual_seed(args.seed)
