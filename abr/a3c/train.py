@@ -61,7 +61,7 @@ def train(rank, args, share_model, counter, lock,
             state, reward, done, _ = env.step(action.data.numpy()[0][0])
             state = Variable(torch.FloatTensor(state))
             # print('reward', reward)
-            # done = done or episode_length >= args.max_episode_length
+            done = done or episode_length >= args.max_episode_length
             # update_tag = episode_length >= args.max_episode_length
             # reward = max(min(reward, 1), -1)
             # reward_sum += reward
@@ -71,6 +71,7 @@ def train(rank, args, share_model, counter, lock,
                 counter.value += 1
 
             if done:
+                episode_length = 0
                 state = env.reset()
                 state = Variable(torch.FloatTensor(state))
 
@@ -79,40 +80,37 @@ def train(rank, args, share_model, counter, lock,
             log_probs.append(log_prob)
             rewards.append(reward)
 
-            if done or episode_length == args.max_update_step:
+            if done:
                 # print('rank: ', rank)
                 # print('reward: ', reward_sum)
                 # reward_sum = 0
-                R = torch.zeros(1, 1)
-                if not done:
-                    logit, value = model(state.view(-1, 11, 8))
-                    R = value.data
+                break
 
-                values.append(Variable(R))
-                policy_loss = 0
-                value_loss = 0
-                R = Variable(R)
-                gae = torch.zeros(1, 1)
-                for i in reversed(range(len(rewards))):
-                    R = args.gamma * R + rewards[i]
-                    advantage = R - values[i]
-                    value_loss = value_loss + 0.5 * advantage.pow(2)
+            R = torch.zeros(1, 1)
+            if not done:
+                logit, value = model(state.view(-1, 11, 8))
+                R = value.data
+            values.append(Variable(R))
+            policy_loss = 0
+            value_loss = 0
+            R = Variable(R)
+            gae = torch.zeros(1, 1)
+            for i in reversed(range(len(rewards))):
+                R = args.gamma * R + rewards[i]
+                advantage = R - values[i]
+                value_loss = value_loss + 0.5 * advantage.pow(2)
 
-                    delta_t = rewards[i] + args.gamma * values[i + 1].data - values[i].data
-                    gae = gae * args.gamma * args.tau + delta_t
+                delta_t = rewards[i] + args.gamma * values[i + 1].data - values[i].data
+                gae = gae * args.gamma * args.tau + delta_t
 
-                    policy_loss = policy_loss - log_probs[i] * Variable(gae) - entropy_coef * entropies[i]
+                policy_loss = policy_loss - log_probs[i] * Variable(gae) - entropy_coef * entropies[i]
 
-                optimizer.zero_grad()
-                (policy_loss + args.value_loss_coef * value_loss).backward()
-                torch.nn.utils.clip_grad_norm(model.parameters(), args.max_grad_norm)
-                ensure_shared_grads(model, share_model)
-                optimizer.step()
+            optimizer.zero_grad()
+            (policy_loss + args.value_loss_coef * value_loss).backward()
+            torch.nn.utils.clip_grad_norm(model.parameters(), args.max_grad_norm)
+            ensure_shared_grads(model, share_model)
+            optimizer.step()
 
-                episode_length = 0
-                values = []
-                log_probs = []
-                rewards = []
-                entropies = []
-                # print('update', rank)
-                # break
+
+            # print('update', rank)
+            # break
