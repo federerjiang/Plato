@@ -1,8 +1,8 @@
-        self.quality_penalty = 1
+        self.quality_penalty = 0
         self.rebuf_penalty = 8
-        self.smooth_penalty = 1.0
-        self.cv_penalty = 1.5
-        self.blank_penalty = 1.0
+        self.smooth_penalty = 0
+        self.cv_penalty = 0
+        self.blank_penalty = 0
         self.entropy_coef = 3
         self.lr = 1e-4
         self.gamma = 0.99
