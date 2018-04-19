@@ -22,8 +22,8 @@ def test(rank, args, model_path,
     state = env.reset()
     state_time = time.time()
     episode_length = 0
-    log = open('new-result-1/test-vp-log20000.txt', 'w')
-    # log = open('results-3/test-vp-log14000.txt', 'w')
+    # log = open('new-result-1/test-vp-log20000.txt', 'w')
+    log = open('results-3/log20000.txt', 'w')
     # log = open('train_norway_result-2/test_log3000.txt', 'w')
     while True:
         episode_length += 1
@@ -71,6 +71,6 @@ if __name__ == '__main__':
     all_cooked_time, all_cooked_bw, _ = load_trace(bw_trace_folder)
     all_vp_time, all_vp_unit = load_viewport_unit(vp_trace_folder)
     # model_path = 'train_norway_result-2/actor.pt-3000'
-    model_path = 'new-result-1/actor.pt-20000'
-    # model_path = 'results-3/actor.pt-20000'
+    # model_path = 'new-result-1/actor.pt-20000'
+    model_path = 'results-3/actor.pt-20000'
     test(1, args, model_path, all_cooked_time, all_cooked_bw, all_vp_time, all_vp_unit)

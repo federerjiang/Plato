@@ -24,7 +24,7 @@ def convert(in_path, out_path):
                 bytes_recv = np.array(bytes_recv)
                 time_recv = np.array(time_recv)
                 throughput_all = bytes_recv / time_recv
-                throughput_all = throughput_all * np.random.uniform(10, 20)
+                throughput_all = throughput_all * np.random.uniform(15, 25)
                 print(trace_file)
                 time_ms = time_ms - time_ms[0]
                 time_ms /= MILLISECONDS_IN_SECONDS
