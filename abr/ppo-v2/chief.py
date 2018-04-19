@@ -65,8 +65,8 @@ def chief(args, model, update_events, rolling_events, state_queue, queue, counte
             state_batch, action_batch, return_batch, adv_batch, old_action_log_batch, mini_batch_size = sample
 
             logit, values = model(Variable(torch.FloatTensor(state_batch)), batch_size=mini_batch_size)
-            probs = F.softmax(logit)
-            log_probs = F.log_softmax(logit)
+            probs = F.softmax(logit, dim=1)
+            log_probs = F.log_softmax(logit, dim=1)
             dist_entropy = -(log_probs * probs).sum(-1).mean()
             action_log_probs = log_probs.gather(1, Variable(torch.LongTensor(action_batch)))
             adv_batch = Variable(torch.FloatTensor(adv_batch))

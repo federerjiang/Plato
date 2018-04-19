@@ -92,7 +92,7 @@ def worker(rank, args, model, update_events, rolling_events, state_queue, queue,
                 if counter_val >= args.batch_size:
                     rolling_events[rank].clear()  # stop collecting data
                     update_events[rank].set()  # update policy adn value network
-                    print('counter is larger than batch_size', counter_val, queue_size.get())
+                    # print('counter is larger than batch_size', counter_val, queue_size.get())
                     break
             # print(step)
 

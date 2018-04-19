@@ -35,6 +35,7 @@ def test(rank, args, shared_model, counter,
         if done or load:
             model.load_state_dict(shared_model.state_dict())
             load = False
+            # time.sleep(5)
             print('update model parameters')
 
         state = Variable(torch.FloatTensor(state))
@@ -74,6 +75,6 @@ def test(rank, args, shared_model, counter,
 
             # episode_length = 0
             actions.clear()
-            time.sleep(1)
+            # time.sleep()
         if done:
             state = env.reset()
