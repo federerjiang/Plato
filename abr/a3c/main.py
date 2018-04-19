@@ -20,12 +20,13 @@ if __name__ == '__main__':
     from load_bw_traces import load_trace
     from load_viewport_trace import load_viewport_unit
 
-    # bw_trace_folder = '../../datasets/bw_trace/sim_belgium/'
+    test_bw_trace_folder = '../../datasets/bw_trace/sim_belgium/'
     bw_trace_folder = '../../datasets/bw_trace/sim_norway/'
     vp_trace_folder = '../../datasets/viewport_trace/RL_new_cooked_train_dataset/'
     args = Args()
     torch.manual_seed(args.seed)
     all_cooked_time, all_cooked_bw, _ = load_trace(bw_trace_folder)
+    test_all_cooked_time, test_all_cooked_bw, _ = load_trace(test_bw_trace_folder)
     all_vp_time, all_vp_unit = load_viewport_unit(vp_trace_folder)
     model = ActorCritic()
     model.share_memory()
@@ -36,7 +37,7 @@ if __name__ == '__main__':
     lock = mp.Lock()
 
     p = mp.Process(target=test, args=(args.num_processes, args, model, counter,
-                                      all_cooked_time, all_cooked_bw, all_vp_time, all_vp_unit))
+                                      test_all_cooked_time, test_all_cooked_bw, all_vp_time, all_vp_unit))
     p.start()
     processes.append(p)
 
