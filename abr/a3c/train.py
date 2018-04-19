@@ -30,6 +30,7 @@ def train(rank, args, share_model, counter, lock,
     done = True
     # reward_sum = 0
     episode_length = 0
+    entropy_coef = args.entropy_coef
     while True:
         model.load_state_dict(share_model.state_dict())
 
@@ -37,7 +38,7 @@ def train(rank, args, share_model, counter, lock,
         log_probs = []
         rewards = []
         entropies = []
-
+        entropy_coef *= 0.99
         for step in range(args.num_steps):
             episode_length += 1
             logit, value = model(state.view(-1, 11, 8))
@@ -99,7 +100,7 @@ def train(rank, args, share_model, counter, lock,
             delta_t = rewards[i] + args.gamma * values[i + 1].data - values[i].data
             gae = gae * args.gamma * args.tau + delta_t
 
-            policy_loss = policy_loss - log_probs[i] * Variable(gae) - args.entropy_coef * entropies[i]
+            policy_loss = policy_loss - log_probs[i] * Variable(gae) - entropy_coef * entropies[i]
 
         optimizer.zero_grad()
         (policy_loss + args.value_loss_coef * value_loss).backward()
