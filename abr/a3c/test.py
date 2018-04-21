@@ -69,7 +69,7 @@ def test(rank, args, shared_model, counter,
             # print('time: ', time.gmtime(time.time() - state_time))
             if episode_length % 500 == 0:
                 # pass
-                path = 'train_sim_result-norway/actor.pt-' + str(episode_length)
+                path = 'train_sim_result-norway-2/actor.pt-' + str(episode_length)
                 torch.save(model.state_dict(), path)
                 print('saved one model in epoch:', episode_length)
 
