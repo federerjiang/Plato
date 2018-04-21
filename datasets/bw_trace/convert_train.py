@@ -20,7 +20,7 @@ def convert(in_path, out_path):
 
             time_ms = np.array(time_ms)
             throughput_all = np.array(throughput_all)
-            throughput_all *= np.random.uniform(15,25)
+            throughput_all *= np.random.uniform(10, 25)
             print(trace_file)
 
             assert len(time_ms) == len(throughput_all)
@@ -30,5 +30,5 @@ def convert(in_path, out_path):
 
 if __name__ == '__main__':
     in_path = './train_traces/'
-    out_path = './train_sim_traces/'
+    out_path = './train_sim_traces_10-25/'
     convert(in_path, out_path)
