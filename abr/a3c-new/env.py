@@ -269,7 +269,7 @@ class Environment:
             blank_count += out_count
         blank_ratio = blank_count / total_count
 
-        return real_vp_bitrate / total_count, vp_acc, ad_acc, out_acc, cv, blank_ratio
+        return real_vp_bitrate / total_count / 40, vp_acc, ad_acc, out_acc, cv, blank_ratio
 
     def step(self, action):
         vp_quality, ad_quality, out_quality = self.action_map[action]
