@@ -246,7 +246,7 @@ class Environment:
         ad_bitrate = self.args.video_bitrate[ad] if ad >= 0 else 0
         out_bitrate = self.args.video_bitrate[out] if out >= 0 else 0
         real_vp_bitrate = vp_count * vp_bitrate + ad_count * ad_bitrate + out_count * out_bitrate
-        real_vp_bitrate = real_vp_bitrate / (vp_count + ad_count + out_count)
+        # real_vp_bitrate = real_vp_bitrate / (vp_count + ad_count + out_count)
         # print(vp_count, ad_count, out_count)
 
         # get accuracy
@@ -269,7 +269,7 @@ class Environment:
             blank_count += out_count
         blank_ratio = blank_count / total_count
 
-        return real_vp_bitrate, vp_acc, ad_acc, out_acc, cv, blank_ratio
+        return real_vp_bitrate / total_count, vp_acc, ad_acc, out_acc, cv, blank_ratio
 
     def step(self, action):
         vp_quality, ad_quality, out_quality = self.action_map[action]
