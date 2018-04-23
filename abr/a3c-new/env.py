@@ -411,7 +411,7 @@ class Environment:
 
         # print('state:', self.state)
         # print('')
-        return self.state, reward, done, (action, vp_quality, ad_quality, out_quality, rebuf, cv, blank_ratio, reward)
+        return self.state, reward, done, (action, vp_quality, ad_quality, out_quality, rebuf, cv, blank_ratio, reward, real_vp_bitrate)
 
     def reset(self):
         self.buffer_size = 0

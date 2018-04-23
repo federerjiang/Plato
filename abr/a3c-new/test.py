@@ -43,7 +43,7 @@ def test(rank, args, shared_model, counter,
         logit, value = model(state.view(-1, 11, 8))
         prob = F.softmax(logit, dim=1)
         _, action = torch.max(prob, 1)
-        state, reward, done, (action, vp_quality, ad_quality, out_quality, rebuf, cv, blank_ratio, reward) \
+        state, reward, done, (action, vp_quality, ad_quality, out_quality, rebuf, cv, blank_ratio, reward, real_vp_bitrate) \
             = env.step(action.data.numpy()[0])
         # action = prob.multinomial()
         # state, reward, done, (action, vp_quality, ad_quality, out_quality, rebuf, cv, blank_ratio, reward) \
@@ -58,9 +58,9 @@ def test(rank, args, shared_model, counter,
         #     done = True
 
         if update:
-            print("Time {}, action {}, ({},{},{}), rebuf {:.3f}, cv {:.3f}, black_ratio {:.3f}, reward {:.3f}, episode {}".format(
+            print("Time {}, action {}, ({},{},{}), bitrate {:.3f}, rebuf {:.3f}, cv {:.3f}, black_ratio {:.3f}, reward {:.3f}, episode {}".format(
                 time.strftime("%Hh %Mm %Ss", time.gmtime(time.time() - state_time)),
-                action, vp_quality, ad_quality, out_quality, rebuf, cv, blank_ratio,
+                action, vp_quality, ad_quality, out_quality, real_vp_bitrate, rebuf, cv, blank_ratio,
                 reward_sum, episode_length))
             # log.write('action: ' + str(action) + ' (' + str(vp_quality) + ',' + str(ad_quality) + ',' + str(out_quality)
             #           + ') rebuf: ' + str(rebuf) + ' black_ratio: ' + str(blank_ratio) + ' reward: ' + str(reward)
