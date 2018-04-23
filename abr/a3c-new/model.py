@@ -5,7 +5,7 @@ import torch.nn.functional as F
 
 
 class ActorCritic(nn.Module):
-    def __init__(self, a_dim=294):
+    def __init__(self, a_dim=216):
         super(ActorCritic, self).__init__()
         self.a_dim = a_dim
         # actor model

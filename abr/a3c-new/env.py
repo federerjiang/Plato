@@ -225,7 +225,7 @@ class Environment:
     @staticmethod
     def _set_action_map():
         vp_levels = [0, 1, 2, 3, 4, 5]
-        ad_levels = out_levels = [-1, 0, 1, 2, 3, 4, 5]
+        ad_levels = out_levels = [0, 1, 2, 3, 4, 5]
         action_map = []
         for vp in range(len(vp_levels)):
             for ad in range(len(ad_levels)):
