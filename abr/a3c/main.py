@@ -23,8 +23,8 @@ if __name__ == '__main__':
     test_bw_trace_folder = '../../datasets/bw_trace/sim_belgium/'
     # bw_trace_folder = '../../datasets/bw_trace/sim_norway/'
     # bw_trace_folder = '../../datasets/bw_trace/train_sim_traces/'
-    bw_trace_folder = '../../datasets/bw_trace/train_sim_traces_norway/'  # norway-2
-    # bw_trace_folder = '../../datasets/bw_trace/train_sim_traces_10-25_norway/'
+    bw_trace_folder = '../../datasets/bw_trace/train_sim_traces_norway/'  # result-norway-2
+    # bw_trace_folder = '../../datasets/bw_trace/train_sim_traces_10-25_norway/'  # result-norway
     vp_trace_folder = '../../datasets/viewport_trace/RL_new_cooked_train_dataset/'
     args = Args()
     torch.manual_seed(args.seed)
