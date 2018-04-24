@@ -3,6 +3,8 @@ import torch
 from torch.autograd import Variable
 import math
 
+# from args import Args
+#from abr.ppo.args import Args, LSTMPredict
 from args import Args, LSTMPredict
 
 
@@ -22,6 +24,7 @@ class Environment:
         self.buffer_size = 0
 
         # pick a random viewport trace file, and a random start point in a file
+        # self.vp_idx = np.random.randint(len(self.all_vp_time))
         self.vp_idx = 0
         self.vp_time = self.all_vp_time[self.vp_idx]
         self.vp_unit = self.all_vp_unit[self.vp_idx]
@@ -275,8 +278,7 @@ class Environment:
         return real_vp_bitrate / total_count / 40, vp_acc, ad_acc, out_acc, cv, blank_ratio
 
     def step(self, action):
-        # vp_quality, ad_quality, out_quality = self.action_map[action]
-        vp_quality, ad_quality, out_quality = action
+        vp_quality, ad_quality, out_quality = self.action_map[action]
         vp_size = self.vp_sizes[vp_quality]
         ad_size = self.ad_sizes[ad_quality] if ad_quality >= 0 else 0
         out_size = self.out_sizes[out_quality] if out_quality >= 0 else 0
@@ -415,9 +417,7 @@ class Environment:
 
         # print('state:', self.state)
         # print('')
-        return video_seg_size * 8 / 1000 / delay, delay / 1000, np.array(self.vp_sizes) * 8 / 1000 / 1000, \
-               np.array(self.ad_sizes) * 8 / 1000 / 1000, np.array(self.out_sizes) * 8 / 1000 / 1000, \
-               done, (rebuf, cv, blank_ratio, reward, real_vp_bitrate)
+        return self.state, reward, done, (action, vp_quality, ad_quality, out_quality, rebuf, cv, blank_ratio, reward, real_vp_bitrate, np.abs(real_vp_bitrate - self.last_real_vp_bitrate))
 
     def reset(self):
         self.buffer_size = 0
@@ -426,6 +426,7 @@ class Environment:
         self.vp_playback_time = 0
 
         # pick a random bandwidth trace file
+        # self.trace_idx = np.random.randint(len(self.all_cooked_time))
         self.trace_idx += 1
         if self.trace_idx >= len(self.all_cooked_bw):
             self.trace_idx = 0
