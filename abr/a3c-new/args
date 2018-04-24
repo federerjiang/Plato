@@ -1,2 +1,4 @@
+new dataset: scaled norway
+
 ENV: reward is normalized bitrate. (bitrate / Max bitrate)
 action no -1

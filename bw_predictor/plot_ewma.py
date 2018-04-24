@@ -1,11 +1,14 @@
 from ewma import EwmaBandwidthEstimator
-import matplotlib
 import numpy as np
-import matplotlib.pyplot as plt
+from matplotlib import pyplot as plt
+from matplotlib import rcParams
+import matplotlib
+matplotlib.use('Agg')
 
 BW_TRACE = '../datasets/bw_trace/'
-# BW_FILE = BW_TRACE + 'sim_belgium/report_bus_0004.log'
-BW_FILE = BW_TRACE + 'sim_belgium/report_car_0002.log'
+BW_FILE = BW_TRACE + 'sim_belgium/report_bus_0007.log'
+# BW_FILE = BW_TRACE + 'sim_belgium/report_bicycle_0001.log'
+# BW_FILE = BW_TRACE + 'sim_belgium/report_car_0002.log'
 
 def get_bw(log_file=BW_FILE):
     time = []
@@ -26,12 +29,22 @@ def get_bw(log_file=BW_FILE):
 
 
 def plot(x, y1, y2):
-    plt.plot(x, y1)
-    plt.plot(x, y2)
+    rcParams.update({'figure.autolayout': True})
+    rcParams['lines.linewidth'] = 2
+    params = {'legend.fontsize': 20, 'legend.handlelength': 1.5}
+    plt.rcParams.update(params)
+    fig = plt.figure()
+
+    real, = plt.plot(x, y1, 'black', label='Real bandwidth')
+    estimate, = plt.plot(x, y2, 'r*-', label='EWMA estimation')
+    plt.legend(handles=[real, estimate])
     plt.xlabel('Time (second)')
     plt.ylabel('Throughput Mbits/sec')
     plt.title('ewma estimation bus-0004')
-    plt.show()
+    plt.grid()
+    # fig.savefig('bicycle-0001' + '.eps', format='eps', dpi=1000)
+    fig.savefig('bus-0007' + '.eps', format='eps', dpi=1000)
+    # plt.show()
 
 
 if __name__ == "__main__":
