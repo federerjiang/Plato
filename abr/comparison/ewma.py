@@ -4,6 +4,7 @@ SLOW = 8
 FAST = 3
 DEFAULT_ESTIMATE = 10
 
+
 class EWMA:
     def __init__(self, half_life):
         self.alpha_ = math.exp(math.log(0.5) / half_life)

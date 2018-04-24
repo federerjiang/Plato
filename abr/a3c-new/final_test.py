@@ -43,7 +43,7 @@ def test(rank, args, model_path,
                 action, vp_quality, ad_quality, out_quality, real_vp_bitrate, rebuf, cv, blank_ratio,
                 reward, episode_length))
             # log.write('action: ' + str(action) + ' (' + str(vp_quality) + ',' + str(ad_quality) + ',' + str(out_quality)
-            #           + ') rebuf: ' + str(rebuf) + ' black_ratio: ' + str(blank_ratio) + ' reward: ' + str(reward)
+            #           + ') rebuf: ' + str(rebuf) + ' cv: ' + str(cv) ' black_ratio: ' + str(blank_ratio) + ' reward: ' + str(reward)
             #           + ' episode: ' + str(episode_length) + '\n')
             # print('Time {}'.format(time.strftime("%Hh %Mm %Ss", time.gmtime(time.time() - state_time))))
             # print('time: ', time.gmtime(time.time() - state_time))
