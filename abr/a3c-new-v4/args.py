@@ -19,7 +19,7 @@ class Args:
         self.rebuf_penalty = 13
         self.smooth_penalty = 1
         self.cv_penalty = 2.3
-        self.blank_penalty = 1
+        self.blank_penalty = 10
         self.drain_buffer_sleep_time = 500.0  # milliseconds
         self.packet_payload_portion = 0.95
         self.link_rtt = 80  # milliseconds
