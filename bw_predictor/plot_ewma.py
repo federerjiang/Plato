@@ -10,6 +10,7 @@ BW_FILE = BW_TRACE + 'sim_belgium/report_bus_0007.log'
 # BW_FILE = BW_TRACE + 'sim_belgium/report_bicycle_0001.log'
 # BW_FILE = BW_TRACE + 'sim_belgium/report_car_0002.log'
 
+
 def get_bw(log_file=BW_FILE):
     time = []
     throughput_all = []
