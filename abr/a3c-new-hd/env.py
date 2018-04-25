@@ -279,11 +279,11 @@ class Environment:
         elif ave <= 6:
             real_vp_bitrate = 3
         elif ave <= 10:
-            real_vp_bitrate = 12
+            real_vp_bitrate = 6
         elif ave <= 20:
-            real_vp_bitrate = 15
+            real_vp_bitrate = 9
         else:
-            real_vp_bitrate = 20
+            real_vp_bitrate = 12
 
         return real_vp_bitrate, vp_acc, ad_acc, out_acc, cv, blank_ratio
 
