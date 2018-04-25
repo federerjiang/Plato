@@ -48,18 +48,18 @@ def test(rank, args,
     env = Environment(args, all_cooked_time, all_cooked_bw, all_vp_time, all_vp_unit, random_seed=args.seed + rank)
     model = MM()
     action = model.default_action
-    bandwidth, delay, vp_sizes, ad_sizes, out_sizes, done, (rebuf, cv, blank_ratio, reward, real_vp_bitrate) = \
+    bandwidth, delay, vp_sizes, ad_sizes, out_sizes, done, (rebuf, cv, blank_ratio, reward, real_vp_bitrate, smooth) = \
         env.step(action)
     state_time = time.time()
     episode_length = 0
     # log = open('new-result-1/test-vp-log20000.txt', 'w')
     # log = open('results-3/log20000.txt', 'w')
     # log = open('train_norway_result-2/test_log3000.txt', 'w')
-    log = open('result-1/log.txt', 'w')
+    log = open('result-1/log-1.txt', 'w')
     while True:
         episode_length += 1
         action = model.action(bandwidth, delay, vp_sizes, ad_sizes, out_sizes)
-        bandwidth, delay, vp_sizes, ad_sizes, out_sizes, done, (rebuf, cv, blank_ratio, reward, real_vp_bitrate) \
+        bandwidth, delay, vp_sizes, ad_sizes, out_sizes, done, (rebuf, cv, blank_ratio, reward, real_vp_bitrate, smooth) \
             = env.step(action)
         update = True
         if update:
@@ -67,8 +67,9 @@ def test(rank, args,
                 time.strftime("%Hh %Mm %Ss", time.gmtime(time.time() - state_time)),
                 action[0], action[1], action[2], real_vp_bitrate, rebuf, cv, blank_ratio,
                 reward, episode_length))
-            log.write('action: ( + ' + str(action[0]) + ',' + str(action[1]) + ',' + str(action[2])
-                      + ') rebuf: ' + str(rebuf) + ' cv: ' + str(cv) + ' black_ratio: ' + str(blank_ratio) + ' reward: ' + str(reward)
+            log.write('action: ' + str(1) + ' (' + str(action[0]) + ',' + str(action[1]) + ',' + str(action[2])
+                      + ') rebuf: ' + str(rebuf) + ' cv: ' + str(cv) + ' black_ratio: ' + str(blank_ratio) +
+                      ' smooth: ' + str(smooth) + ' reward: ' + str(reward)
                       + ' episode: ' + str(episode_length) + '\n')
             # print('Time {}'.format(time.strftime("%Hh %Mm %Ss", time.gmtime(time.time() - state_time))))
             # print('time: ', time.gmtime(time.time() - state_time))
@@ -77,9 +78,9 @@ def test(rank, args,
         if done:
             env.reset()
             action = model.default_action
-            bandwidth, delay, vp_sizes, ad_sizes, out_sizes, done, (rebuf, cv, blank_ratio, reward, real_vp_bitrate) = \
+            bandwidth, delay, vp_sizes, ad_sizes, out_sizes, done, (rebuf, cv, blank_ratio, reward, real_vp_bitrate, smooth) = \
                 env.step(action)
-        if episode_length == 10000:
+        if episode_length == 50000:
             log.close()
             break
 

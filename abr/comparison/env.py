@@ -417,7 +417,7 @@ class Environment:
         # print('')
         return video_seg_size * 8 / 1000 / delay, delay / 1000, np.array(self.vp_sizes) * 8 / 1000 / 1000, \
                np.array(self.ad_sizes) * 8 / 1000 / 1000, np.array(self.out_sizes) * 8 / 1000 / 1000, \
-               done, (rebuf, cv, blank_ratio, reward, real_vp_bitrate)
+               done, (rebuf, cv, blank_ratio, reward, real_vp_bitrate, np.abs(real_vp_bitrate - self.last_real_vp_bitrate))
 
     def reset(self):
         self.buffer_size = 0
