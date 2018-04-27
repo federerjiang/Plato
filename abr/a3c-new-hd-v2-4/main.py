@@ -32,6 +32,7 @@ if __name__ == '__main__':
     test_all_cooked_time, test_all_cooked_bw, _ = load_trace(test_bw_trace_folder)
     all_vp_time, all_vp_unit = load_viewport_unit(vp_trace_folder)
     model = ActorCritic()
+    model.load_state_dict('result-1/actor.pt-39000')
     model.share_memory()
     print(model)
     processes = []
