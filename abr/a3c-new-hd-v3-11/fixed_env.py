@@ -275,7 +275,7 @@ class Environment:
             blank_count += out_count
         blank_ratio = blank_count / total_count
 
-        return real_vp_bitrate / total_count / 40, vp_acc, ad_acc, out_acc, cv, blank_ratio
+        return real_vp_bitrate / total_count / 4, vp_acc, ad_acc, out_acc, cv, blank_ratio
 
     def step(self, action):
         vp_quality, ad_quality, out_quality = self.action_map[action]
@@ -404,6 +404,7 @@ class Environment:
                  - self.args.cv_penalty * cv \
                  - self.args.blank_penalty * blank_ratio
 
+        smooth = np.abs(real_vp_bitrate - self.last_real_vp_bitrate)
         self.last_real_vp_bitrate = real_vp_bitrate
         # print('action: ', action)
         # print('action: ', vp_quality, ad_quality, out_quality)
@@ -417,7 +418,7 @@ class Environment:
 
         # print('state:', self.state)
         # print('')
-        return self.state, reward, done, (action, vp_quality, ad_quality, out_quality, rebuf, cv, blank_ratio, reward, real_vp_bitrate, np.abs(real_vp_bitrate - self.last_real_vp_bitrate))
+        return self.state, reward, done, (action, vp_quality, ad_quality, out_quality, rebuf, cv, blank_ratio, reward, real_vp_bitrate, smooth)
 
     def reset(self):
         self.buffer_size = 0
@@ -506,15 +507,3 @@ if __name__ == "__main__":
         # print(logit)
 
         tag -= 1
-
-
-
-
-
-
-
-
-
-
-
-
