@@ -74,7 +74,7 @@ if __name__ == '__main__':
     all_cooked_time, all_cooked_bw, _ = load_trace(bw_trace_folder)
     all_vp_time, all_vp_unit = load_viewport_unit(vp_trace_folder)
     # nums = [20000, 40000, 45000, 55000]
-    nums = [90000]  # 95000,
+    nums = [80000]  # 95000,
     for num in nums:
         model_path = 'result-1/actor.pt-' + str(num)  # 20000, 40000, 45000, 55000
         test(1, args, model_path, all_cooked_time, all_cooked_bw, all_vp_time, all_vp_unit, num)
