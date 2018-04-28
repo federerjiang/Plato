@@ -1,0 +1,10 @@
+action: 197 (5,2,5) rebuf: 458.7808961541814 cv: 0.0 bitrate: 0.25 smooth: 0.75 reward: -2.793904480770907 episode: 1
+action: 5 (0,0,5) rebuf: 0.0 cv: 0.4970578351716895 bitrate: 8.05 smooth: 7.800000000000001 reward: -0.4955867527575343 episode: 2
+action: 5 (0,0,5) rebuf: 0.0 cv: 0.0 bitrate: 10.0 smooth: 1.9499999999999993 reward: 8.05 episode: 3
+action: 5 (0,0,5) rebuf: 0.0 cv: 0.0 bitrate: 10.0 smooth: 0.0 reward: 10.0 episode: 4
+action: 5 (0,0,5) rebuf: 0.0 cv: 0.0 bitrate: 10.0 smooth: 0.0 reward: 10.0 episode: 5
+action: 5 (0,0,5) rebuf: 0.0 cv: 0.0 bitrate: 10.0 smooth: 0.0 reward: 10.0 episode: 6
+action: 5 (0,0,5) rebuf: 0.0 cv: 0.0 bitrate: 10.0 smooth: 0.0 reward: 10.0 episode: 7
+action: 5 (0,0,5) rebuf: 0.0 cv: 0.0 bitrate: 10.0 smooth: 0.0 reward: 10.0 episode: 8
+action: 5 (0,0,5) rebuf: 0.0 cv: 0.0 bitrate: 10.0 smooth: 0.0 reward: 10.0 episode: 9
+action: 5 (0,0,5) rebuf: 0.0 cv: 0.0 bitrate: 10.0 smooth: 0.0 reward: 10.0 episode: 10
