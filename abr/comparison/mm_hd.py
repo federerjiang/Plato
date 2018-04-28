@@ -1,6 +1,6 @@
 from ewma import EwmaBandwidthEstimator
 import time
-from env_lin import Environment
+from env_hd import Environment
 from args import Args, LSTMPredict
 
 
@@ -55,7 +55,7 @@ def test(rank, args,
     # log = open('new-result-1/test-vp-log20000.txt', 'w')
     # log = open('results-3/log20000.txt', 'w')
     # log = open('train_norway_result-2/test_log3000.txt', 'w')
-    log = open('result-1/log-lin.txt', 'w')
+    log = open('result-1/log-hd.txt', 'w')
     while True:
         episode_length += 1
         action = model.action(bandwidth, delay, vp_sizes, ad_sizes, out_sizes)
