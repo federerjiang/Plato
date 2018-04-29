@@ -492,7 +492,7 @@ if __name__ == "__main__":
     from abr.ppo.model import ActorModel, CriticModel
     actor = ActorModel()
     critic = CriticModel()
-    print(actor)
+    # print(actor)
     tag = 10
     while tag > 0:
         action = env.sample_action()
