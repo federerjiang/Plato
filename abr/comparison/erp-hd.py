@@ -53,7 +53,7 @@ def test(rank, args,
                 time.strftime("%Hh %Mm %Ss", time.gmtime(time.time() - state_time)),
                 action, action, action, real_vp_bitrate, rebuf, cv, smooth,
                 reward, episode_length))
-            log.write('action: ' + str(1) + ' (' + str(action[0]) + ',' + str(action[1]) + ',' + str(action[2])
+            log.write('action: ' + str(1) + ' (' + str(action) + ',' + str(action) + ',' + str(action)
                       + ') rebuf: ' + str(rebuf) + ' cv: ' + str(cv) + ' black_ratio: ' + str(blank_ratio) +
                       ' smooth: ' + str(smooth) + ' bitrate: ' + str(real_vp_bitrate) + ' reward: ' + str(reward)
                       + ' episode: ' + str(episode_length) + '\n')
