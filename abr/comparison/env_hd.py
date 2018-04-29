@@ -292,7 +292,7 @@ class Environment:
         return real_vp_bitrate, vp_acc, ad_acc, out_acc, cv, blank_ratio
 
     def step(self, action):
-        vp_quality, ad_quality, out_quality = self.action_map[action]
+        vp_quality, ad_quality, out_quality = action
         vp_size = self.vp_sizes[vp_quality]
         ad_size = self.ad_sizes[ad_quality] if ad_quality >= 0 else 0
         out_size = self.out_sizes[out_quality] if out_quality >= 0 else 0
