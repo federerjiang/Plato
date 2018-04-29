@@ -12,7 +12,7 @@ class ERP:
     def action(self, bandwidth, delay, vp_sizes, ad_sizes, out_sizes):
         self.estimator.sample(delay, bandwidth)
         bandwidth_prediction = self.estimator.get_estimate()
-        video_sizes = []
+        video_sizes = [0, 0, 0, 0, 0, 0]
         quality = 5
         for q in range(6):
             video_sizes[q] = vp_sizes[q] + ad_sizes[q] + out_sizes[q]
