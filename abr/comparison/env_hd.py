@@ -432,7 +432,9 @@ class Environment:
 
         # print('state:', self.state)
         # print('')
-        return self.state, reward, done, (action, vp_quality, ad_quality, out_quality, rebuf, cv, blank_ratio, reward, real_vp_bitrate, smooth)
+        return video_seg_size * 8 / 1000 / delay, delay / 1000, np.array(self.vp_sizes) * 8 / 1000 / 1000, \
+               np.array(self.ad_sizes) * 8 / 1000 / 1000, np.array(self.out_sizes) * 8 / 1000 / 1000, \
+               done, (rebuf, cv, blank_ratio, reward, real_vp_bitrate, smooth)
 
     def reset(self):
         self.buffer_size = 0
