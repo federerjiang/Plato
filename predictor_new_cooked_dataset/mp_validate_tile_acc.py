@@ -82,7 +82,7 @@ def get_loss_360(predicts, label):
     return loss
 
 
-def _update_tile_map(vp_future):
+def _update_tile_map(args, vp_future):
     def rotation_to_vp_tile(yaw, pitch, tile_column, tile_row, vp_length, vp_height, tile_map, tag):
         tile_length = 360 / tile_column
         tile_height = 180 / tile_row
@@ -134,7 +134,7 @@ def _update_tile_map(vp_future):
 
         # print(tile_count)
         # return tile_map
-    args = self.args
+
     tile_map = [x[:] for x in [[0] * args.tile_column] * args.tile_row]
     for rotation in vp_future:  # set vp tile tag
         pitch = rotation[1] * 180 / math.pi
@@ -177,8 +177,8 @@ def validate_lstm_rotation_acc(args, test_data_loader, rank, model_path, num_lay
     with open(str(rank) + '.txt', 'w') as f:
         for inputs, label in test_data_loader:
             predicts = lstm_predict(args, model, inputs)
-            pred_tile_map = _update_tile_map(predicts[length-30: length])
-            real_tile_map = _update_tile_map(label[length-30: length])
+            pred_tile_map = _update_tile_map(args, predicts[length-30: length])
+            real_tile_map = _update_tile_map(args, label[length-30: length])
             vp_acc, ad_acc, out_acc = get_acc(real_tile_map, pred_tile_map)
             f.write(str(vp_acc) + ' ' + str(ad_acc) + ' ' + str(out_acc) + '\n')
             print(rank, vp_acc, ad_acc, out_acc)
@@ -218,8 +218,8 @@ def validate_other_rotation_acc(args, model, test_data_loader, rank, length):
     with open(str(rank) + '.txt', 'w') as f:
         for inputs, label in test_data_loader:
             predicts = other_predict(args, model, inputs)
-            pred_tile_map = _update_tile_map(predicts[length-30: length])
-            real_tile_map = _update_tile_map(label[length-30: length])
+            pred_tile_map = _update_tile_map(args, predicts[length-30: length])
+            real_tile_map = _update_tile_map(args, label[length-30: length])
             vp_acc, ad_acc, out_acc = get_acc(real_tile_map, pred_tile_map)
             f.write(str(vp_acc) + ' ' + str(ad_acc) + ' ' + str(out_acc) + '\n')
             print(rank, vp_acc, ad_acc, out_acc)
