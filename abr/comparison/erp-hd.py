@@ -20,7 +20,7 @@ class ERP:
         budget = bandwidth_prediction - video_sizes[quality]
 
         for q in range(0, 5):
-            if vp_sizes[q] <= budget:
+            if video_sizes[q] <= budget:
                 quality = q
                 break
 
@@ -73,7 +73,7 @@ def test(rank, args,
             action = model.default_action
             bandwidth, delay, vp_sizes, ad_sizes, out_sizes, done, (rebuf, cv, blank_ratio, reward, real_vp_bitrate, smooth) = \
                 env.step(action)
-        if episode_length == 18000:
+        if episode_length == 50000:
             log.close()
             break
 
