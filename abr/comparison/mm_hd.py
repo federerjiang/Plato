@@ -45,6 +45,8 @@ class MM:
 def test(rank, args,
          all_cooked_time, all_cooked_bw, all_vp_time, all_vp_unit):
 
+    log = open('result-1/log-hd.txt', 'w')
+
     env = Environment(args, all_cooked_time, all_cooked_bw, all_vp_time, all_vp_unit, random_seed=args.seed + rank)
     model = MM()
     action = model.default_action
@@ -52,10 +54,13 @@ def test(rank, args,
         env.step(action)
     state_time = time.time()
     episode_length = 0
+    log.write('action: ' + str(1) + ' (' + str(action[0]) + ',' + str(action[1]) + ',' + str(action[2])
+            + ') rebuf: ' + str(rebuf) + ' cv: ' + str(cv) +
+            ' smooth: ' + str(smooth) + ' bitrate: ' + str(real_vp_bitrate) + ' reward: ' + str(reward)
+            + ' episode: ' + str(episode_length) + '\n')
     # log = open('new-result-1/test-vp-log20000.txt', 'w')
     # log = open('results-3/log20000.txt', 'w')
     # log = open('train_norway_result-2/test_log3000.txt', 'w')
-    log = open('result-1/log-hd.txt', 'w')
     while True:
         episode_length += 1
         action = model.action(bandwidth, delay, vp_sizes, ad_sizes, out_sizes)
