@@ -82,7 +82,7 @@ def get_loss_360(predicts, label):
     return loss
 
 
-def _update_tile_map(self, vp_future):
+def _update_tile_map(vp_future):
     def rotation_to_vp_tile(yaw, pitch, tile_column, tile_row, vp_length, vp_height, tile_map, tag):
         tile_length = 360 / tile_column
         tile_height = 180 / tile_row
