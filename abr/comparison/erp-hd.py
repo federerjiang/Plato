@@ -12,17 +12,18 @@ class ERP:
     def action(self, bandwidth, delay, vp_sizes, ad_sizes, out_sizes):
         self.estimator.sample(delay, bandwidth)
         bandwidth_prediction = self.estimator.get_estimate()
-        budget = bandwidth_prediction
         video_sizes = [0, 0, 0, 0, 0, 0]
         quality = 5
         for q in range(6):
             video_sizes[q] = vp_sizes[q] + ad_sizes[q] + out_sizes[q]
-    
+        
+        budget = bandwidth_prediction - video_sizes[quality]
+
         for q in range(0, 5):
             if vp_sizes[q] <= budget:
                 quality = q
                 break
-                
+
         return quality
 
 
