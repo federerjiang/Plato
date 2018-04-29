@@ -186,8 +186,8 @@ def main_validate_other(args, model, name):
 if __name__ == "__main__":
     torch.set_num_threads(1)
     print(torch.get_num_threads())
-    model_path = 'adam-lstm-64-1.model'
-    hidden_size = 64
+    model_path = 'adam-lstm-128-1.model'
+    hidden_size = 128
     num_layers = 1
     # test_data_loader = TestDataLoader(args)  # total 114857 samples for test
 
