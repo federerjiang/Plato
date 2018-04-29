@@ -54,6 +54,10 @@ def test(rank, args,
         env.step(action)
     state_time = time.time()
     episode_length = 0
+    print("Time {}, action ({},{},{}), bitrate {:.3f}, rebuf {:.3f}, cv {:.3f}, smooth {:.3f}, reward {:.3f}, episode {}".format(
+                time.strftime("%Hh %Mm %Ss", time.gmtime(time.time() - state_time)),
+                action[0], action[1], action[2], real_vp_bitrate, rebuf, cv, smooth,
+                reward, episode_length))
     log.write('action: ' + str(1) + ' (' + str(action[0]) + ',' + str(action[1]) + ',' + str(action[2])
             + ') rebuf: ' + str(rebuf) + ' cv: ' + str(cv) +
             ' smooth: ' + str(smooth) + ' bitrate: ' + str(real_vp_bitrate) + ' reward: ' + str(reward)
