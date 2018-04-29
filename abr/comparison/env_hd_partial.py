@@ -326,7 +326,7 @@ class Environment:
         delay *= self.args.milliseconds_in_second  # ms
         delay += self.args.link_rtt
         # add a multiplicative noise to the delay
-        delay *= np.random.uniform(self.args.noise_low, self.args.noise_high)
+        # delay *= np.random.uniform(self.args.noise_low, self.args.noise_high)
 
         # rebuffer time
         rebuf = np.maximum(delay - self.buffer_size, 0.0)
