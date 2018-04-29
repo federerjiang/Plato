@@ -14,7 +14,7 @@ class ERP:
         bandwidth_prediction = self.estimator.get_estimate()
         video_sizes = [0, 0, 0, 0, 0, 0]
         quality = 5
-        for q in range(6):
+        for q in reversed(range(6)):
             video_sizes[q] = vp_sizes[q] + ad_sizes[q] + out_sizes[q]
             if video_sizes[q] <= bandwidth_prediction:
                 quality = q
