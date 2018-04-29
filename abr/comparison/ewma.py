@@ -61,5 +61,5 @@ if __name__ == "__main__":
     print(estimator.get_estimate())
     estimator.sample(1000, 10000)
     print(estimator.get_estimate())
-    estimator.sample(3000, 10000)
+    # estimator.sample(3000, 10000)
     print(estimator.get_estimate())
