@@ -82,6 +82,88 @@ def get_loss_360(predicts, label):
     return loss
 
 
+def _update_tile_map(self, vp_future):
+    def rotation_to_vp_tile(yaw, pitch, tile_column, tile_row, vp_length, vp_height, tile_map, tag):
+        tile_length = 360 / tile_column
+        tile_height = 180 / tile_row
+
+        vp_pitch = pitch + 90
+        vp_up = vp_pitch + vp_height / 2
+        if vp_up > 180:
+            vp_up = 179
+        vp_down = vp_pitch - vp_height / 2
+        if vp_down < 0:
+            vp_down = 0
+
+        vp_yaw = yaw + 180
+        vp_part = 1
+        vp_left = vp_yaw - vp_length / 2
+        vp_right = vp_yaw + vp_length / 2
+        if vp_left < 0:
+            vp_part = 2
+            vp_left_1 = 0
+            vp_left_2 = vp_left + 360
+            vp_right_1 = vp_right
+            vp_right_2 = 359
+        if vp_right > 360:
+            vp_part = 2
+            vp_right_1 = vp_right - 360
+            vp_right_2 = 359
+            vp_left_1 = 0
+            vp_left_2 = vp_left
+
+        def get_tiles(left, right, up, down, tag):
+            col_start = math.floor(left / tile_length)
+            col_end = math.floor(right / tile_length)
+            row_start = math.floor(down / tile_height)
+            row_end = math.floor(up / tile_height)
+            count = 0
+            for row in range(row_start, row_end + 1):
+                for col in range(col_start, col_end + 1):
+                    count += 1
+                    if tile_map[row][col] != 1:  # if tile is not vp, then is set tag
+                        tile_map[row][col] = tag
+            return count
+
+        tile_count = 0
+        if vp_part == 1:
+            tile_count = get_tiles(vp_left, vp_right, vp_up, vp_down, tag)
+        if vp_part == 2:
+            tile_count = get_tiles(vp_left_1, vp_right_1, vp_up, vp_down, tag)
+            tile_count += get_tiles(vp_left_2, vp_right_2, vp_up, vp_down, tag)
+
+        # print(tile_count)
+        # return tile_map
+    args = self.args
+    tile_map = [x[:] for x in [[0] * args.tile_column] * args.tile_row]
+    for rotation in vp_future:  # set vp tile tag
+        pitch = rotation[1] * 180 / math.pi
+        yaw = rotation[2] * 180 / math.pi
+        rotation_to_vp_tile(yaw, pitch, args.tile_column, args.tile_row, args.vp_length, args.vp_height,
+                                tile_map, 1)
+    for rotation in vp_future:  # set ad tile tag
+        pitch = rotation[1]
+        yaw = rotation[2]
+        rotation_to_vp_tile(yaw, pitch, args.tile_column, args.tile_row, args.ad_length, args.ad_height,
+                                tile_map, 2)
+    return tile_map
+
+
+def get_acc(real_tile_map, pred_tile_map):
+    count = [0, 0, 0]
+    for row in range(6):
+        for column in range(12):
+            if real_tile_map[row][column] == 1:
+                count[pred_tile_map[row][column]] += 1
+    out_count, vp_count, ad_count = count[0], count[1], count[2]
+    # get accuracy
+    total_count = vp_count + ad_count + out_count
+    vp_acc = vp_count / total_count
+    ad_acc = ad_count / total_count
+    out_acc = out_count / total_count
+    return vp_acc, ad_acc, out_acc
+
+
 def validate_lstm_rotation_acc(args, test_data_loader, rank, model_path, num_layers, hidden_size, length):
     def init_hidden(num_layers, hidden_size):
         hx = torch.nn.init.xavier_normal(torch.randn(num_layers, 1, hidden_size))
@@ -92,20 +174,14 @@ def validate_lstm_rotation_acc(args, test_data_loader, rank, model_path, num_lay
     model = torch.load(model_path, map_location='cpu')
     model.hidden = init_hidden(num_layers, hidden_size)
 
-    loss_function = torch.nn.MSELoss()
     with open(str(rank) + '.txt', 'w') as f:
         for inputs, label in test_data_loader:
             predicts = lstm_predict(args, model, inputs)
-            predict_rolls, predict_pitchs, predict_yaws, label_rolls, label_pitchs, label_yaws = \
-                get_rotations(predicts[length-30: length], label[length-30: length])
-            # roll_loss = get_loss_360(loss_function, predict_rolls, label_rolls)
-            roll_loss = get_loss_360(predict_rolls, label_rolls)
-            pitch_loss = get_loss(loss_function, predict_pitchs, label_pitchs)
-            yaw_loss = get_loss_360(predict_yaws, label_yaws)
-            # yaw_loss = get_loss_360(loss_function, predict_yaws, label_yaws)
-
-            f.write(str(roll_loss) + ' ' + str(pitch_loss) + ' ' + str(yaw_loss) + '\n')
-            print(rank, roll_loss, pitch_loss, yaw_loss)
+            pred_tile_map = _update_tile_map(predicts[length-30: length])
+            real_tile_map = _update_tile_map(label[length-30: length])
+            vp_acc, ad_acc, out_acc = get_acc(real_tile_map, pred_tile_map)
+            f.write(str(vp_acc) + ' ' + str(ad_acc) + ' ' + str(out_acc) + '\n')
+            print(rank, vp_acc, ad_acc, out_acc)
 
 
 def main_validate_lstm(args, model_path, hidden_size, num_layers):
@@ -129,7 +205,7 @@ def main_validate_lstm(args, model_path, hidden_size, num_layers):
     file_names = []
     for rank in range(len(sub_paths)):
         file_names.append(str(rank) + '.txt')
-    with open(str(args.test_label_length) + 'lstm-64-1-error.txt', 'w') as outfile:
+    with open(str(args.test_label_length) + 'lstm-128-1-tile-acc.txt', 'w') as outfile:
         for fname in file_names:
             with open(fname) as infile:
                 for line in infile:
@@ -139,20 +215,14 @@ def main_validate_lstm(args, model_path, hidden_size, num_layers):
 
 def validate_other_rotation_acc(args, model, test_data_loader, rank, length):
 
-    loss_function = torch.nn.MSELoss()
-    loss_sum = 0.0
-    count = 0
     with open(str(rank) + '.txt', 'w') as f:
         for inputs, label in test_data_loader:
             predicts = other_predict(args, model, inputs)
-            predict_rolls, predict_pitchs, predict_yaws, label_rolls, label_pitchs, label_yaws = \
-                get_rotations(predicts[length-30: length], label[length-30: length])
-            roll_loss = get_loss_360(predict_rolls, label_rolls)
-            pitch_loss = get_loss(loss_function, predict_pitchs, label_pitchs)
-            yaw_loss = get_loss_360(predict_yaws, label_yaws)
-
-            f.write(str(roll_loss) + ' ' + str(pitch_loss) + ' ' + str(yaw_loss) + '\n')
-            print(rank, roll_loss, pitch_loss, yaw_loss)
+            pred_tile_map = _update_tile_map(predicts[length-30: length])
+            real_tile_map = _update_tile_map(label[length-30: length])
+            vp_acc, ad_acc, out_acc = get_acc(real_tile_map, pred_tile_map)
+            f.write(str(vp_acc) + ' ' + str(ad_acc) + ' ' + str(out_acc) + '\n')
+            print(rank, vp_acc, ad_acc, out_acc)
 
 
 def main_validate_other(args, model, name):
@@ -175,7 +245,7 @@ def main_validate_other(args, model, name):
     file_names = []
     for rank in range(len(sub_paths)):
         file_names.append(str(rank) + '.txt')
-    with open(str(args.test_label_length) + '-' + name + '-error.txt', 'w') as outfile:
+    with open(str(args.test_label_length) + '-' + name + '-tile-acc.txt', 'w') as outfile:
         for fname in file_names:
             with open(fname) as infile:
                 for line in infile:
@@ -195,13 +265,13 @@ if __name__ == "__main__":
     # validate_other_rotation_acc(args, average, test_data_loader)
     # validate_other_rotation_acc(args, lr, test_data_loader)
 
-    # for length in [30, 60, 90]:
-    #     args = Args(length)
-    #     main_validate_other(args, average, 'average')
-    # for length in [30, 60, 90]:
-    #     args = Args(length)
-    #     main_validate_other(args, lr_cal, 'lr_cal')
-    for length in [60, 90]:
+    for length in [30, 60, 90]:
+        args = Args(length)
+        main_validate_other(args, average, 'average')
+    for length in [30, 60, 90]:
+        args = Args(length)
+        main_validate_other(args, lr_cal, 'lr_cal')
+    for length in [30, 60, 90]:
         args = Args(length)
         main_validate_lstm(args, model_path, hidden_size, num_layers)
 
