@@ -12,8 +12,10 @@ class PART:
     def action(self, bandwidth, delay, vp_sizes, ad_sizes, out_sizes):
         self.estimator.sample(delay, bandwidth)
         bandwidth_prediction = self.estimator.get_estimate()
-        vp_q = ad_q = out_q = 5
-        budget = bandwidth_prediction - vp_sizes[vp_q] - ad_sizes[ad_q] - out_sizes[out_q]
+        vp_q = ad_q = 5
+        for q in range(6):
+            ad_sizes[q] = ad_sizes[q] + out_sizes[q]
+        budget = bandwidth_prediction - vp_sizes[vp_q] - ad_sizes[ad_q]
         while True:
             if budget <= 0:
                 break
@@ -28,18 +30,13 @@ class PART:
                         budget = budget - ad_sizes[q]
                         ad_q = q
                         break
-                for q in range(0, 5):
-                    if out_sizes[q] <= budget:
-                        budget = budget - out_sizes[q]
-                        out_q = q
-                        break
                 break
         # print('bandwidth: ', bandwidth)
         # print('delay: ', delay)
         # print('vp: ', vp_sizes)
         # print('ad: ', ad_sizes)
         # print('out: ', out_sizes)
-        return vp_q, ad_q, out_q
+        return vp_q, ad_q
 
 
 def test(rank, args,
@@ -65,9 +62,9 @@ def test(rank, args,
         if update:
             print("Time {}, action ({},{},{}), bitrate {:.3f}, rebuf {:.3f}, cv {:.3f}, smooth {:.3f}, reward {:.3f}, episode {}".format(
                 time.strftime("%Hh %Mm %Ss", time.gmtime(time.time() - state_time)),
-                action[0], action[1], action[2], real_vp_bitrate, rebuf, cv, smooth,
+                action[0], action[1], action[1], real_vp_bitrate, rebuf, cv, smooth,
                 reward, episode_length))
-            log.write('action: ' + str(1) + ' (' + str(action[0]) + ',' + str(action[1]) + ',' + str(action[2])
+            log.write('action: ' + str(1) + ' (' + str(action[0]) + ',' + str(action[1]) + ',' + str(action[1])
                       + ') rebuf: ' + str(rebuf) + ' cv: ' + str(cv) + ' black_ratio: ' + str(blank_ratio) +
                       ' smooth: ' + str(smooth) + ' bitrate: ' + str(real_vp_bitrate) + ' reward: ' + str(reward)
                       + ' episode: ' + str(episode_length) + '\n')
