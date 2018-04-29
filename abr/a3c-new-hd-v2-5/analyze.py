@@ -1,4 +1,4 @@
-log_file = 'result-1/log-95000.txt'
+log_file = 'result-1/log-33000.txt'
 
 with open(log_file) as f:
     bitrate = 0

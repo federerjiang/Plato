@@ -10,7 +10,7 @@ def load_viewport_unit(trace_folder=TEST_DATASET):
     all_vp_time = []
     all_vp_unit = []
     for root, dirnames, filenames in os.walk(trace_folder):
-        for filename in fnmatch.filter(filenames, '*.txt'):
+        for filename in sorted(fnmatch.filter(filenames, '*.txt')):
             if filename == 'formAnswers.txt' or filename == 'testInfo.txt':
                 continue
             trace_file = os.path.join(root, filename)

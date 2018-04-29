@@ -1,0 +1,12 @@
+action: 101 (2,4,5) rebuf: 544.1962125959794 cv: 0.0 bitrate: 2.0 smooth: 1.0 reward: -2.265177275575877 episode: 1
+action: 173 (4,4,5) rebuf: 0.0 cv: 0.27981227784140567 bitrate: 0.55 smooth: 1.45 reward: -1.543568239035233 episode: 2
+action: 173 (4,4,5) rebuf: 0.0 cv: 0.27981227784140567 bitrate: 0.55 smooth: 0.0 reward: -0.09356823903523293 episode: 3
+action: 173 (4,4,5) rebuf: 0.0 cv: 0.0 bitrate: 0.625 smooth: 0.07499999999999996 reward: 0.55 episode: 4
+action: 173 (4,4,5) rebuf: 0.0 cv: 0.0 bitrate: 0.625 smooth: 0.0 reward: 0.625 episode: 5
+action: 173 (4,4,5) rebuf: 0.0 cv: 0.0 bitrate: 0.625 smooth: 0.0 reward: 0.625 episode: 6
+action: 173 (4,4,5) rebuf: 0.0 cv: 0.0 bitrate: 0.625 smooth: 0.0 reward: 0.625 episode: 7
+action: 173 (4,4,5) rebuf: 0.0 cv: 0.0 bitrate: 0.625 smooth: 0.0 reward: 0.625 episode: 8
+action: 173 (4,4,5) rebuf: 0.0 cv: 0.0 bitrate: 0.625 smooth: 0.0 reward: 0.625 episode: 9
+action: 173 (4,4,5) rebuf: 0.0 cv: 0.0 bitrate: 0.625 smooth: 0.0 reward: 0.625 episode: 10
+action: 173 (4,4,5) rebuf: 0.0 cv: 0.0 bitrate: 0.625 smooth: 0.0 reward: 0.625 episode: 11
+action: 173 (4,4,5) rebuf: 0.0 cv: 0.0 bitrate: 0.625 smooth: 0.0 reward: 0.625 episode: 12

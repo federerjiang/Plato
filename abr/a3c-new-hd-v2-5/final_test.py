@@ -43,7 +43,7 @@ def test(rank, args, model_path,
                 action, vp_quality, ad_quality, out_quality, real_vp_bitrate, rebuf, cv, smooth,
                 reward, episode_length))
             log.write('action: ' + str(action) + ' (' + str(vp_quality) + ',' + str(ad_quality) + ',' + str(out_quality)
-                      + ') rebuf: ' + str(rebuf) + ' cv: ' + str(cv) + ' bitrate: ' + str(real_vp_bitrate) + ' smooth: ' + str(smooth) + ' reward: ' + str(reward)
+                      + ') rebuf: ' + str(rebuf) + ' cv: ' + str(cv) + ' smooth: ' + str(smooth) + ' bitrate: ' + str(real_vp_bitrate) + ' reward: ' + str(reward)
                       + ' episode: ' + str(episode_length) + '\n')
             # log.write(str())
             # print('Time {}'.format(time.strftime("%Hh %Mm %Ss", time.gmtime(time.time() - state_time))))
@@ -51,7 +51,7 @@ def test(rank, args, model_path,
             # time.sleep(0.5)
         if done:
             state = env.reset()
-        if episode_length == 50000:
+        if episode_length == 18000:
             log.close()
             break
 
@@ -74,7 +74,7 @@ if __name__ == '__main__':
     all_cooked_time, all_cooked_bw, _ = load_trace(bw_trace_folder)
     all_vp_time, all_vp_unit = load_viewport_unit(vp_trace_folder)
     # nums = [20000, 40000, 45000, 55000]
-    nums = [33000]  # 30000, 
+    nums = [33000]  # 30000, 33000
     for num in nums:
         model_path = 'result-1/actor.pt-' + str(num)  # 20000, 40000, 45000, 55000
         test(1, args, model_path, all_cooked_time, all_cooked_bw, all_vp_time, all_vp_unit, num)
