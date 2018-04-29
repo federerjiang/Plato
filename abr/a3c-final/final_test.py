@@ -12,7 +12,7 @@ from args import Args, LSTMPredict
 
 def test(rank, args, model_path,
          all_cooked_time, all_cooked_bw, all_vp_time, all_vp_unit, num):
-    torch.manual_seed(args.seed + rank)
+    # torch.manual_seed(args.seed + rank)
 
     env = Environment(args, all_cooked_time, all_cooked_bw, all_vp_time, all_vp_unit, random_seed=args.seed + rank)
 
@@ -70,7 +70,7 @@ if __name__ == '__main__':
     bw_trace_folder = '../../datasets/bw_trace/sim_belgium/'
     vp_trace_folder = '../../datasets/viewport_trace/RL_new_cooked_test_dataset/'
     args = Args()
-    torch.manual_seed(args.seed)
+    # torch.manual_seed(args.seed)
     all_cooked_time, all_cooked_bw, _ = load_trace(bw_trace_folder)
     all_vp_time, all_vp_unit = load_viewport_unit(vp_trace_folder)
     # nums = [20000, 40000, 45000, 55000]
