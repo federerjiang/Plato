@@ -21,7 +21,7 @@ def get_ave(file):
         ave_rebuf = rebuf / count
         ave_cv = cv / count
         ave_smooth = smooth / count
-        reward = ave_bitrate - 33 * ave_rebuf / 1000 - 5.3 * ave_cv - ave_smooth
+        reward = ave_bitrate - 35 * ave_rebuf / 1000 - 5.3 * ave_cv - ave_smooth
         print(ave_bitrate, ave_rebuf, ave_cv, ave_smooth, reward)
 
 

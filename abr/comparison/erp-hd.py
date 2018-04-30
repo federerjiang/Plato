@@ -17,7 +17,7 @@ class ERP:
         for q in range(6):
             video_sizes[q] = vp_sizes[q] + ad_sizes[q] + out_sizes[q]
         
-        budget = bandwidth_prediction - video_sizes[quality]
+        # budget = bandwidth_prediction - video_sizes[quality]
 
         for q in range(0, 5):
             if video_sizes[q] <= budget:
@@ -29,7 +29,7 @@ class ERP:
 
 def test(rank, args,
          all_cooked_time, all_cooked_bw, all_vp_time, all_vp_unit):
-    log = open('result-1/log-hd-erp.txt', 'w')
+    log = open('result-1/log-hd-erp-2.txt', 'w')
 
     env = Environment(args, all_cooked_time, all_cooked_bw, all_vp_time, all_vp_unit, random_seed=args.seed + rank)
     model = ERP()
