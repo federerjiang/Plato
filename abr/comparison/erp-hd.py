@@ -18,7 +18,7 @@ class ERP:
             video_sizes[q] = vp_sizes[q] + ad_sizes[q] + out_sizes[q]
         
         # budget = bandwidth_prediction - video_sizes[quality]
-
+        budget = bandwidth_prediction
         for q in range(0, 5):
             if video_sizes[q] <= budget:
                 quality = q
